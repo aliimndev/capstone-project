@@ -1,0 +1,6 @@
+{
+  "installCommand": "npm --prefix apps/web ci",
+  "buildCommand": "npm run vercel-build",
+  "outputDirectory": "apps/web/.next",
+  "framework": "nextjs"
+}
