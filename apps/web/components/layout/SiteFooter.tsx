@@ -15,6 +15,9 @@ export function SiteFooter() {
           <Link href="/" className="transition hover:text-[#0099ff]">
             Home
           </Link>
+          <Link href="/about" className="transition hover:text-[#0099ff]">
+            About
+          </Link>
           <Link href="/recommend" className="transition hover:text-[#0099ff]">
             Rekomendasi
           </Link>
