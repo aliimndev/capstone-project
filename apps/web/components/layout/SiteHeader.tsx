@@ -2,7 +2,8 @@ import Link from "next/link";
 
 const navigationItems = [
   { href: "/", label: "Home" },
-  { href: "/recommend", label: "About" },
+  { href: "/about", label: "About" },
+  { href: "/recommend", label: "Rekomendasi" },
 ];
 
 export function SiteHeader() {
