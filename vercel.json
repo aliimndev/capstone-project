@@ -1,6 +1,35 @@
 {
-  "installCommand": "npm --prefix apps/web ci",
   "buildCommand": "npm run vercel-build",
+  "installCommand": "npm --prefix apps/web ci && pip install -r apps/api/requirements.txt",
   "outputDirectory": "apps/web/.next",
-  "framework": "nextjs"
+  "framework": "nextjs",
+  "functions": {
+    "apps/api/app/main.py": {
+      "runtime": "python3.9",
+      "memory": 1024,
+      "maxDuration": 60
+    }
+  },
+  "routes": [
+    {
+      "src": "/api/v1/(.*)",
+      "dest": "/apps/api/app/main.py"
+    },
+    {
+      "src": "/api/docs",
+      "dest": "/apps/api/app/main.py"
+    },
+    {
+      "src": "/api/openapi.json",
+      "dest": "/apps/api/app/main.py"
+    },
+    {
+      "src": "/api/redoc",
+      "dest": "/apps/api/app/main.py"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "apps/web/.next"
+    }
+  ]
 }

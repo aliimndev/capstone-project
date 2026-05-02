@@ -1,21 +1,42 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from core.config import get_settings
+from app.api.v1.endpoints import recommend
 
+# Load settings
+settings = get_settings()
+
+# Create FastAPI app
 app = FastAPI(
-    title="RekoFilm API",
+    title=settings.API_TITLE,
     description="Backend for Movie Recommender",
-    version="1.0.0",
+    version=settings.API_VERSION,
+    docs_url="/api/docs",
+    redoc_url="/api/redoc",
+    openapi_url="/api/openapi.json",
 )
 
 # Konfigurasi CORS agar frontend Next.js bisa memanggil API ini
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000"], # Atur sesuai URL Frontend
+    allow_origins=settings.ALLOWED_ORIGINS,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
+# Include routers
+app.include_router(recommend.router)
+
 @app.get("/")
 def read_root():
-    return {"message": "Hello Pruy", "status": "running"}
+    return {
+        "message": "RekoFilm API",
+        "status": "running",
+        "version": settings.API_VERSION,
+        "docs": "/api/docs"
+    }
+
+@app.get("/health")
+def health_check():
+    return {"status": "healthy", "message": "API is running"}
