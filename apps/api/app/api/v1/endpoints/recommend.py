@@ -7,15 +7,13 @@ from app.schemas.recommend import (
     MovieBase
 )
 from app.services.tmdb_service import get_tmdb_service, TMDBService
-from app.services.gemini_service import get_gemini_service, GeminiService
 
 router = APIRouter(prefix="/api/v1/recommendations", tags=["recommendations"])
 
 @router.post("/", response_model=RecommendationResponse)
 async def get_recommendations(
     request: RecommendationRequest,
-    tmdb_service: TMDBService = Depends(get_tmdb_service),
-    gemini_service: GeminiService = Depends(get_gemini_service)
+    tmdb_service: TMDBService = Depends(get_tmdb_service)
 ):
     """Get movie recommendations based on query or movie ID"""
     movies_data = []
@@ -50,19 +48,10 @@ async def get_recommendations(
                 vote_average=movie.get("vote_average")
             ))
         
-        # Generate recommendation text using Gemini
-        recommendation_text = None
-        if request.user_preference:
-            recommendation_text = gemini_service.generate_recommendation_text(
-                movies_data,
-                request.user_preference
-            )
-        
         return RecommendationResponse(
             status="success",
             message=f"Found {len(movies_data)} recommendations",
-            movies=movies_data,
-            recommendation_text=recommendation_text
+            movies=movies_data
         )
     
     except HTTPException:
