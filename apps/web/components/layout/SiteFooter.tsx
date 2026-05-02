@@ -2,24 +2,23 @@ import Link from "next/link";
 
 export function SiteFooter() {
   return (
-    <footer className="border-t border-white/10 bg-[#000000] text-white/70">
-      <div className="mx-auto flex w-full max-w-6xl flex-col gap-4 px-4 py-8 sm:px-6 md:flex-row md:items-center md:justify-between lg:px-8">
+    <footer className="w-full bg-[#000000] border-t-2 border-[#0099ff] text-gray-400">
+      <div className="mx-auto flex w-full max-w-6xl items-center justify-between px-4 py-6 sm:px-6 lg:px-8 text-sm">
+        {/* Bagian Kiri */}
         <div>
-          <p className="text-sm font-semibold text-[#ffffff]">RekoFilm</p>
-          <p className="mt-1 text-sm text-white/50">
-            Temukan film yang pas dengan mood dan preferensimu.
-          </p>
+          &copy; 2026 WeMovies AI
         </div>
 
-        <div className="flex items-center gap-4 text-sm">
-          <Link href="/" className="transition hover:text-[#0099ff]">
-            Home
+        {/* Bagian Kanan */}
+        <div className="flex items-center gap-3">
+          <Link href="/contact" className="transition hover:text-white">
+            Contact
           </Link>
-          <Link href="/about" className="transition hover:text-[#0099ff]">
-            About
-          </Link>
-          <Link href="/recommend" className="transition hover:text-[#0099ff]">
-            Rekomendasi
+
+          <span className="text-white/20">|</span>
+
+          <Link href="/privacy" className="transition hover:text-white">
+            Privacy
           </Link>
         </div>
       </div>

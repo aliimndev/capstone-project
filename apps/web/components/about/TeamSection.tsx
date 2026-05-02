@@ -55,10 +55,10 @@ const TeamCard: React.FC<TeamMemberProps> = ({ name, jobdesk, photoUrl }) => {
 
 const TeamSection: React.FC = () => {
   const teamMembers = [
-    { name: "Andi Pratama", jobdesk: "Lead Developer" },
-    { name: "Sari Dewi", jobdesk: "UI/UX Designer" },
-    { name: "Budi Santoso", jobdesk: "Backend Engineer" },
-    { name: "Rina Lestari", jobdesk: "Project Manager" },
+    { name: "Ali Imannudin", jobdesk: "Full Stack Engineer" },
+    { name: "Arinda Setyo Rini", jobdesk: "UI/UX Designer" },
+    { name: "Joshua Christian Benedict", jobdesk: "Backend Engineer" },
+    { name: "Shandy Putraniar Budianto", jobdesk: "ML Engineer" },
     { name: "Dian Kurnia", jobdesk: "QA Engineer" },
   ];
 

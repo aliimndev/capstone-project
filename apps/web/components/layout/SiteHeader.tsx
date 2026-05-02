@@ -14,7 +14,7 @@ export function SiteHeader() {
           <span className="flex h-9 w-9 items-center justify-center rounded-full bg-[#0099ff] text-sm font-bold text-[#ffffff] shadow-[0_0_24px_rgba(0,153,255,0.35)]">
             RF
           </span>
-          <span className="text-lg font-semibold text-[#ffffff]">RekoFilm</span>
+          <span className="text-lg font-semibold text-[#ffffff]">wemovies</span>
         </Link>
 
         <nav className="flex items-center gap-1" aria-label="Navigasi utama">
