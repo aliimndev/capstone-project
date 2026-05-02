@@ -1,35 +1,10 @@
 {
   "buildCommand": "npm run vercel-build",
-  "installCommand": "npm --prefix apps/web ci && pip install -r apps/api/requirements.txt",
+  "installCommand": "npm --prefix apps/web ci",
   "outputDirectory": "apps/web/.next",
   "framework": "nextjs",
-  "functions": {
-    "apps/api/app/main.py": {
-      "runtime": "python3.9",
-      "memory": 1024,
-      "maxDuration": 60
-    }
-  },
-  "routes": [
-    {
-      "src": "/api/v1/(.*)",
-      "dest": "/apps/api/app/main.py"
-    },
-    {
-      "src": "/api/docs",
-      "dest": "/apps/api/app/main.py"
-    },
-    {
-      "src": "/api/openapi.json",
-      "dest": "/apps/api/app/main.py"
-    },
-    {
-      "src": "/api/redoc",
-      "dest": "/apps/api/app/main.py"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "apps/web/.next"
-    }
-  ]
+  "env": {
+    "TMDB_API_KEY": "@tmdb_api_key",
+    "NEXT_PUBLIC_API_URL": "@next_public_api_url"
+  }
 }
