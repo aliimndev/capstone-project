@@ -12,13 +12,11 @@ class MovieBase(BaseModel):
 class RecommendationRequest(BaseModel):
     movie_id: Optional[int] = None
     query: Optional[str] = None
-    user_preference: Optional[str] = None
 
 class RecommendationResponse(BaseModel):
     status: str
     message: str
     movies: List[MovieBase]
-    recommendation_text: Optional[str] = None
 
 class TrendingMoviesResponse(BaseModel):
     status: str

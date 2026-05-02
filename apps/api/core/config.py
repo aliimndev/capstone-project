@@ -14,9 +14,6 @@ class Settings(BaseSettings):
     TMDB_API_KEY: str = os.getenv("TMDB_API_KEY", "")
     TMDB_BASE_URL: str = "https://api.themoviedb.org/3"
     
-    # Gemini Configuration
-    GEMINI_API_KEY: str = os.getenv("GEMINI_API_KEY", "")
-    
     # CORS Configuration
     ALLOWED_ORIGINS: list = [
         "http://localhost:3000",
