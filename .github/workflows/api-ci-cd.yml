@@ -105,13 +105,13 @@ jobs:
         run: |
           # Install wrangler CLI
           npm install -g wrangler
-          
-          # Deploy worker with environment variables
-          wrangler deploy apps/api/worker.ts \
-            --env production
+
+          # Ensure TMDB API key is stored securely in Cloudflare
+          echo "${{ secrets.TMDB_API_KEY }}" | wrangler secret put TMDB_API_KEY --env production
+
+          # Deploy the Worker
+          wrangler deploy apps/api/worker.ts --env production
         env:
-          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           WRANGLER_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           WRANGLER_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
       

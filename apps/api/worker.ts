@@ -1,11 +1,12 @@
 /**
  * Cloudflare Worker - TMDB API Proxy
- * Handles API requests with caching and rate limiting
+ * Handles API requests with caching and direct TMDB integration
  */
 
 interface Env {
 	TMDB_API_KEY: string;
 	API_BACKEND_URL?: string;
+	TMDB_BASE_URL?: string;
 }
 
 interface ExecutionContext {
@@ -19,6 +20,8 @@ const CACHE_TTL = {
 	health: 60,          // 1 minute
 };
 
+const DEFAULT_TMDB_BASE = "https://api.themoviedb.org/3";
+
 export default {
 	async fetch(
 		request: Request,
@@ -26,7 +29,7 @@ export default {
 		ctx: ExecutionContext
 	): Promise<Response> {
 		const url = new URL(request.url);
-		const path = url.pathname;
+		const path = url.pathname.replace(/\/+$/, "");
 
 		// Health check
 		if (path === "/health") {
@@ -48,59 +51,43 @@ export default {
 		// CORS preflight
 		if (request.method === "OPTIONS") {
 			return new Response(null, {
-				headers: {
-					"Access-Control-Allow-Origin": "*",
-					"Access-Control-Allow-Methods": "GET, POST, OPTIONS",
-					"Access-Control-Allow-Headers": "Content-Type",
-				},
+				headers: getCORSHeaders(),
 			});
 		}
 
 		try {
-			// Determine cache duration based on endpoint
-			let cacheTTL = CACHE_TTL.recommendations;
-			if (path.includes("/trending")) cacheTTL = CACHE_TTL.trending;
-			if (path.includes("/search")) cacheTTL = CACHE_TTL.search;
+			let response: Response;
 
-			// Generate cache key
-			const cacheKey = new Request(url.toString(), { method: "GET" });
-			const cache = (caches as any).default;
-
-			// Check cache
-			let response = await cache.match(cacheKey);
-			if (response) {
-				return addCORSHeaders(response.clone());
+			if (env.API_BACKEND_URL) {
+				response = await proxyToBackend(request, path, url, env);
+			} else {
+				response = await handleTmdbRequest(request, path, url, env);
 			}
 
-			// Route to backend API
-			const backendUrl = env.API_BACKEND_URL || "http://localhost:8000";
-			const backendRequest = new Request(`${backendUrl}${path}${url.search}`, {
-				method: request.method,
-				headers: {
-					...Object.fromEntries(request.headers.entries()),
-					"X-TMDB-API-Key": env.TMDB_API_KEY,
-				},
-				body: request.body,
-			});
+			if (request.method === "GET") {
+				const cacheKey = new Request(url.toString(), { method: "GET" });
+				const cache = (caches as any).default;
+				const cachedResponse = await cache.match(cacheKey);
+				if (cachedResponse) {
+					return addCORSHeaders(cachedResponse.clone());
+				}
 
-			response = await fetch(backendRequest);
-
-			// Cache successful responses
-			if (response.status === 200 && request.method === "GET") {
-				const cachedResponse = response.clone();
-				ctx.waitUntil(
-					cache.put(
-						cacheKey,
-						new Response(cachedResponse.body, {
-							status: cachedResponse.status,
-							statusText: cachedResponse.statusText,
-							headers: {
-								...Object.fromEntries(cachedResponse.headers.entries()),
-								"Cache-Control": `public, max-age=${cacheTTL}`,
-							},
-						})
-					)
-				);
+				if (response.status === 200) {
+					const responseClone = response.clone();
+					ctx.waitUntil(
+						cache.put(
+							cacheKey,
+							new Response(responseClone.body, {
+								status: responseClone.status,
+								statusText: responseClone.statusText,
+								headers: {
+									...Object.fromEntries(responseClone.headers.entries()),
+									"Cache-Control": `public, max-age=${getCacheTTL(path)}`,
+								},
+							})
+						)
+					);
+				}
 			}
 
 			return addCORSHeaders(response);
@@ -122,6 +109,127 @@ export default {
 		}
 	},
 };
+
+function getCacheTTL(path: string): number {
+	if (path.includes("/trending")) return CACHE_TTL.trending;
+	if (path.includes("/search")) return CACHE_TTL.search;
+	return CACHE_TTL.recommendations;
+}
+
+async function proxyToBackend(
+	request: Request,
+	path: string,
+	url: URL,
+	env: Env
+): Promise<Response> {
+	const backendUrl = env.API_BACKEND_URL || "http://localhost:8000";
+	const backendRequest = new Request(`${backendUrl}${path}${url.search}`, {
+		method: request.method,
+		headers: {
+			...Object.fromEntries(request.headers.entries()),
+			"X-TMDB-API-Key": env.TMDB_API_KEY,
+		},
+		body: request.body,
+	});
+	return fetch(backendRequest);
+}
+
+async function handleTmdbRequest(
+	request: Request,
+	path: string,
+	url: URL,
+	env: Env
+): Promise<Response> {
+	const tmdbBase = env.TMDB_BASE_URL || DEFAULT_TMDB_BASE;
+
+	if (path === "/api/v1/recommendations/trending") {
+		const timeWindow = url.searchParams.get("time_window") || "week";
+		return fetch(
+			`${tmdbBase}/trending/movie/${encodeURIComponent(timeWindow)}?api_key=${env.TMDB_API_KEY}&language=en-US`
+		);
+	}
+
+	if (path === "/api/v1/recommendations/search") {
+		const query = url.searchParams.get("query") || "";
+		if (!query) {
+			return new Response(
+				JSON.stringify({ error: "Query parameter is required." }),
+				{
+					status: 400,
+					headers: {
+						"Content-Type": "application/json",
+					},
+				}
+			);
+		}
+		return fetch(
+			`${tmdbBase}/search/movie?api_key=${env.TMDB_API_KEY}&language=en-US&query=${encodeURIComponent(
+				query
+			)}&page=1&include_adult=false`
+		);
+	}
+
+	if (path === "/api/v1/recommendations") {
+		if (request.method !== "POST") {
+			return new Response(
+				JSON.stringify({ error: "Method not allowed." }),
+				{
+					status: 405,
+					headers: {
+						"Content-Type": "application/json",
+					},
+				}
+			);
+		}
+
+		const body = await request.json().catch(() => null);
+		if (!body) {
+			return new Response(
+				JSON.stringify({ error: "Invalid JSON body." }),
+				{
+					status: 400,
+					headers: {
+						"Content-Type": "application/json",
+					},
+				}
+			);
+		}
+
+		if (body.movie_id) {
+			return fetch(
+				`${tmdbBase}/movie/${encodeURIComponent(body.movie_id)}/recommendations?api_key=${env.TMDB_API_KEY}&language=en-US&page=1`
+			);
+		}
+
+		if (body.query) {
+			return fetch(
+				`${tmdbBase}/search/movie?api_key=${env.TMDB_API_KEY}&language=en-US&query=${encodeURIComponent(
+					body.query
+				)}&page=1&include_adult=false`
+			);
+		}
+
+		return new Response(
+			JSON.stringify({ error: "Please provide either movie_id or query." }),
+			{
+				status: 400,
+				headers: {
+					"Content-Type": "application/json",
+				},
+			}
+		);
+	}
+
+	return new Response(
+		JSON.stringify({ error: "Not Found." }),
+		{
+			status: 404,
+			headers: {
+				"Content-Type": "application/json",
+			},
+		}
+	);
+}
 
 function addCORSHeaders(response: Response): Response {
 	const newResponse = response.clone();
