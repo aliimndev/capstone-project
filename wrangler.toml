@@ -2,6 +2,7 @@ name = "tmdb-api"
 main = "apps/api/worker.ts"
 compatibility_date = "2024-05-01"
 compatibility_flags = ["nodejs_compat"]
+account_id = "201fe0617db9cf5383f0008862507bf5"
 
 [env.production]
 name = "tmdb-api-prod"
