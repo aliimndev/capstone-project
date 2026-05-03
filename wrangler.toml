@@ -5,7 +5,7 @@ compatibility_flags = ["nodejs_compat"]
 account_id = "201fe0617db9cf5383f0008862507bf5"
 
 [env.production]
-name = "tmdb-api-prod"
+name = "tmdb-api-prod-v2"
 # Routes: Update this if you have a custom domain
 # routes = [
 #   { pattern = "api.yourdomain.com/*", zone_name = "yourdomain.com" }

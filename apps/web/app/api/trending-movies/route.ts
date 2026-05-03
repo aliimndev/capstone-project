@@ -16,7 +16,7 @@ type TmdbTrendingResponse = {
 };
 
 // Use Cloudflare Workers API URL
-const CLOUDFLARE_API_URL = "https://tmdb-api-prod.devaliimn.workers.dev";
+const CLOUDFLARE_API_URL = "https://tmdb-api-prod-v2.devaliimn.workers.dev";
 const TMDB_IMAGE_BASE_URL = "https://image.tmdb.org/t/p/w500";
 
 export const dynamic = "force-dynamic";
