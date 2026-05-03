@@ -1,0 +1,21 @@
+name = "tmdb-api"
+main = "apps/api/worker.ts"
+compatibility_date = "2024-05-01"
+compatibility_flags = ["nodejs_compat"]
+
+[env.production]
+name = "tmdb-api-prod"
+routes = [
+  { pattern = "api.example.com/*", zone_name = "example.com" }
+]
+vars = { ENVIRONMENT = "production" }
+
+[env.development]
+name = "tmdb-api-dev"
+vars = { ENVIRONMENT = "development" }
+
+[[env.production.vars]]
+name = "TMDB_API_KEY"
+
+[[env.development.vars]]
+name = "TMDB_API_KEY"
