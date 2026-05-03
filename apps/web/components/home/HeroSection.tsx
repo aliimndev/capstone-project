@@ -18,7 +18,7 @@ export function HeroSection() {
         <div className="mt-12">
           <Link
             href="/recommend"
-            className="inline-flex h-14 min-w-[200px] items-center justify-center rounded-full bg-[#0099ff] px-10 text-lg font-semibold text-[#ffffff] shadow-[0_0_36px_rgba(0,153,255,0.35)] transition-all hover:bg-[#008ae6] hover:shadow-[0_0_44px_rgba(0,153,255,0.45)] active:scale-[0.97]"
+            className="inline-flex h-14 min-w-[200px] items-center justify-center rounded-full bg-primary-orange px-10 text-lg font-semibold text-primary-black shadow-[0_0_36px_rgba(255,107,0,0.35)] transition-all hover:bg-interactive-hover hover:shadow-[0_0_44px_rgba(255,107,0,0.45)] active:scale-[0.97]"
           >
             Get Started
           </Link>

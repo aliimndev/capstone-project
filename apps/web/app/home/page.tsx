@@ -7,7 +7,7 @@ import { SiteHeader } from "@/components/layout/SiteHeader";
 
 export default function HomePage() {
   return (
-    <div className="min-h-screen bg-[#000000]">
+    <div className="min-h-screen bg-primary-black">
       <SiteHeader />
       <main>
         <HeroSection />

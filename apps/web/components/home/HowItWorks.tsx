@@ -23,7 +23,7 @@ export function HowItWorks() {
           {steps.map((step) => (
             <div
               key={step.id}
-              className="group bg-white/5 rounded-3xl p-8 shadow-[0_0_0_1px_rgba(255,255,255,0.08)] hover:shadow-[0_0_40px_rgba(0,153,255,0.18)] transition-all duration-300 border border-white/10 hover:border-[#0099ff]/40 min-h-[260px] flex flex-col"
+              className="group bg-secondary-dark rounded-3xl p-8 shadow-[0_0_0_1px_rgba(255,255,255,0.08)] hover:shadow-[0_0_40px_rgba(255,107,0,0.18)] transition-all duration-300 border border-secondary-light hover:border-primary-orange min-h-[260px] flex flex-col"
             >
               {/* Area kosong yang ukurannya tetap */}
               <div className="flex-1 flex items-center justify-center">

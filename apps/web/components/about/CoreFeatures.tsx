@@ -9,14 +9,14 @@ interface FeatureCardProps {
 
 const FeatureCard: React.FC<FeatureCardProps> = ({ icon, title, description }) => {
   return (
-    <div className="flex flex-col items-center text-center p-6 md:p-8 bg-gray-200 rounded-xl shadow-sm hover:shadow-md transition-shadow duration-300">
-      <div className="mb-4 text-gray-900">
+    <div className="flex flex-col items-center text-center p-6 md:p-8 bg-secondary-dark rounded-xl shadow-sm hover:shadow-md transition-shadow duration-300 border border-secondary-light">
+      <div className="mb-4 text-primary-orange">
         {icon}
       </div>
-      <h3 className="text-lg md:text-xl font-bold text-gray-900 mb-3">
+      <h3 className="text-lg md:text-xl font-bold text-text-primary mb-3">
         {title}
       </h3>
-      <p className="text-gray-600 text-sm md:text-base leading-relaxed">
+      <p className="text-text-secondary text-sm md:text-base leading-relaxed">
         {description}
       </p>
     </div>
@@ -88,9 +88,9 @@ const CoreFeatures: React.FC = () => {
   ];
 
   return (
-    <section className="w-full bg-white py-16 md:py-24 px-4 sm:px-6 lg:px-8">
+    <section className="w-full bg-primary-black py-16 md:py-24 px-4 sm:px-6 lg:px-8">
       <div className="max-w-6xl mx-auto">
-        <h2 className="text-3xl md:text-4xl font-bold text-center text-gray-900 mb-12">
+        <h2 className="text-3xl md:text-4xl font-bold text-center text-text-primary mb-12">
           Core Features
         </h2>
 

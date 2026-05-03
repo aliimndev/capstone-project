@@ -17,7 +17,7 @@ export function ReadyToExplore() {
         <div className="mt-10">
           <Link
             href="/recommend"
-            className="inline-flex h-14 items-center justify-center rounded-full bg-[#0099ff] px-10 text-lg font-semibold text-[#ffffff] shadow-[0_0_36px_rgba(0,153,255,0.35)] transition hover:bg-[#008ae6] active:scale-[0.97]"
+            className="inline-flex h-14 items-center justify-center rounded-full bg-primary-orange px-10 text-lg font-semibold text-primary-black shadow-[0_0_36px_rgba(255,107,0,0.35)] transition hover:bg-interactive-hover active:scale-[0.97]"
           >
             Start Exploring
           </Link>

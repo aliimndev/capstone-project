@@ -8,14 +8,41 @@ interface FeatureProps {
 }
 
 const Feature: React.FC<FeatureProps> = ({ title, description, align = 'left' }) => {
+  // Untuk align right, balik urutan: teks dulu, baru garis
+  if (align === 'right') {
+    return (
+      <div className="flex gap-6 justify-end">
+        {/* Content - DI KIRI GARIS */}
+        <div className="flex-1 max-w-2xl text-right">
+          <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
+            {title}
+          </h2>
+          <p className="text-gray-400 text-base md:text-lg leading-relaxed">
+            {description}
+          </p>
+        </div>
+        
+        {/* Accent Line (Orange Vertical Line) - DI KANAN */}
+        <div className="w-1 h-full min-h-[150px] bg-orange-500 flex-shrink-0" />
+      </div>
+    );
+  }
+
+  // Untuk align left: garis dulu, baru teks
   return (
-    <div className={`flex flex-col ${align === 'right' ? 'items-end text-right' : 'items-start text-left'}`}>
-      <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-        {title}
-      </h2>
-      <p className="text-gray-600 text-base md:text-lg leading-relaxed max-w-2xl">
-        {description}
-      </p>
+    <div className="flex gap-6 justify-start">
+      {/* Accent Line (Orange Vertical Line) - DI KIRI */}
+      <div className="w-1 h-full min-h-[150px] bg-orange-500 flex-shrink-0" />
+      
+      {/* Content - DI KANAN GARIS */}
+      <div className="flex-1 max-w-2xl text-left">
+        <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
+          {title}
+        </h2>
+        <p className="text-gray-400 text-base md:text-lg leading-relaxed">
+          {description}
+        </p>
+      </div>
     </div>
   );
 };
@@ -38,7 +65,7 @@ const FeaturesSection: React.FC = () => {
 
   return (
     <section 
-      className="w-full bg-white py-16 md:py-24 lg:py-32 px-4 sm:px-6 lg:px-8"
+      className="w-full bg-black py-16 md:py-24 lg:py-32 px-4 sm:px-6 lg:px-8"
       aria-labelledby="features-heading"
     >
       <div className="max-w-7xl mx-auto">

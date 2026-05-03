@@ -1,121 +1,118 @@
 "use client";
 
-import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
+import { MovieCard } from "./MovieCard";
+import { MovieSkeleton } from "./MovieSkeleton";
+import { ErrorState } from "./ErrorState";
+import { EmptyState } from "./EmptyState";
 
-type TrendingMovie = {
+interface Movie {
   id: number;
   title: string;
-  overview: string;
   posterUrl: string;
   releaseYear: number | null;
   rating: number | null;
-};
+  voteCount?: number;
+}
 
-type TrendingMoviesResponse = {
-  movies?: TrendingMovie[];
+interface TrendingMoviesResponse {
+  movies?: Movie[];
   message?: string;
-};
+}
 
+/**
+ * TrendingMovies component displays a grid of trending movies from TMDB
+ * Features: lazy loading, error handling, rank badges, ratings, and hover effects
+ */
 export function TrendingMovies() {
-  const [movies, setMovies] = useState<TrendingMovie[]>([]);
+  const [movies, setMovies] = useState<Movie[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  /**
+   * Fetch trending movies from API endpoint
+   */
+  const loadTrendingMovies = useCallback(async () => {
+    try {
+      setIsLoading(true);
+      setError(null);
+
+      const response = await fetch("/api/trending-movies");
+      const data = (await response.json()) as TrendingMoviesResponse;
+
+      if (!response.ok) {
+        throw new Error(data.message ?? "Failed to load trending movies.");
+      }
+
+      setMovies(data.movies ?? []);
+    } catch (err) {
+      const errorMessage =
+        err instanceof Error ? err.message : "Failed to load trending movies.";
+      setError(errorMessage);
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
+
+  /**
+   * Load movies on component mount
+   */
   useEffect(() => {
     let isActive = true;
 
-    async function loadTrendingMovies() {
-      try {
-        const response = await fetch("/api/trending-movies");
-        const data = (await response.json()) as TrendingMoviesResponse;
-
-        if (!response.ok) {
-          throw new Error(data.message ?? "Failed to load trending movies.");
-        }
-
-        if (isActive) {
-          setMovies(data.movies ?? []);
-        }
-      } catch (err) {
-        if (isActive) {
-          setError(
-            err instanceof Error
-              ? err.message
-              : "Failed to load trending movies.",
-          );
-        }
-      } finally {
-        if (isActive) {
-          setIsLoading(false);
-        }
+    // Use setTimeout to avoid synchronous setState in effect
+    const timer = setTimeout(() => {
+      if (isActive) {
+        loadTrendingMovies();
       }
-    }
-
-    loadTrendingMovies();
+    }, 0);
 
     return () => {
       isActive = false;
+      clearTimeout(timer);
     };
-  }, []);
+  }, [loadTrendingMovies]);
 
   return (
-    <section className="py-16 bg-[#000000]">
+    <section className="py-16 bg-primary-black">
       <div className="mx-auto max-w-7xl px-6">
-        <div className="mb-10">
-          <h2 className="text-3xl font-bold tracking-tight text-[#ffffff]">
+        {/* Section Header */}
+        <div className="mb-12">
+          <h2 className="text-3xl lg:text-4xl font-bold tracking-tight text-text-primary">
             Trending Movies
           </h2>
-          <p className="text-white/60 mt-2 text-lg">
+          <p className="text-text-secondary mt-3 text-lg">
             Popular picks you might like
           </p>
         </div>
 
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-8">
-          {isLoading
-            ? Array.from({ length: 5 }).map((_, index) => (
-                <div key={index} className="animate-pulse">
-                  <div className="aspect-[2/3] rounded-2xl bg-white/10 shadow-[0_0_0_1px_rgba(255,255,255,0.08)]" />
-                  <div className="mx-auto mt-4 h-4 w-3/4 rounded-full bg-white/10" />
-                </div>
-              ))
-            : movies.map((movie) => (
-                <div key={movie.id} className="group cursor-pointer">
-                  <div className="relative aspect-[2/3] overflow-hidden rounded-2xl bg-white/10 shadow-[0_0_0_1px_rgba(255,255,255,0.08)] transition-all group-hover:shadow-[0_0_36px_rgba(0,153,255,0.22)]">
-                    <Image
-                      src={movie.posterUrl}
-                      alt={`${movie.title} poster`}
-                      fill
-                      sizes="(min-width: 768px) 20vw, (min-width: 640px) 33vw, 50vw"
-                      className="object-cover transition-transform duration-300 group-hover:scale-105"
-                    />
-                  </div>
-                  <div className="mt-4 text-center">
-                    <p className="line-clamp-2 text-sm font-medium text-white/80">
-                      {movie.title}
-                    </p>
-                    <p className="mt-1 text-xs text-white/45">
-                      {[
-                        movie.releaseYear,
-                        movie.rating !== null ? `${movie.rating}/10` : null,
-                      ]
-                        .filter(Boolean)
-                        .join(" / ")}
-                    </p>
-                  </div>
-                </div>
-              ))}
-        </div>
-
-        {!isLoading && error ? (
-          <p className="mt-8 text-sm text-red-300">{error}</p>
-        ) : null}
-
-        {!isLoading && !error && movies.length === 0 ? (
-          <p className="mt-8 text-sm text-white/60">
-            No trending movies available right now.
-          </p>
-        ) : null}
+        {/* Movies Grid or Loading State */}
+        {isLoading ? (
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-6 sm:gap-8">
+            {Array.from({ length: 10 }).map((_, index) => (
+              <MovieSkeleton key={`skeleton-${index}`} />
+            ))}
+          </div>
+        ) : error ? (
+          <ErrorState message={error} onRetry={loadTrendingMovies} />
+        ) : movies.length === 0 ? (
+          <EmptyState />
+        ) : (
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-6 sm:gap-8">
+            {movies.map((movie, index) => (
+              <MovieCard
+                key={movie.id}
+                id={movie.id}
+                title={movie.title}
+                posterUrl={movie.posterUrl}
+                rating={movie.rating}
+                releaseYear={movie.releaseYear}
+                voteCount={movie.voteCount}
+                index={index}
+              />
+            ))}
+          </div>
+        )}
       </div>
     </section>
   );

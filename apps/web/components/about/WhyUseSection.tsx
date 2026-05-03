@@ -8,11 +8,11 @@ interface FeatureItemProps {
 
 const FeatureItem: React.FC<FeatureItemProps> = ({ icon, text }) => {
   return (
-    <div className="flex items-center gap-3 bg-gray-200 hover:bg-gray-300 transition-colors duration-200 rounded-full px-4 py-3 w-full max-w-2xl mx-auto">
-      <div className="flex-shrink-0 text-gray-800">
+    <div className="flex items-center gap-3 bg-[#111111] hover:bg-[#1A1A1A] transition-colors duration-200 rounded-full px-4 py-3 w-full max-w-2xl mx-auto border border-gray-700">
+      <div className="shrink-0 text-orange-500">
         {icon}
       </div>
-      <span className="text-gray-800 text-sm md:text-base font-medium">
+      <span className="text-white text-sm md:text-base font-medium">
         {text}
       </span>
     </div>
@@ -79,14 +79,14 @@ const WhyUseSection: React.FC = () => {
 
   return (
     <section 
-      className="w-full bg-white py-16 md:py-20 px-4 sm:px-6 lg:px-8"
+      className="w-full bg-black py-16 md:py-20 px-4 sm:px-6 lg:px-8"
       aria-labelledby="why-use-heading"
     >
       <div className="max-w-4xl mx-auto">
         {/* Heading */}
         <h2 
           id="why-use-heading"
-          className="text-3xl md:text-4xl font-bold text-center text-gray-900 mb-10 md:mb-12"
+          className="text-3xl md:text-4xl font-bold text-center text-white mb-10 md:mb-12"
         >
           Why Use This?
         </h2>

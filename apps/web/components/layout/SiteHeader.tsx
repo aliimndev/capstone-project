@@ -11,10 +11,10 @@ export function SiteHeader() {
     <header className="sticky top-0 z-50 border-b border-white/10 bg-[#000000]/90 backdrop-blur">
       <div className="mx-auto flex h-16 w-full max-w-6xl items-center justify-between px-4 sm:px-6 lg:px-8">
         <Link href="/" className="flex items-center gap-3" aria-label="RekoFilm home">
-          <span className="flex h-9 w-9 items-center justify-center rounded-full bg-[#0099ff] text-sm font-bold text-[#ffffff] shadow-[0_0_24px_rgba(0,153,255,0.35)]">
-            RF
+          <span className="flex h-9 w-9 items-center justify-center rounded-full bg-primary-orange text-sm font-bold text-primary-black shadow-[0_0_24px_rgba(255,107,0,0.35)]">
+            WM
           </span>
-          <span className="text-lg font-semibold text-[#ffffff]">wemovies</span>
+          <span className="text-lg font-semibold text-text-primary">wemovies</span>
         </Link>
 
         <nav className="flex items-center gap-1" aria-label="Navigasi utama">
@@ -22,7 +22,7 @@ export function SiteHeader() {
             <Link
               key={item.href}
               href={item.href}
-              className="rounded-full px-3 py-2 text-sm font-medium text-white/70 transition hover:bg-white/10 hover:text-[#ffffff]"
+              className="rounded-full px-3 py-2 text-sm font-medium text-text-secondary transition hover:bg-secondary-medium hover:text-text-primary"
             >
               {item.label}
             </Link>
