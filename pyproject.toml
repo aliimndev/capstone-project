@@ -1,0 +1,13 @@
+[tool.poetry]
+name = "capstone-api"
+version = "1.0.0"
+description = "RekoFilm API with FastAPI"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+fastapi = "0.110.0"
+uvicorn = "0.29.0"
+python-dotenv = "1.0.1"
+requests = "2.31.0"
+pydantic = "2.7.1"
+pydantic-settings = "2.2.1"
