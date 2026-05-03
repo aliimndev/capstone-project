@@ -15,34 +15,26 @@ type TmdbTrendingResponse = {
   results?: TmdbMovie[];
 };
 
-const TMDB_API_BASE_URL = "https://api.themoviedb.org/3";
+// Use Cloudflare Workers API URL
+const CLOUDFLARE_API_URL = "https://tmdb-api-prod.devaliimn.workers.dev";
 const TMDB_IMAGE_BASE_URL = "https://image.tmdb.org/t/p/w500";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 3600;
 
 export async function GET() {
-  const apiKey = process.env.TMDB_API_KEY;
-
-  if (!apiKey) {
-    return NextResponse.json(
-      { message: "TMDB_API_KEY is not configured." },
-      { status: 500 },
-    );
-  }
-
-  const url = new URL(`${TMDB_API_BASE_URL}/trending/movie/week`);
-  url.searchParams.set("api_key", apiKey);
-  url.searchParams.set("language", "en-US");
-
   try {
-    const response = await fetch(url, {
+    // Call Cloudflare Workers API instead of direct TMDB
+    const response = await fetch(`${CLOUDFLARE_API_URL}/api/v1/recommendations/trending`, {
       next: { revalidate },
+      headers: {
+        "Content-Type": "application/json",
+      },
     });
 
     if (!response.ok) {
       return NextResponse.json(
-        { message: "Failed to fetch trending movies from TMDB." },
+        { message: "Failed to fetch trending movies from API." },
         { status: response.status },
       );
     }
@@ -75,9 +67,10 @@ export async function GET() {
         },
       },
     );
-  } catch {
+  } catch (error) {
+    console.error("API Error:", error);
     return NextResponse.json(
-      { message: "Unable to connect to TMDB." },
+      { message: "Unable to connect to movie API." },
       { status: 502 },
     );
   }
