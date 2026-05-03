@@ -5,17 +5,11 @@ compatibility_flags = ["nodejs_compat"]
 
 [env.production]
 name = "tmdb-api-prod"
-routes = [
-  { pattern = "api.example.com/*", zone_name = "example.com" }
-]
-vars = { ENVIRONMENT = "production" }
+# Routes: Update this if you have a custom domain
+# routes = [
+#   { pattern = "api.yourdomain.com/*", zone_name = "yourdomain.com" }
+# ]
+# Otherwise, worker will be available at: https://tmdb-api-prod.<account>.workers.dev
 
 [env.development]
 name = "tmdb-api-dev"
-vars = { ENVIRONMENT = "development" }
-
-[[env.production.vars]]
-name = "TMDB_API_KEY"
-
-[[env.development.vars]]
-name = "TMDB_API_KEY"
