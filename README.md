@@ -1,4 +1,4 @@
-# RekoFilm
+# WeMovies AI
 
 ## Struktur Proyek
 
