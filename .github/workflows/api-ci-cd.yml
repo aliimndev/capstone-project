@@ -100,20 +100,59 @@ jobs:
     
     steps:
       - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
       
       - name: Deploy to Cloudflare Workers
         run: |
-          # Install wrangler CLI
-          npm install -g wrangler
+          set -euo pipefail
+
+          ACCOUNT_ID="${CLOUDFLARE_ACCOUNT_ID:-201fe0617db9cf5383f0008862507bf5}"
+          WORKER_NAME="tmdb-api-prod-v2"
+
+          if [ -z "${CLOUDFLARE_API_TOKEN:-}" ]; then
+            echo "CLOUDFLARE_API_TOKEN secret is missing."
+            exit 1
+          fi
+
+          echo "Verifying Cloudflare API token..."
+          token_status="$(curl -sS -o /tmp/cloudflare-token.json -w "%{http_code}" \
+            -H "Authorization: Bearer ${CLOUDFLARE_API_TOKEN}" \
+            "https://api.cloudflare.com/client/v4/user/tokens/verify")"
+
+          if [ "$token_status" != "200" ]; then
+            echo "CLOUDFLARE_API_TOKEN is invalid or expired."
+            cat /tmp/cloudflare-token.json
+            exit 1
+          fi
+
+          echo "Checking access to Worker ${WORKER_NAME}..."
+          worker_status="$(curl -sS -o /tmp/cloudflare-worker.json -w "%{http_code}" \
+            -H "Authorization: Bearer ${CLOUDFLARE_API_TOKEN}" \
+            "https://api.cloudflare.com/client/v4/accounts/${ACCOUNT_ID}/workers/services/${WORKER_NAME}")"
+
+          if [ "$worker_status" != "200" ]; then
+            echo "Token is valid, but cannot access Worker ${WORKER_NAME} in account ${ACCOUNT_ID}."
+            echo "Create a token with Account > Account Settings > Read and Account > Workers Scripts > Edit for this account."
+            cat /tmp/cloudflare-worker.json
+            exit 1
+          fi
 
           # Ensure TMDB API key is stored securely in Cloudflare
-          echo "${{ secrets.TMDB_API_KEY }}" | wrangler secret put TMDB_API_KEY --env production
+          echo "${{ secrets.TMDB_API_KEY }}" | npx wrangler secret put TMDB_API_KEY --env production
 
           # Deploy the Worker
-          wrangler deploy apps/api/worker.ts --env production
+          npx wrangler deploy apps/api/worker.ts --env production
         env:
-          WRANGLER_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          WRANGLER_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
       
       - name: Notification - Success
         if: success()
