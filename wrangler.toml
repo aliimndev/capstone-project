@@ -1,4 +1,4 @@
-name = "tmdb-api"
+name = "tmdb-api-prod-v2"
 main = "apps/api/worker.ts"
 compatibility_date = "2024-05-01"
 compatibility_flags = ["nodejs_compat"]
