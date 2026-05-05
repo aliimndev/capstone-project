@@ -31,7 +31,7 @@ app.include_router(recommend.router)
 @app.get("/")
 def read_root():
     return {
-        "message": "RekoFilm API",
+        "message": "wemovies.ai",
         "status": "running",
         "version": settings.API_VERSION,
         "docs": "/api/docs"

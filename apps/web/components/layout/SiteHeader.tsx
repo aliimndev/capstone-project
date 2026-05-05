@@ -3,7 +3,7 @@ import Link from "next/link";
 const navigationItems = [
   { href: "/", label: "Home" },
   { href: "/about", label: "About" },
-  { href: "/recommend", label: "Rekomendasi" },
+
 ];
 
 export function SiteHeader() {
@@ -14,7 +14,7 @@ export function SiteHeader() {
           <span className="flex h-9 w-9 items-center justify-center rounded-full bg-primary-orange text-sm font-bold text-primary-black shadow-[0_0_24px_rgba(255,107,0,0.35)]">
             WM
           </span>
-          <span className="text-lg font-semibold text-text-primary">wemovies</span>
+          <span className="text-lg font-semibold text-text-primary">WeMovies AI</span>
         </Link>
 
         <nav className="flex items-center gap-1" aria-label="Navigasi utama">
