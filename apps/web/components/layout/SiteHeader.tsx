@@ -1,19 +1,27 @@
 import Link from "next/link";
+import Image from "next/image";
 
 const navigationItems = [
   { href: "/", label: "Home" },
   { href: "/about", label: "About" },
-
 ];
 
 export function SiteHeader() {
   return (
     <header className="sticky top-0 z-50 border-b border-white/10 bg-[#000000]/90 backdrop-blur">
       <div className="mx-auto flex h-16 w-full max-w-6xl items-center justify-between px-4 sm:px-6 lg:px-8">
-        <Link href="/" className="flex items-center gap-3" aria-label="RekoFilm home">
-          <span className="flex h-9 w-9 items-center justify-center rounded-full bg-primary-orange text-sm font-bold text-primary-black shadow-[0_0_24px_rgba(255,107,0,0.35)]">
-            WM
-          </span>
+        <Link href="/" className="flex items-center gap-3" aria-label="WeMovies AI home">
+          {/* Replace text "WM" with PNG logo */}
+          <div className="relative h-9 w-9">
+            <Image
+              src="/logo/logo-header.png"
+              alt="WeMovies AI Logo"
+              fill
+              className="object-contain"
+              sizes="40px"
+              priority
+            />
+          </div>
           <span className="text-lg font-semibold text-text-primary">WeMovies AI</span>
         </Link>
 

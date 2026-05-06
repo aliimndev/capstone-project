@@ -17,7 +17,7 @@ export function SiteFooter() {
 
           <span className="text-text-muted">|</span>
 
-          <Link href="/privacy" className="transition hover:text-text-primary">
+          <Link href="/privacy-policy" className="transition hover:text-text-primary">
             Privacy
           </Link>
         </div>

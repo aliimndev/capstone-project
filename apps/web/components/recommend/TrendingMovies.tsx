@@ -63,7 +63,7 @@ const MovieCard: React.FC<MovieCardProps> = ({ movie, onSelect, isSelected }) =>
       )}
 
       {/* Poster Container */}
-      <div className="aspect-[2/3] w-full overflow-hidden bg-secondary-dark">
+      <div className="relative aspect-[2/3] w-full overflow-hidden bg-secondary-dark">
         <Image
           src={movie.posterUrl}
           alt={movie.title}

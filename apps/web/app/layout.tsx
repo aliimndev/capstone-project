@@ -15,6 +15,10 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "wemovies",
   description: "Aplikasi rekomendasi film berdasarkan preferensi pengguna.",
+  icons: {
+    icon: "/logo/logo-search.svg",
+    shortcut: "/logo/logo-search.svg",
+  },
 };
 
 export default function RootLayout({
