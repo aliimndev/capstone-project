@@ -1,6 +1,9 @@
 {
   "name": "capstone-project",
   "private": true,
+  "workspaces": [
+    "apps/*"
+  ],
   "scripts": {
     "vercel-build": "npm --prefix apps/web run build",
     "worker:dev": "wrangler dev apps/api/worker.ts",
