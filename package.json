@@ -6,8 +6,8 @@
   ],
   "scripts": {
     "vercel-build": "npm --prefix apps/web run build",
-    "worker:dev": "wrangler dev apps/api/worker.ts",
-    "worker:deploy": "wrangler deploy apps/api/worker.ts --env production",
+    "worker:dev": "wrangler dev apps/proxy/worker.ts",
+    "worker:deploy": "wrangler deploy apps/proxy/worker.ts --env production",
     "docker:build": "docker build -t tmdb-api:latest .",
     "docker:run": "docker run -p 8000:8000 tmdb-api:latest",
     "lint:api": "flake8 apps/api/app --count --select=E9,F63,F7,F82 --show-source",
