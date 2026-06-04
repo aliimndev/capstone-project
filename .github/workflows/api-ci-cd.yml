@@ -82,8 +82,8 @@ jobs:
       - name: Build and push Docker image
         uses: docker/build-push-action@v5
         with:
-          context: .
-          file: ./Dockerfile
+          context: apps/api
+          file: apps/api/Dockerfile
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
@@ -149,7 +149,7 @@ jobs:
           echo "${{ secrets.TMDB_API_KEY }}" | npx wrangler secret put TMDB_API_KEY --env production
 
           # Deploy the Worker
-          npx wrangler deploy apps/api/worker.ts --env production
+          npx wrangler deploy apps/proxy/worker.ts --env production
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
