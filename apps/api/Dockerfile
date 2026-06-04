@@ -9,7 +9,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 
 # Copy requirements
-COPY apps/api/requirements.txt .
+COPY requirements.txt .
 
 # Install Python dependencies
 RUN pip install --user --no-cache-dir -r requirements.txt
@@ -28,14 +28,18 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 COPY --from=builder /root/.local /root/.local
 
 # Copy application code
-COPY apps/api/app ./app
-COPY apps/api/core ./core
-COPY app.py .
+COPY app ./app
+COPY core ./core
+COPY wewatch_backend ./wewatch_backend
+
+# Copy the environment file if needed, or rely on runtime env vars
+# COPY .env .env
 
 # Set environment variables
 ENV PATH=/root/.local/bin:$PATH \
     PYTHONUNBUFFERED=1 \
-    PYTHONDONTWRITEBYTECODE=1
+    PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONPATH=/app
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
@@ -44,5 +48,5 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
 # Expose port
 EXPOSE 8000
 
-# Run application
-CMD ["python", "app.py"]
+# Run application using uvicorn directly since app.py is removed
+CMD ["python", "-m", "uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
