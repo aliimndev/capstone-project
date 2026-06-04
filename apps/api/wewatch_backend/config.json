@@ -1,0 +1,26 @@
+{
+  "model": "TF-IDF (50k vocab, 1-2gram) + TruncatedSVD(256) + SBERT (all-MiniLM-L6-v2)",
+  "n_movies": 80505,
+  "tfidf_weight": 0.4,
+  "sbert_weight": 0.6,
+  "tfidf_svd_dim": 256,
+  "sbert_model": "all-MiniLM-L6-v2",
+  "embedding_dim": 640,
+  "sentiment_weights": {
+    "loved_it": 1.0,
+    "liked_it": 0.7,
+    "just_normal": 0.3,
+    "dislike": -0.5
+  },
+  "evaluation": {
+    "hit_rate@5": 0.996,
+    "hit_rate@10": 1.0,
+    "hit_rate@20": 1.0,
+    "recall@5": 0.9188,
+    "recall@10": 0.9098,
+    "recall@20": 0.9052,
+    "ndcg@5": 0.9689,
+    "ndcg@10": 0.9651,
+    "ndcg@20": 0.9617
+  }
+}

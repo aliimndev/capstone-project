@@ -38,23 +38,29 @@ const SearchMovies: React.FC<SearchMoviesProps> = ({ onSelectMovie }) => {
       setIsLoading(true);
       
       // Ganti dengan API route Anda
-      const response = await fetch(`/api/search-movies?q=${encodeURIComponent(query)}`);
+      const response = await fetch('http://localhost:8000/api/v1/recommendations/search?q=' + encodeURIComponent(query));
       
       if (!response.ok) {
-        throw new Error('Search failed');
+        const text = await response.text();
+        throw new Error(text || 'Search failed');
       }
 
       const data = await response.json();
       
-      // Format hasil dari TMDB
-      const formattedMovies: Movie[] = data.results
-        .filter((movie: TMDBMovie) => movie.poster_path) // Hanya yang ada poster
-        .slice(0, 5) // Maksimal 5 hasil
-        .map((movie: TMDBMovie) => ({
+      const moviesArray = data?.movies ?? data?.results ?? [];
+
+      const formattedMovies: Movie[] = moviesArray
+        .filter((movie: any) => movie.poster_path || movie.posterUrl)
+        .slice(0, 5)
+        .map((movie: any) => ({
           id: movie.id,
           title: movie.title || movie.name || 'Untitled',
-          posterUrl: `https://image.tmdb.org/t/p/w200${movie.poster_path}`,
-          year: movie.release_date?.split('-')[0] ? parseInt(movie.release_date.split('-')[0]) : undefined,
+          posterUrl:
+            movie.posterUrl ||
+            (movie.poster_path ? `https://image.tmdb.org/t/p/w200${movie.poster_path}` : ''),
+          year: movie.release_date?.split('-')[0]
+            ? parseInt(movie.release_date.split('-')[0])
+            : undefined,
           rating: movie.vote_average,
           releaseDate: movie.release_date,
         }));
