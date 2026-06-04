@@ -7,52 +7,86 @@ from app.schemas.recommend import (
     MovieBase
 )
 from app.services.tmdb_service import get_tmdb_service, TMDBService
+from app.services.wewatch_service import WeWatchService, get_wewatch_service
+
 
 router = APIRouter(prefix="/api/v1/recommendations", tags=["recommendations"])
 
 @router.post("/", response_model=RecommendationResponse)
 async def get_recommendations(
     request: RecommendationRequest,
-    tmdb_service: TMDBService = Depends(get_tmdb_service)
+    tmdb_service: TMDBService = Depends(get_tmdb_service),
+    wewatch_service: WeWatchService = Depends(get_wewatch_service),
 ):
+
     """Get movie recommendations based on query or movie ID"""
     movies_data = []
     
     try:
-        # If movie_id provided, get recommendations for that movie
+        # 1) Preferred: recommendations based on 3 selected movies
+        if request.movie_ids and len(request.movie_ids) > 0:
+            recs = wewatch_service.recommend_from_selected([int(x) for x in request.movie_ids], top_n=3)
+            return RecommendationResponse(
+                status="success",
+                message="Found 3 recommendations",
+                movies=recs,
+            )
+
+        # 2) Legacy: If movie_id provided, get recommendations for that movie (TMDB)
         if request.movie_id:
             result = tmdb_service.get_movie_recommendations(request.movie_id)
-        # If query provided, search for movies
-        elif request.query:
+
+            if not result or "results" not in result:
+                raise HTTPException(status_code=404, detail="No movies found")
+
+            for movie in result.get("results", [])[:3]:
+                movies_data.append(
+                    MovieBase(
+                        id=movie.get("id"),
+                        title=movie.get("title", "Unknown"),
+                        overview=movie.get("overview"),
+                        poster_path=movie.get("poster_path"),
+                        release_date=movie.get("release_date"),
+                        vote_average=movie.get("vote_average"),
+                    )
+                )
+
+            return RecommendationResponse(
+                status="success",
+                message="Found 3 recommendations",
+                movies=movies_data,
+            )
+
+        # 3) Legacy: If query provided, search for movies (TMDB)
+        if request.query:
             result = tmdb_service.search_movies(request.query)
-        else:
-            raise HTTPException(
-                status_code=400,
-                detail="Please provide either movie_id or query parameter"
+
+            if not result or "results" not in result:
+                raise HTTPException(status_code=404, detail="No movies found")
+
+            for movie in result.get("results", [])[:3]:
+                movies_data.append(
+                    MovieBase(
+                        id=movie.get("id"),
+                        title=movie.get("title", "Unknown"),
+                        overview=movie.get("overview"),
+                        poster_path=movie.get("poster_path"),
+                        release_date=movie.get("release_date"),
+                        vote_average=movie.get("vote_average"),
+                    )
+                )
+
+            return RecommendationResponse(
+                status="success",
+                message="Found 3 recommendations",
+                movies=movies_data,
             )
-        
-        if not result or "results" not in result:
-            raise HTTPException(
-                status_code=404,
-                detail="No movies found"
-            )
-        
-        # Parse movies from result
-        for movie in result.get("results", [])[:10]:  # Limit to 10 movies
-            movies_data.append(MovieBase(
-                id=movie.get("id"),
-                title=movie.get("title", "Unknown"),
-                overview=movie.get("overview"),
-                poster_path=movie.get("poster_path"),
-                release_date=movie.get("release_date"),
-                vote_average=movie.get("vote_average")
-            ))
-        
-        return RecommendationResponse(
-            status="success",
-            message=f"Found {len(movies_data)} recommendations",
-            movies=movies_data
+
+        raise HTTPException(
+            status_code=400,
+            detail="Please provide movie_ids (selected movies) or movie_id or query parameter",
         )
+
     
     except HTTPException:
         raise

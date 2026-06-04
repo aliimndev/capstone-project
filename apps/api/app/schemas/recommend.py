@@ -10,8 +10,13 @@ class MovieBase(BaseModel):
     vote_average: Optional[float] = None
 
 class RecommendationRequest(BaseModel):
+    # user can send 3 selected movies
+    movie_ids: Optional[List[int]] = None
+
+    # legacy fields
     movie_id: Optional[int] = None
     query: Optional[str] = None
+
 
 class RecommendationResponse(BaseModel):
     status: str

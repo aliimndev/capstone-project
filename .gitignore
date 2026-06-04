@@ -15,3 +15,10 @@ venv/
 .DS_Store
 .vercel
 .wrangler
+
+# Model files
+apps/api/wewatch_backend/*.npy
+apps/api/wewatch_backend/*.bin
+apps/api/wewatch_backend/*.parquet
+apps/api/wewatch_backend/*.csv
+apps/api/wewatch_backend/*.pkl
