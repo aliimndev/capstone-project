@@ -38,11 +38,24 @@ module.exports = {
           success: '#FBBF24',
           error: '#DC2626',
         },
+        brand: '#3D81E3',
       },
       backgroundImage: {
         "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
         "gradient-conic":
           "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))",
+      },
+      fontFamily: {
+        sans: ['Inter', 'system-ui', 'sans-serif'],
+      },
+      animation: {
+        shiny: 'shiny 6s linear infinite',
+      },
+      keyframes: {
+        shiny: {
+          '0%': { backgroundPosition: '-200% center' },
+          '100%': { backgroundPosition: '200% center' },
+        }
       },
     },
   },

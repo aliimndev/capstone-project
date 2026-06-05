@@ -1,114 +1,57 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { motion } from "motion/react";
+import { ChevronRight } from "lucide-react";
 import Link from "next/link";
 
 export function HeroSection() {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
-
-    let animationFrameId: number;
-    let particles: { x: number; y: number; r: number; dx: number; dy: number; opacity: number; color: string }[] = [];
-
-    const resize = () => {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-      initParticles();
-    };
-
-    const initParticles = () => {
-      particles = [];
-      // Jumlah partikel menyesuaikan ukuran layar
-      const count = Math.floor((canvas.width * canvas.height) / 12000);
-      
-      for (let i = 0; i < count; i++) {
-        particles.push({
-          x: Math.random() * canvas.width,
-          y: Math.random() * canvas.height,
-          r: Math.random() * 2.5 + 0.5,
-          dx: (Math.random() - 0.5) * 0.4,
-          dy: (Math.random() - 0.5) * 0.4,
-          opacity: Math.random() * 0.4 + 0.05,
-          // 10% partikel berwarna hangat (orange lembut) untuk menyatu dengan tombol
-          color: Math.random() > 0.9 ? "rgba(255, 160, 80," : "rgba(255, 255, 255,",
-        });
-      }
-    };
-
-    const draw = () => {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      
-      for (const p of particles) {
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-        ctx.fillStyle = `${p.color} ${p.opacity})`;
-        ctx.fill();
-
-        p.x += p.dx;
-        p.y += p.dy;
-
-        // Pantulan halus di tepi layar
-        if (p.x < 0 || p.x > canvas.width) p.dx *= -1;
-        if (p.y < 0 || p.y > canvas.height) p.dy *= -1;
-      }
-      
-      animationFrameId = requestAnimationFrame(draw);
-    };
-
-    resize();
-    draw();
-
-    window.addEventListener("resize", resize);
-    
-    return () => {
-      window.removeEventListener("resize", resize);
-      cancelAnimationFrame(animationFrameId);
-    };
-  }, []);
+  const gradientStyle = {
+    backgroundImage: 'linear-gradient(to right, #091020 0%, #0B2551 12.5%, #A4F4FD 32.5%, #00d2ff 50%, #0B2551 67.5%, #091020 87.5%, #091020 100%)',
+    backgroundSize: '200% auto',
+    WebkitBackgroundClip: 'text',
+    backgroundClip: 'text',
+    color: 'transparent',
+    WebkitTextFillColor: 'transparent',
+    filter: 'url(#c3-noise)'
+  };
 
   return (
-    <section className="relative min-h-[calc(100vh-4rem)] bg-[#000000] flex items-center justify-center overflow-hidden">
-      {/* Canvas Background Sinematik */}
-      <canvas
-        ref={canvasRef}
-        className="absolute inset-0 w-full h-full pointer-events-none z-0"
-      />
+    <section className="relative pt-16 md:pt-28 pb-20 text-center flex flex-col items-center justify-center px-6 min-h-[calc(100vh-4rem)] overflow-hidden">
+      {/* Background is now handled globally in layout.tsx */}
 
-      {/* Gradient Overlay agar teks tetap mudah dibaca */}
-      <div className="absolute inset-0 bg-gradient-to-br from-black/90 via-black/70 to-[#00111f]/80 pointer-events-none z-10" />
+      <div className="relative z-20 flex flex-col items-center justify-center w-full max-w-4xl mx-auto">
+        <motion.h1
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
+          className="text-5xl md:text-7xl font-semibold tracking-tight leading-[0.9]"
+        >
+          <span className="block text-white">What do you want to</span>
+          <span className="block text-white">watch today?</span>
+          <span className="block animate-shiny mt-3" style={gradientStyle}>WeMovies AI</span>
+        </motion.h1>
 
-      {/* Film Grain Halus (Nuansa Layar Bioskop) */}
-      <div 
-        className="absolute inset-0 opacity-[0.04] pointer-events-none z-10 mix-blend-overlay"
-        style={{
-          backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`,
-        }}
-      />
+        <motion.p
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.5, ease: [0.22, 1, 0.36, 1] }}
+          className="mt-8 text-white/80 max-w-md text-base leading-[1.5]"
+        >
+          Find your next favorite movie. We MoveisAi powerful AI to organize, prioritize, and refine your recommendations into total clarity.
+        </motion.p>
 
-      {/* Konten Utama */}
-      <div className="relative mx-auto max-w-3xl px-6 text-center z-20">
-        <h1 className="text-5xl font-bold tracking-tighter text-[#ffffff] sm:text-6xl lg:text-7xl">
-          What do you want to<br className="hidden sm:block" /> watch today?
-        </h1>
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.7, ease: [0.22, 1, 0.36, 1] }}
+          className="mt-10 flex flex-col items-center gap-4"
+        >
+          <Link href="/recommend" className="group inline-flex items-center justify-center gap-2 rounded-full bg-white text-black font-medium text-sm px-6 py-3.5 transition-all hover:bg-white/90 active:scale-[0.98]">
 
-        <p className="mt-6 text-xl text-white/70">
-          Find your next favorite movie
-        </p>
-
-        <div className="mt-12">
-          <Link
-            href="/recommend"
-            className="inline-flex h-14 min-w-[200px] items-center justify-center rounded-full bg-primary-orange px-10 text-lg font-semibold text-primary-black shadow-[0_0_36px_rgba(255,107,0,0.35)] transition-all hover:bg-interactive-hover hover:shadow-[0_0_44px_rgba(255,107,0,0.45)] active:scale-[0.97]"
-          >
             Get Started
+            <ChevronRight className="w-4 h-4 transition-transform group-hover:translate-x-[2px]" />
           </Link>
-        </div>
+        </motion.div>
       </div>
     </section>
   );

@@ -41,8 +41,8 @@ const MovieCard: React.FC<MovieCardProps> = ({ movie, onSelect, isSelected }) =>
       className={`group relative overflow-hidden rounded-lg cursor-pointer 
         transition-all duration-300 
         ${isSelected 
-          ? 'ring-2 ring-primary-orange shadow-lg shadow-primary-orange/50 scale-105' 
-          : 'hover:shadow-[0_0_36px_rgba(255,107,0,0.22)] hover:scale-105'
+          ? 'ring-2 ring-[#00d2ff] shadow-lg shadow-[#00d2ff]/50 scale-105' 
+          : 'hover:shadow-[0_0_36px_rgba(0,210,255,0.22)] hover:scale-105'
         }`}
       onClick={() => onSelect?.(movie)}
       role="button"
@@ -56,7 +56,7 @@ const MovieCard: React.FC<MovieCardProps> = ({ movie, onSelect, isSelected }) =>
       {/* Rank Badge */}
       {movie.rank && (
         <div className="absolute top-3 left-3 z-20">
-          <div className="bg-primary-orange text-primary-black text-xs font-bold px-3 py-2 rounded-lg shadow-lg">
+          <div className="bg-[#00d2ff] text-[#091020] text-xs font-bold px-3 py-2 rounded-lg shadow-lg">
             {String(movie.rank).padStart(2, '0')}
           </div>
         </div>
@@ -77,9 +77,9 @@ const MovieCard: React.FC<MovieCardProps> = ({ movie, onSelect, isSelected }) =>
       </div>
 
       {/* Info Section */}
-      <div className="p-3 bg-secondary-dark border-t border-interactive-border">
+      <div className="p-3 bg-secondary-dark border-t border-white/10">
         {/* Title */}
-        <h3 className="text-text-primary font-semibold text-sm md:text-base mb-2 line-clamp-2 min-h-[2.5rem] group-hover:text-primary-orange transition-colors">
+        <h3 className="text-text-primary font-semibold text-sm md:text-base mb-2 line-clamp-2 min-h-[2.5rem] group-hover:text-[#00d2ff] transition-colors">
           {movie.title}
         </h3>
         
@@ -261,10 +261,10 @@ const TrendingMovies: React.FC<TrendingMoviesProps> = ({
     return (
       <section className="w-full bg-primary-black py-12 px-4">
         <div className="max-w-7xl mx-auto text-center">
-          <p className="text-special-error mb-6">{error}</p>
+          <p className="text-red-500 mb-6">{error}</p>
           <button 
             onClick={fetchTrendingMovies}
-            className="px-6 py-3 bg-primary-orange hover:bg-interactive-hover text-primary-black font-semibold rounded-lg transition-all duration-200 hover:shadow-lg hover:shadow-primary-orange/30"
+            className="px-6 py-3 bg-[#00d2ff] hover:bg-[#00d2ff]/80 text-[#091020] font-semibold rounded-lg transition-all duration-200 hover:shadow-lg hover:shadow-[#00d2ff]/30"
           >
             Try Again
           </button>
@@ -274,7 +274,7 @@ const TrendingMovies: React.FC<TrendingMoviesProps> = ({
   }
 
   return (
-    <section className="w-full bg-primary-black py-12 md:py-16 px-4 sm:px-6 lg:px-8">
+    <section className="w-full bg-transparent py-12 md:py-16 px-4 sm:px-6 lg:px-8 relative z-10">
       <div className="max-w-7xl mx-auto">
         {/* Section Header */}
         <div className="mb-8 md:mb-12">

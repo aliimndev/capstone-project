@@ -32,16 +32,16 @@ const SelectionSummary: React.FC<SelectionSummaryProps> = ({
   });
 
   return (
-    <section className="w-full bg-black py-6 px-4 sm:px-6 lg:px-8">
+    <section className="w-full bg-transparent py-6 px-4 sm:px-6 lg:px-8 relative z-10">
       <div className="max-w-6xl mx-auto">
-        <div className="bg-black rounded-xl p-5 md:p-7">
+        <div className="bg-[#091020]/50 backdrop-blur-sm border border-white/10 rounded-xl p-5 md:p-7 shadow-[0_0_30px_rgba(0,210,255,0.05)]">
           <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 md:gap-8">
             
             {/* Left: Counter & Movie Slots */}
             <div className="flex-1">
               {/* Counter Text */}
               <div className="mb-5">
-                <span className="text-orange-500 font-bold text-xl">
+                <span className="text-[#00d2ff] font-bold text-xl">
                   {selectedCount}/{maxSelection}
                 </span>
                 <span className="text-white font-semibold ml-2">
@@ -59,8 +59,8 @@ const SelectionSummary: React.FC<SelectionSummaryProps> = ({
                     key={index}
                     className={`relative aspect-[2/3] rounded-xl overflow-hidden transition-all duration-300
                       ${movie 
-                        ? 'ring-2 ring-orange-500 shadow-lg shadow-orange-500/20' 
-                        : 'ring-2 ring-gray-700 ring-dashed bg-[#111111]'
+                        ? 'ring-2 ring-[#00d2ff] shadow-lg shadow-[#00d2ff]/20' 
+                        : 'ring-2 ring-white/20 ring-dashed bg-[#091020]/50 backdrop-blur-sm'
                       }`}
                   >
                     {/* Ukuran poster diperbesar: w-28 md:w-36 (112px - 144px) */}
@@ -137,7 +137,7 @@ const SelectionSummary: React.FC<SelectionSummaryProps> = ({
               ) : (
                 <Link
                   href="/recommendations"
-                  className="inline-flex items-center justify-center w-full md:w-auto px-8 py-4 bg-orange-600 hover:bg-orange-700 text-white font-semibold rounded-xl transition-all duration-200 hover:shadow-lg hover:shadow-orange-600/40 hover:scale-105"
+                  className="inline-flex items-center justify-center w-full md:w-auto px-8 py-4 bg-[#00d2ff] hover:bg-[#00d2ff]/80 text-[#091020] font-semibold rounded-xl transition-all duration-200 hover:shadow-lg hover:shadow-[#00d2ff]/40 hover:scale-105"
                 >
                   Get Rekomendation
                   <svg

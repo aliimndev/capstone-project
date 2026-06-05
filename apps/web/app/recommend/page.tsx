@@ -87,7 +87,7 @@ export default function RecommendPage() {
 
   return (
 
-    <div className="min-h-screen bg-primary-black text-text-primary flex flex-col">
+    <div className="min-h-screen bg-transparent text-text-primary flex flex-col relative z-10">
       <SiteHeader />
       
       {/* Main Content */}
@@ -100,7 +100,7 @@ export default function RecommendPage() {
       </main>
 
       {/* Selection Summary - Tidak fixed, tapi di atas Footer */}
-      <div className="bg-primary-black z-50">
+      <div className="bg-[#091020]/80 backdrop-blur-md z-50">
         <SelectionSummary
           selectedMovies={selectedMovies}
           onRemoveMovie={handleRemoveMovie}

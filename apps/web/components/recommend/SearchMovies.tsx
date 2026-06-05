@@ -17,11 +17,13 @@ interface SearchMoviesProps {
   onSelectMovie?: (movie: Movie) => void;
 }
 
-interface TMDBMovie {
+// Define the expected shape of a movie from the backend API
+interface RawMovie {
   id: number;
   title?: string;
   name?: string;
   poster_path?: string;
+  posterUrl?: string;
   release_date?: string;
   vote_average?: number;
 }
@@ -47,12 +49,12 @@ const SearchMovies: React.FC<SearchMoviesProps> = ({ onSelectMovie }) => {
 
       const data = await response.json();
       
-      const moviesArray = data?.movies ?? data?.results ?? [];
+      const moviesArray: RawMovie[] = data?.movies ?? data?.results ?? [];
 
       const formattedMovies: Movie[] = moviesArray
-        .filter((movie: any) => movie.poster_path || movie.posterUrl)
+        .filter((movie: RawMovie) => movie.poster_path || movie.posterUrl)
         .slice(0, 5)
-        .map((movie: any) => ({
+        .map((movie: RawMovie) => ({
           id: movie.id,
           title: movie.title || movie.name || 'Untitled',
           posterUrl:
@@ -109,7 +111,7 @@ const SearchMovies: React.FC<SearchMoviesProps> = ({ onSelectMovie }) => {
   };
 
   return (
-    <section className="w-full bg-black py-12 md:py-16 px-4 sm:px-6 lg:px-8">
+    <section className="w-full bg-transparent py-12 md:py-16 px-4 sm:px-6 lg:px-8 relative z-10">
       <div className="max-w-3xl mx-auto">
         {/* Heading */}
         <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-center text-white mb-4">
@@ -148,13 +150,13 @@ const SearchMovies: React.FC<SearchMoviesProps> = ({ onSelectMovie }) => {
               onChange={(e) => setSearchQuery(e.target.value)}
               onFocus={() => searchResults.length > 0 && setShowResults(true)}
               placeholder="Search for a movie..."
-              className="w-full pl-12 pr-4 py-4 bg-primary-black border border-primary-orange/50 rounded-lg text-text-primary placeholder-text-muted focus:outline-none focus:border-primary-orange focus:ring-2 focus:ring-primary-orange/20 transition-all duration-200"
+              className="w-full pl-12 pr-4 py-4 bg-[#091020]/50 backdrop-blur-sm border border-white/10 rounded-lg text-text-primary placeholder-text-muted focus:outline-none focus:border-[#00d2ff] focus:ring-2 focus:ring-[#00d2ff]/20 transition-all duration-200 shadow-[0_0_20px_rgba(0,210,255,0.05)]"
             />
           </div>
 
           {/* Search Results Dropdown */}
           {showResults && searchResults.length > 0 && (
-            <div className="absolute top-full left-0 right-0 mt-2 bg-primary-black border border-primary-orange/50 rounded-lg overflow-hidden shadow-2xl z-50">
+            <div className="absolute top-full left-0 right-0 mt-2 bg-[#091020]/90 backdrop-blur-md border border-white/10 rounded-lg overflow-hidden shadow-[0_0_30px_rgba(0,210,255,0.1)] z-50">
               {isLoading ? (
                 <div className="p-4 text-center text-text-secondary">
                   Searching...
@@ -165,7 +167,7 @@ const SearchMovies: React.FC<SearchMoviesProps> = ({ onSelectMovie }) => {
                     <button
                       key={movie.id}
                       onClick={() => handleMovieSelect(movie)}
-                      className="w-full flex items-center gap-4 p-3 hover:bg-secondary-medium transition-colors border-b border-interactive-border last:border-b-0"
+                      className="w-full flex items-center gap-4 p-3 hover:bg-[#00d2ff]/10 hover:text-white transition-colors border-b border-white/10 last:border-b-0"
                     >
                       {/* Movie Poster */}
                       <div className="w-12 h-16 flex-shrink-0 overflow-hidden rounded relative">
@@ -189,7 +191,7 @@ const SearchMovies: React.FC<SearchMoviesProps> = ({ onSelectMovie }) => {
                       </div>
 
                       {/* Add Icon */}
-                      <div className="text-primary-orange">
+                      <div className="text-[#00d2ff]">
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
                           className="h-5 w-5"
@@ -214,7 +216,7 @@ const SearchMovies: React.FC<SearchMoviesProps> = ({ onSelectMovie }) => {
 
           {/* No Results */}
           {showResults && searchQuery.trim().length >= 2 && searchResults.length === 0 && !isLoading && (
-            <div className="absolute top-full left-0 right-0 mt-2 bg-primary-black border border-interactive-border rounded-lg p-4 text-center text-text-secondary z-50">
+            <div className="absolute top-full left-0 right-0 mt-2 bg-[#091020]/90 backdrop-blur-md border border-white/10 rounded-lg p-4 text-center text-text-secondary z-50">
               No movies found
             </div>
           )}

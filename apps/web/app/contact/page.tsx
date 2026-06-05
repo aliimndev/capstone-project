@@ -152,7 +152,7 @@ export default function ContactPage() {
   };
 
   return (
-    <div className="min-h-screen bg-black text-white flex flex-col">
+    <div className="min-h-screen bg-transparent text-white flex flex-col relative z-10">
       {/* Header */}
       <SiteHeader />
 
@@ -170,7 +170,7 @@ export default function ContactPage() {
           </div>
 
           {/* Contact Form Card */}
-          <div className="bg-[#111111] border border-gray-800 rounded-2xl p-6 md:p-8">
+          <div className="bg-[#091020]/50 backdrop-blur-sm border border-white/10 rounded-2xl p-6 md:p-8 shadow-[0_0_40px_rgba(0,210,255,0.05)]">
             <form onSubmit={handleSubmit} className="space-y-6" noValidate>
               {/* Name & Email Row */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -251,9 +251,9 @@ export default function ContactPage() {
             <h3 className="text-white font-semibold mb-3">
               Other Ways to Connect
             </h3>
-            <a
+              <a
               href="mailto:support@wemovies.ai"
-              className="inline-flex items-center gap-2 text-gray-400 hover:text-orange-500 transition-colors duration-200"
+              className="inline-flex items-center gap-2 text-gray-400 hover:text-[#00d2ff] transition-colors duration-200"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
