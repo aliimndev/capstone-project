@@ -1,5 +1,8 @@
+"use client";
+
 // components/FeaturesSection.tsx
 import React from 'react';
+import { motion } from "motion/react";
 
 interface FeatureProps {
   title: string;
@@ -22,8 +25,8 @@ const Feature: React.FC<FeatureProps> = ({ title, description, align = 'left' })
           </p>
         </div>
         
-        {/* Accent Line (Orange Vertical Line) - DI KANAN */}
-        <div className="w-1 h-full min-h-[150px] bg-orange-500 flex-shrink-0" />
+        {/* Accent Line (Cyan Vertical Line) - DI KANAN */}
+        <div className="w-1 h-full min-h-[150px] bg-[#00d2ff] flex-shrink-0 shadow-[0_0_20px_rgba(0,210,255,0.5)]" />
       </div>
     );
   }
@@ -31,8 +34,8 @@ const Feature: React.FC<FeatureProps> = ({ title, description, align = 'left' })
   // Untuk align left: garis dulu, baru teks
   return (
     <div className="flex gap-6 justify-start">
-      {/* Accent Line (Orange Vertical Line) - DI KIRI */}
-      <div className="w-1 h-full min-h-[150px] bg-orange-500 flex-shrink-0" />
+      {/* Accent Line (Cyan Vertical Line) - DI KIRI */}
+      <div className="w-1 h-full min-h-[150px] bg-[#00d2ff] flex-shrink-0 shadow-[0_0_20px_rgba(0,210,255,0.5)]" />
       
       {/* Content - DI KANAN GARIS */}
       <div className="flex-1 max-w-2xl text-left">
@@ -65,14 +68,18 @@ const FeaturesSection: React.FC = () => {
 
   return (
     <section 
-      className="w-full bg-black py-16 md:py-24 lg:py-32 px-4 sm:px-6 lg:px-8"
+      className="w-full bg-transparent py-16 md:py-24 lg:py-32 px-4 sm:px-6 lg:px-8 relative z-10"
       aria-labelledby="features-heading"
     >
       <div className="max-w-7xl mx-auto">
         <div className="space-y-20 md:space-y-32">
           {features.map((feature, index) => (
-            <div
+            <motion.div
               key={index}
+              initial={{ opacity: 0, y: 40 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-100px" }}
+              transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
               className="flex flex-col justify-center"
             >
               <Feature
@@ -80,7 +87,7 @@ const FeaturesSection: React.FC = () => {
                 description={feature.description}
                 align={feature.align}
               />
-            </div>
+            </motion.div>
           ))}
         </div>
       </div>

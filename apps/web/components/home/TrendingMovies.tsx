@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
+import { motion } from "motion/react";
 import { MovieCard } from "./MovieCard";
 import { MovieSkeleton } from "./MovieSkeleton";
 import { ErrorState } from "./ErrorState";
@@ -74,17 +75,24 @@ export function TrendingMovies() {
   }, [loadTrendingMovies]);
 
   return (
-    <section className="py-16 bg-primary-black">
+    <section className="py-20 bg-transparent relative z-10">
       <div className="mx-auto max-w-7xl px-6">
         {/* Section Header */}
-        <div className="mb-12">
-          <h2 className="text-3xl lg:text-4xl font-bold tracking-tight text-text-primary">
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-100px" }}
+          transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+          className="mb-14"
+        >
+          <h2 className="text-3xl lg:text-4xl font-bold tracking-tight text-white flex items-center gap-4">
             Trending Movies
+            <div className="h-[2px] flex-1 bg-gradient-to-r from-white/10 to-transparent hidden sm:block" />
           </h2>
-          <p className="text-text-secondary mt-3 text-lg">
+          <p className="text-white/60 mt-3 text-lg">
             Popular picks you might like
           </p>
-        </div>
+        </motion.div>
 
         {/* Movies Grid or Loading State */}
         {isLoading ? (

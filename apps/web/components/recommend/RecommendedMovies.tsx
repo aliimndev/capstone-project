@@ -19,7 +19,7 @@ interface RecommendedMoviesProps {
 const RecommendedMovies: React.FC<RecommendedMoviesProps> = ({ loading, error, movies }) => {
   if (loading) {
     return (
-      <section className="w-full bg-primary-black py-8 px-4">
+      <section className="w-full bg-transparent py-8 px-4 relative z-10">
         <div className="max-w-7xl mx-auto">
           <h2 className="text-2xl md:text-3xl font-bold text-text-primary mb-2">Recommended for you</h2>
           <p className="text-text-secondary">Loading recommendations...</p>
@@ -30,7 +30,7 @@ const RecommendedMovies: React.FC<RecommendedMoviesProps> = ({ loading, error, m
 
   if (error) {
     return (
-      <section className="w-full bg-primary-black py-8 px-4">
+      <section className="w-full bg-transparent py-8 px-4 relative z-10">
         <div className="max-w-7xl mx-auto text-center">
           <h2 className="text-2xl md:text-3xl font-bold text-text-primary mb-2">Recommended for you</h2>
           <p className="text-special-error mb-4">{error}</p>
@@ -41,7 +41,7 @@ const RecommendedMovies: React.FC<RecommendedMoviesProps> = ({ loading, error, m
 
   if (!movies || movies.length === 0) {
     return (
-      <section className="w-full bg-primary-black py-8 px-4">
+      <section className="w-full bg-transparent py-8 px-4 relative z-10">
         <div className="max-w-7xl mx-auto">
           <h2 className="text-2xl md:text-3xl font-bold text-text-primary mb-2">Recommended for you</h2>
           <p className="text-text-secondary">Pick 3 movies to get recommendations.</p>
@@ -51,7 +51,7 @@ const RecommendedMovies: React.FC<RecommendedMoviesProps> = ({ loading, error, m
   }
 
   return (
-    <section className="w-full bg-primary-black py-8 px-4">
+    <section className="w-full bg-transparent py-8 px-4 relative z-10">
       <div className="max-w-7xl mx-auto">
         <h2 className="text-2xl md:text-3xl font-bold text-text-primary mb-2">Recommended for you</h2>
         <p className="text-text-secondary text-sm md:text-base mb-6">Top picks based on your selected movies.</p>

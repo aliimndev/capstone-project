@@ -34,10 +34,10 @@ export function MovieCard({
   return (
     <div key={id} className="group cursor-pointer h-full flex flex-col">
       {/* Movie Poster Container */}
-      <div className="relative aspect-[2/3] overflow-hidden rounded-2xl bg-secondary-dark shadow-[0_0_0_1px_rgba(255,255,255,0.08)] transition-all duration-300 group-hover:shadow-[0_0_36px_rgba(255,107,0,0.22)] group-hover:border group-hover:border-primary-orange/50 group-hover:scale-110">
+      <div className="relative aspect-[2/3] overflow-hidden rounded-2xl bg-secondary-dark shadow-[0_0_0_1px_rgba(255,255,255,0.08)] transition-all duration-300 group-hover:shadow-[0_0_36px_rgba(0,210,255,0.22)] group-hover:border group-hover:border-[#00d2ff]/50 group-hover:scale-110">
         {/* Rank Badge */}
-        <div className="absolute top-3 left-3 z-20 bg-primary-orange/90 backdrop-blur-sm px-3 py-2 rounded-lg">
-          <span className="text-sm font-bold text-primary-black">{rankBadge}</span>
+        <div className="absolute top-3 left-3 z-20 bg-[#00d2ff]/90 backdrop-blur-sm px-3 py-2 rounded-lg">
+          <span className="text-sm font-bold text-[#091020]">{rankBadge}</span>
         </div>
 
         {/* Poster Image */}
@@ -67,7 +67,7 @@ export function MovieCard({
       {/* Movie Information */}
       <div className="mt-4 flex-1 flex flex-col">
         {/* Title */}
-        <p className="line-clamp-2 text-sm font-semibold text-text-primary group-hover:text-primary-orange transition-colors duration-300">
+        <p className="line-clamp-2 text-sm font-semibold text-text-primary group-hover:text-[#00d2ff] transition-colors duration-300">
           {title}
         </p>
 

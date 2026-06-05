@@ -1,5 +1,8 @@
+"use client";
+
 // components/WhyUseSection.tsx
 import React from 'react';
+import { motion } from "motion/react";
 
 interface FeatureItemProps {
   icon: React.ReactNode;
@@ -8,8 +11,8 @@ interface FeatureItemProps {
 
 const FeatureItem: React.FC<FeatureItemProps> = ({ icon, text }) => {
   return (
-    <div className="flex items-center gap-3 bg-[#111111] hover:bg-[#1A1A1A] transition-colors duration-200 rounded-full px-4 py-3 w-full max-w-2xl mx-auto border border-gray-700">
-      <div className="shrink-0 text-orange-500">
+    <div className="flex items-center gap-3 bg-[#091020]/50 backdrop-blur-sm hover:bg-[#00d2ff]/10 hover:border-[#00d2ff]/50 hover:shadow-[0_0_20px_rgba(0,210,255,0.2)] transition-all duration-300 rounded-full px-4 py-3 w-full max-w-2xl mx-auto border border-white/10">
+      <div className="shrink-0 text-[#00d2ff]">
         {icon}
       </div>
       <span className="text-white text-sm md:text-base font-medium">
@@ -79,26 +82,37 @@ const WhyUseSection: React.FC = () => {
 
   return (
     <section 
-      className="w-full bg-black py-16 md:py-20 px-4 sm:px-6 lg:px-8"
+      className="w-full bg-transparent py-16 md:py-20 px-4 sm:px-6 lg:px-8 relative z-10"
       aria-labelledby="why-use-heading"
     >
       <div className="max-w-4xl mx-auto">
         {/* Heading */}
-        <h2 
+        <motion.h2 
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-100px" }}
+          transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
           id="why-use-heading"
           className="text-3xl md:text-4xl font-bold text-center text-white mb-10 md:mb-12"
         >
           Why Use This?
-        </h2>
+        </motion.h2>
 
         {/* Features List */}
         <div className="space-y-4">
           {features.map((feature, index) => (
-            <FeatureItem
+            <motion.div
               key={index}
-              icon={feature.icon}
-              text={feature.text}
-            />
+              initial={{ opacity: 0, scale: 0.95 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true, margin: "-50px" }}
+              transition={{ duration: 0.5, delay: index * 0.1, ease: [0.22, 1, 0.36, 1] }}
+            >
+              <FeatureItem
+                icon={feature.icon}
+                text={feature.text}
+              />
+            </motion.div>
           ))}
         </div>
       </div>

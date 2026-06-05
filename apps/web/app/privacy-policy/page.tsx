@@ -51,7 +51,7 @@ export default function PrivacyPolicyPage() {
   };
 
   return (
-    <div className="min-h-screen bg-black text-white flex flex-col">
+    <div className="min-h-screen bg-transparent text-white flex flex-col relative z-10">
       <SiteHeader />
 
       <main className="flex-1 py-16 px-4 sm:px-6 lg:px-8">
@@ -67,7 +67,7 @@ export default function PrivacyPolicyPage() {
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
             {/* Table of Contents - Sidebar */}
             <aside className="lg:col-span-4 lg:sticky lg:top-24 lg:self-start">
-              <div className="bg-[#111111] border border-gray-800 rounded-xl p-6">
+              <div className="bg-[#091020]/50 backdrop-blur-sm border border-white/10 rounded-xl p-6 shadow-[0_0_40px_rgba(0,210,255,0.05)]">
                 <h2 className="text-white font-semibold mb-6 text-lg">
                   Table of Content
                 </h2>
@@ -78,7 +78,7 @@ export default function PrivacyPolicyPage() {
                       onClick={() => scrollToSection(section.id)}
                       className={`block w-full text-left px-3 py-2 rounded-lg transition-all duration-200 ${
                         activeSection === section.id
-                          ? 'text-orange-500 bg-orange-500/10 font-medium'
+                          ? 'text-[#00d2ff] bg-[#00d2ff]/10 font-medium'
                           : 'text-gray-400 hover:text-white hover:bg-white/5'
                       }`}
                     >
@@ -122,19 +122,19 @@ export default function PrivacyPolicyPage() {
                 </p>
                 <ul className="space-y-2 text-gray-400">
                   <li className="flex items-start gap-2">
-                    <span className="text-orange-500 mt-1.5">•</span>
+                    <span className="text-[#00d2ff] mt-1.5">•</span>
                     <span>Generate personalized movie recommendations</span>
                   </li>
                   <li className="flex items-start gap-2">
-                    <span className="text-orange-500 mt-1.5">•</span>
+                    <span className="text-[#00d2ff] mt-1.5">•</span>
                     <span>Improve recommendation accuracy over time</span>
                   </li>
                   <li className="flex items-start gap-2">
-                    <span className="text-orange-500 mt-1.5">•</span>
+                    <span className="text-[#00d2ff] mt-1.5">•</span>
                     <span>Analyze basic usage to enhance user experience</span>
                   </li>
                   <li className="flex items-start gap-2">
-                    <span className="text-orange-500 mt-1.5">•</span>
+                    <span className="text-[#00d2ff] mt-1.5">•</span>
                     <span>Respond to feedback or inquiries</span>
                   </li>
                 </ul>
@@ -150,11 +150,11 @@ export default function PrivacyPolicyPage() {
                 </p>
                 <ul className="space-y-2 text-gray-400 mb-4">
                   <li className="flex items-start gap-2">
-                    <span className="text-orange-500 mt-1.5">•</span>
+                    <span className="text-[#00d2ff] mt-1.5">•</span>
                     <span>Movie datasets (e.g., public datasets like TMDB/Kaggle) for film information</span>
                   </li>
                   <li className="flex items-start gap-2">
-                    <span className="text-orange-500 mt-1.5">•</span>
+                    <span className="text-[#00d2ff] mt-1.5">•</span>
                     <span>Hosting or deployment platforms</span>
                   </li>
                 </ul>
@@ -182,11 +182,11 @@ export default function PrivacyPolicyPage() {
                 <p className="text-gray-400 mb-4 leading-relaxed">You may:</p>
                 <ul className="space-y-2 text-gray-400">
                   <li className="flex items-start gap-2">
-                    <span className="text-orange-500 mt-1.5">•</span>
+                    <span className="text-[#00d2ff] mt-1.5">•</span>
                     <span>Request deletion of any provided data</span>
                   </li>
                   <li className="flex items-start gap-2">
-                    <span className="text-orange-500 mt-1.5">•</span>
+                    <span className="text-[#00d2ff] mt-1.5">•</span>
                     <span>Contact us regarding privacy concerns</span>
                   </li>
                 </ul>
@@ -213,7 +213,7 @@ export default function PrivacyPolicyPage() {
                 </p>
                 <a
                   href="mailto:support@wemovies.ai"
-                  className="inline-flex items-center gap-2 text-orange-500 hover:text-orange-400 transition-colors"
+                  className="inline-flex items-center gap-2 text-[#00d2ff] hover:text-white transition-colors"
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
