@@ -30,6 +30,7 @@ COPY --from=builder /root/.local /root/.local
 # Copy application code
 COPY app ./app
 COPY core ./core
+COPY model ./model
 COPY wewatch_backend ./wewatch_backend
 
 # Copy the environment file if needed, or rely on runtime env vars
