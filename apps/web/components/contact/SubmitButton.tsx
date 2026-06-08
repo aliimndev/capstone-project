@@ -8,8 +8,8 @@ interface SubmitButtonProps {
 export function SubmitButton({ isSubmitting, submitStatus }: SubmitButtonProps) {
   if (submitStatus === 'success') {
     return (
-      <div className="p-4 bg-green-500/10 border border-green-500/20 rounded-lg text-center">
-        <p className="text-green-500 font-medium flex items-center justify-center gap-2">
+      <div className="p-4 bg-emerald-500/10 border border-emerald-500/20 rounded-lg text-center">
+        <p className="text-emerald-400 font-medium flex items-center justify-center gap-2">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             className="h-5 w-5"
@@ -32,14 +32,14 @@ export function SubmitButton({ isSubmitting, submitStatus }: SubmitButtonProps) 
     return (
       <div className="space-y-3">
         <div className="p-4 bg-red-500/10 border border-red-500/20 rounded-lg text-center">
-          <p className="text-red-500 font-medium">
+          <p className="text-red-400 font-medium">
             Failed to send message. Please try again.
           </p>
         </div>
         <button
           type="submit"
           disabled={isSubmitting}
-          className="w-full px-6 py-4 bg-orange-600 hover:bg-orange-700 disabled:bg-orange-600/50 text-white font-semibold rounded-lg transition-all duration-200 hover:shadow-lg hover:shadow-orange-600/30 disabled:cursor-not-allowed"
+          className="w-full px-6 py-4 bg-[#00d2ff] hover:bg-[#00d2ff]/80 disabled:bg-[#00d2ff]/50 text-[#091020] font-semibold rounded-lg transition-all duration-200 hover:shadow-lg hover:shadow-[#00d2ff]/30 disabled:cursor-not-allowed"
         >
           Try Again
         </button>
@@ -51,12 +51,12 @@ export function SubmitButton({ isSubmitting, submitStatus }: SubmitButtonProps) 
     <button
       type="submit"
       disabled={isSubmitting}
-      className="w-full px-6 py-4 bg-orange-600 hover:bg-orange-700 disabled:bg-orange-600/50 text-white font-semibold rounded-lg transition-all duration-200 hover:shadow-lg hover:shadow-orange-600/30 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+      className="w-full px-6 py-4 bg-[#00d2ff] hover:bg-[#00d2ff]/80 disabled:bg-[#00d2ff]/50 text-[#091020] font-semibold rounded-lg transition-all duration-200 hover:shadow-lg hover:shadow-[#00d2ff]/30 disabled:cursor-not-allowed flex items-center justify-center gap-2"
     >
       {isSubmitting ? (
         <>
           <svg
-            className="animate-spin h-5 w-5 text-white"
+            className="animate-spin h-5 w-5 text-[#091020]"
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
             viewBox="0 0 24 24"

@@ -12,31 +12,30 @@ interface TeamMemberProps {
 
 const TeamCard: React.FC<TeamMemberProps> = ({ name, jobdesk, photoUrl }) => {
   return (
-    <div className="w-full max-w-[300px] bg-[#091020]/50 backdrop-blur-sm rounded-xl overflow-hidden flex flex-col transition-all duration-300 hover:-translate-y-2 hover:shadow-[0_0_30px_rgba(0,210,255,0.15)] border border-white/10 hover:border-[#00d2ff]/30">
+    <div className="w-full bg-[#091020]/50 backdrop-blur-sm rounded-xl overflow-hidden flex flex-col transition-all duration-300 hover:-translate-y-2 hover:shadow-[0_0_30px_rgba(0,210,255,0.15)] border border-white/10 hover:border-[#00d2ff]/30">
       {/* Photo Area */}
-      <div className="h-64 md:h-72 bg-[#091020] flex items-center justify-center overflow-hidden">
+      <div className="aspect-square bg-[#091020] flex items-center justify-center overflow-hidden">
         {photoUrl ? (
-          <img 
-            src={photoUrl} 
-            alt={name} 
+          <img
+            src={photoUrl}
+            alt={name}
             className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
             loading="lazy"
           />
         ) : (
           <div className="flex flex-col items-center gap-2 text-gray-500">
-            {/* Icon Placeholder */}
-            <svg 
-              xmlns="http://www.w3.org/2000/svg" 
-              className="h-10 w-10 opacity-60" 
-              fill="none" 
-              viewBox="0 0 24 24" 
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-12 w-12 opacity-60"
+              fill="none"
+              viewBox="0 0 24 24"
               stroke="currentColor"
             >
-              <path 
-                strokeLinecap="round" 
-                strokeLinejoin="round" 
-                strokeWidth={1.5} 
-                d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" 
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={1.5}
+                d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
               />
             </svg>
             <span className="text-sm font-medium">Photo</span>
@@ -58,30 +57,29 @@ const TeamCard: React.FC<TeamMemberProps> = ({ name, jobdesk, photoUrl }) => {
 };
 
 const TeamSection: React.FC = () => {
-  // Ganti dengan URL foto asli tim Anda
   const teamMembers = [
-    { 
-      name: "Ali Imannudin", 
+    {
+      name: "Ali Imannudin",
       jobdesk: "Full Stack Engineer",
-      photoUrl: "/team/ali.jpg" // Ganti dengan path foto asli
+      photoUrl: "/team/ali.jpeg"
     },
-    { 
-      name: "Arinda Setyo Rini", 
+    {
+      name: "Arinda Setyo Rini",
       jobdesk: "UI/UX Designer",
       photoUrl: "/team/arinda.jpg"
     },
-    { 
-      name: "Joshua Christian Benedict", 
+    {
+      name: "Joshua Christian Benedict",
       jobdesk: "Backend Engineer",
       photoUrl: "/team/joshua.jpg"
     },
-    { 
-      name: "Shandy Putraniar Budianto", 
+    {
+      name: "Shandy Putraniar Budianto",
       jobdesk: "ML Engineer",
       photoUrl: "/team/shandy.jpg"
     },
-    { 
-      name: "Dian Kurnia", 
+    {
+      name: "Dian Kurnia",
       jobdesk: "QA Engineer",
       photoUrl: "/team/dian.jpg"
     },
@@ -90,7 +88,7 @@ const TeamSection: React.FC = () => {
   return (
     <section className="w-full bg-transparent py-16 md:py-24 px-4 sm:px-6 lg:px-8 relative z-10">
       <div className="max-w-6xl mx-auto">
-        <motion.h2 
+        <motion.h2
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-100px" }}
@@ -100,7 +98,7 @@ const TeamSection: React.FC = () => {
           Our Team
         </motion.h2>
 
-        {/* Flexbox: 3 di atas, 2 di bawah (center) */}
+        {/* ✨ Flexbox dengan justify-center agar baris yang tidak penuh otomatis center */}
         <div className="flex flex-wrap justify-center gap-6 md:gap-8">
           {teamMembers.map((member, index) => (
             <motion.div
@@ -109,6 +107,8 @@ const TeamSection: React.FC = () => {
               whileInView={{ opacity: 1, scale: 1, y: 0 }}
               viewport={{ once: true, margin: "-50px" }}
               transition={{ duration: 0.5, delay: index * 0.1, ease: [0.22, 1, 0.36, 1] }}
+
+              className="w-full sm:w-[calc(50%-12px)] lg:w-[calc(33.333%-22px)] max-w-[300px]"
             >
               <TeamCard
                 name={member.name}

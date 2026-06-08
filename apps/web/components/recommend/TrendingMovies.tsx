@@ -4,9 +4,6 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import Image from 'next/image';
 
-/**
- * Movie interface for trending movies display in recommendation selection
- */
 export interface Movie {
   id: string | number;
   rank?: number;
@@ -15,7 +12,6 @@ export interface Movie {
   rating?: number;
   votes?: number;
   year?: number;
-  releaseDate?: string;
 }
 
 interface TrendingMoviesProps {
@@ -31,80 +27,80 @@ interface MovieCardProps {
   isSelected?: boolean;
 }
 
+// Icon Components (Inline SVG agar tidak perlu install library icon)
+const StarIcon = ({ className }: { className?: string }) => (
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className={className}>
+    <path fillRule="evenodd" d="M10.788 3.21c.448-1.077 1.976-1.077 2.424 0l2.082 5.007 5.404.433c1.164.093 1.636 1.545.749 2.305l-4.117 3.527 1.257 5.273c.271 1.136-.964 2.033-1.96 1.425L12 18.354 7.373 21.18c-.996.608-2.231-.29-1.96-1.425l1.257-5.273-4.117-3.527c-.887-.76-.415-2.212.749-2.305l5.404-.433 2.082-5.006z" clipRule="evenodd" />
+  </svg>
+);
+
+const CheckIcon = ({ className }: { className?: string }) => (
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className={className}>
+    <path fillRule="evenodd" d="M19.916 4.626a.75.75 0 01.208 1.04l-9 13.5a.75.75 0 01-1.154.114l-6-6a.75.75 0 011.06-1.06l5.353 5.353 8.493-12.739a.75.75 0 011.04-.208z" clipRule="evenodd" />
+  </svg>
+);
+
 /**
- * Movie card component with selection capability
- * Used in recommendation flow to allow users to select movies
+ * Movie card component dengan desain overlay modern
  */
 const MovieCard: React.FC<MovieCardProps> = ({ movie, onSelect, isSelected }) => {
   return (
-    <div 
-      className={`group relative overflow-hidden rounded-lg cursor-pointer 
-        transition-all duration-300 
-        ${isSelected 
-          ? 'ring-2 ring-[#00d2ff] shadow-lg shadow-[#00d2ff]/50 scale-105' 
-          : 'hover:shadow-[0_0_36px_rgba(0,210,255,0.22)] hover:scale-105'
+    <div
+      className={`group relative aspect-[2/3] rounded-xl overflow-hidden cursor-pointer transition-all duration-300 ease-out
+        ${isSelected
+          ? 'ring-2 ring-cyan-400 scale-[1.02] shadow-xl shadow-cyan-500/20'
+          : 'hover:scale-[1.03] hover:shadow-2xl hover:shadow-black/40'
         }`}
       onClick={() => onSelect?.(movie)}
       role="button"
       tabIndex={0}
       onKeyDown={(e) => {
         if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
           onSelect?.(movie);
         }
       }}
+      aria-pressed={isSelected}
+      aria-label={`Select movie ${movie.title}`}
     >
-      {/* Rank Badge */}
-      {movie.rank && (
-        <div className="absolute top-3 left-3 z-20">
-          <div className="bg-[#00d2ff] text-[#091020] text-xs font-bold px-3 py-2 rounded-lg shadow-lg">
-            {String(movie.rank).padStart(2, '0')}
-          </div>
+      {/* Poster Image */}
+      <Image
+        src={movie.posterUrl}
+        alt={movie.title}
+        fill
+        sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 20vw"
+        className="object-cover transition-transform duration-500 group-hover:scale-110"
+      />
+
+      {/* Selection Badge (Muncul saat dipilih) */}
+      {isSelected && (
+        <div className="absolute top-2.5 right-2.5 z-20 bg-cyan-400 text-black rounded-full p-1.5 shadow-lg">
+          <CheckIcon className="w-3.5 h-3.5" />
         </div>
       )}
 
-      {/* Poster Container */}
-      <div className="relative aspect-[2/3] w-full overflow-hidden bg-secondary-dark">
-        <Image
-          src={movie.posterUrl}
-          alt={movie.title}
-          fill
-          className="object-cover transition-transform duration-300 group-hover:scale-110"
-          sizes="(min-width: 768px) 20vw, (min-width: 640px) 25vw, 50vw"
-        />
-        
-        {/* Gradient Overlay */}
-        <div className="absolute inset-0 bg-gradient-to-t from-primary-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-      </div>
+      {/* Rank Badge */}
+      {movie.rank && (
+        <div className="absolute top-2.5 left-2.5 z-20 bg-black/60 backdrop-blur-md text-white text-[10px] font-bold px-2 py-1 rounded-md border border-white/10">
+          #{movie.rank}
+        </div>
+      )}
 
-      {/* Info Section */}
-      <div className="p-3 bg-secondary-dark border-t border-white/10">
-        {/* Title */}
-        <h3 className="text-text-primary font-semibold text-sm md:text-base mb-2 line-clamp-2 min-h-[2.5rem] group-hover:text-[#00d2ff] transition-colors">
+      {/* Bottom Info Overlay (Menimpa bagian bawah poster) */}
+      <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/95 via-black/60 to-transparent p-3 pt-12">
+        <h3 className={`text-white font-semibold text-sm line-clamp-2 mb-1 transition-colors duration-200 ${isSelected ? 'text-cyan-300' : 'group-hover:text-cyan-300'}`}>
           {movie.title}
         </h3>
-        
-        {/* Rating & Votes */}
-        <div className="flex items-center justify-between gap-2">
-          {movie.rating ? (
-            <div className="flex items-center gap-1.5">
-              <svg 
-                xmlns="http://www.w3.org/2000/svg" 
-                className="h-4 w-4 text-special-success fill-current" 
-                viewBox="0 0 20 20"
-              >
-                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-              </svg>
-              <span className="text-text-secondary text-sm font-semibold">
-                {movie.rating.toFixed(1)}
-              </span>
-            </div>
-          ) : null}
-
-          {movie.votes ? (
-            <span className="text-text-muted text-xs">
-              {movie.votes >= 1000 ? `${(movie.votes / 1000).toFixed(1)}K` : movie.votes}
+        <div className="flex items-center justify-between text-[11px]">
+          <div className="flex items-center gap-1">
+            <StarIcon className="w-3 h-3 text-yellow-400" />
+            <span className="text-white/90 font-medium">
+              {movie.rating && movie.rating > 0 ? movie.rating.toFixed(1) : 'N/A'}
             </span>
-          ) : null}
+          </div>
+          {movie.year && (
+            <span className="text-white/60 font-medium">{movie.year}</span>
+          )}
         </div>
       </div>
     </div>
@@ -112,61 +108,24 @@ const MovieCard: React.FC<MovieCardProps> = ({ movie, onSelect, isSelected }) =>
 };
 
 /**
- * Skeleton loader for movie cards
+ * Skeleton loader yang disesuaikan dengan desain card baru
  */
 const MovieCardSkeleton: React.FC = () => {
   return (
-    <div className="bg-secondary-dark rounded-lg overflow-hidden animate-pulse">
-      <div className="aspect-[2/3] bg-secondary-medium" />
-      <div className="p-3 space-y-2 bg-secondary-dark">
-        <div className="h-4 bg-secondary-medium rounded w-3/4" />
-        <div className="h-3 bg-secondary-medium rounded w-1/2" />
+    <div className="aspect-[2/3] rounded-xl overflow-hidden bg-zinc-800/50 animate-pulse relative">
+      <div className="absolute inset-x-0 bottom-0 p-3 pt-12 bg-gradient-to-t from-black/80 to-transparent">
+        <div className="h-4 bg-zinc-700 rounded w-3/4 mb-2" />
+        <div className="h-3 bg-zinc-700 rounded w-1/2" />
       </div>
     </div>
   );
 };
 
 /**
- * TMDB Movie interface for API responses
+ * Main TrendingMovies component
  */
-interface TMDBMovie {
-  id: number;
-  title?: string;
-  name?: string;
-  poster_path?: string;
-  posterUrl?: string;
-  rating?: number;
-  vote_average?: number;
-  votes?: number;
-  vote_count?: number;
-  year?: number;
-  release_date?: string;
-}
-
-/**
- * Mock data provider for fallback/testing
- */
-function getMockData(): Movie[] {
-  return [
-    { id: 1, rank: 1, title: "Violet Evergarden", posterUrl: "https://image.tmdb.org/t/p/w500/yFpAKU8zzVUT3MOpgx03yO0kQN1.jpg", rating: 9.0 },
-    { id: 2, rank: 2, title: "A Silent Voice", posterUrl: "https://image.tmdb.org/t/p/w500/drlyxSKbs1uVshxZ9K6FNKzqKv.jpg", rating: 8.9 },
-    { id: 3, rank: 3, title: "Your Name", posterUrl: "https://image.tmdb.org/t/p/w500/q719jXXEzOoYaps6babgKnONONX.jpg", rating: 9.5 },
-    { id: 4, rank: 4, title: "Your Lie in April", posterUrl: "https://image.tmdb.org/t/p/w500/9R7YKCNqKxh0xPNPM0VlK8zKQZV.jpg", rating: 8.8 },
-    { id: 5, rank: 5, title: "Josee, the Tiger and the Fish", posterUrl: "https://image.tmdb.org/t/p/w500/1M1vJdH6lkdXlCJkJTlJJlJJlJJ.jpg", rating: 8.7 },
-    { id: 6, rank: 6, title: "From Up on Poppy Hill", posterUrl: "https://image.tmdb.org/t/p/w500/xtPBZYzWkH0M0xJlJJlJJlJJlJJ.jpg", rating: 8.6 },
-    { id: 7, rank: 7, title: "Howl's Moving Castle", posterUrl: "https://image.tmdb.org/t/p/w500/TkTPELWinKXvBzjWIgGy5qHbOQ.jpg", rating: 8.9 },
-    { id: 8, rank: 8, title: "Kiki's Delivery Service", posterUrl: "https://image.tmdb.org/t/p/w500/7nO5DUMnGUuXrA4cH6llGyWlIRh.jpg", rating: 9.3 },
-    { id: 9, rank: 9, title: "My Neighbor Totoro", posterUrl: "https://image.tmdb.org/t/p/w500/rtGDOeG9LzoerkDGZF9dnVeLppL.jpg", rating: 8.8 },
-    { id: 10, rank: 10, title: "Spirited Away", posterUrl: "https://image.tmdb.org/t/p/w500/39wmItIWsg5sZMyRUKhGbHldv.jpg", rating: 9.6 },
-  ];
-}
-
-/**
- * Main TrendingMovies component for recommendation page
- * Allows users to select up to 3 movies with visual feedback
- */
-const TrendingMovies: React.FC<TrendingMoviesProps> = ({ 
-  movies, 
+const TrendingMovies: React.FC<TrendingMoviesProps> = ({
+  movies,
   limit = 10,
   onSelectMovie,
   selectedMovies = [],
@@ -175,98 +134,76 @@ const TrendingMovies: React.FC<TrendingMoviesProps> = ({
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  /**
-   * Fetch trending movies from API
-   */
   const fetchTrendingMovies = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
 
+      // Memanggil API route Next.js yang akan fetch data asli dari TMDB
       const response = await fetch('/api/trending-movies');
-      
+
       if (!response.ok) {
-        throw new Error('Failed to fetch trending movies');
+        throw new Error(`Failed to fetch trending movies (${response.status})`);
       }
 
       const data = await response.json();
-      
-      // Handle various response structures
-      const moviesArray = data.results || data.movies || data.data || data;
-      
+      const moviesArray = data.results || data.movies || data;
+
       if (!Array.isArray(moviesArray)) {
-        throw new Error('Invalid data format received');
+        throw new Error('Invalid data format received from API');
       }
-      
-// Format data according to interface
+
+      // Format data according to interface (Updated to support normalized API response)
       const formattedMovies: Movie[] = moviesArray
-        .filter((movie: TMDBMovie) => movie.poster_path || movie.posterUrl)
-        .slice(0, limit)
-        .map((movie: TMDBMovie, index: number) => ({
+        .filter((movie: any) => movie.poster_path || movie.posterUrl)
+        // ✨ Ubah angka 6 sesuai kebutuhan (6 item = 2 baris jika grid 3 kolom)
+        .slice(0, 10)
+        .map((movie: any, index: number) => ({
           id: movie.id,
           rank: index + 1,
           title: movie.title || movie.name || 'Untitled',
-          posterUrl: movie.posterUrl 
-            ? movie.posterUrl
-            : `https://image.tmdb.org/t/p/w500${movie.poster_path}`,
+          posterUrl: movie.posterUrl || `https://image.tmdb.org/t/p/w500${movie.poster_path}`,
           rating: movie.rating || movie.vote_average,
-          votes: movie.votes || movie.vote_count,
-          year: movie.year || (movie.release_date?.split('-')[0] ? parseInt(movie.release_date.split('-')[0]) : undefined),
-        }));
 
-      if (formattedMovies.length === 0) {
-        throw new Error('No movies with posters found');
-      }
+          // ✨ Tambahkan movie.voteCount agar kompatibel dengan API yang baru
+          votes: movie.votes || movie.vote_count || movie.voteCount,
+
+          // ✨ Tambahkan movie.releaseYear agar kompatibel dengan API yang baru
+          year: movie.year || movie.releaseYear || (movie.release_date ? new Date(movie.release_date).getFullYear() : undefined),
+        }));
 
       setMovieData(formattedMovies);
     } catch (err) {
       console.error('Fetch error:', err);
-      setError(err instanceof Error ? err.message : 'An error occurred');
-      
-      // Fallback to mock data for development
-      setMovieData(getMockData());
+      setError(err instanceof Error ? err.message : 'An unexpected error occurred');
+      setMovieData([]); // Kosongkan data jika error (tidak ada lagi fallback dummy)
     } finally {
       setLoading(false);
     }
   }, [limit]);
 
-  /**
-   * Initialize data on mount or when props change
-   */
   useEffect(() => {
+    // Jika ada props movies yang dikirim, gunakan itu. Jika tidak, fetch dari API.
     if (movies && movies.length > 0) {
-      // Use setTimeout to avoid synchronous setState in effect
-      const timer = setTimeout(() => {
-        setMovieData(movies.slice(0, limit));
-        setLoading(false);
-      }, 0);
-      
-      return () => clearTimeout(timer);
+      setMovieData(movies.slice(0, limit));
+      setLoading(false);
     } else {
-      // Also wrap fetchTrendingMovies in setTimeout to avoid synchronous setState
-      const timer = setTimeout(() => {
-        fetchTrendingMovies();
-      }, 0);
-      
-      return () => clearTimeout(timer);
+      fetchTrendingMovies();
     }
   }, [movies, limit, fetchTrendingMovies]);
 
-  const handleSelectMovie = (movie: Movie) => {
-    onSelectMovie?.(movie);
-  };
-
-  // Error state
+  // Error State UI
   if (error && !loading) {
     return (
-      <section className="w-full bg-primary-black py-12 px-4">
-        <div className="max-w-7xl mx-auto text-center">
-          <p className="text-red-500 mb-6">{error}</p>
-          <button 
+      <section className="w-full py-16 px-4 text-center">
+        <div className="max-w-md mx-auto bg-zinc-900/50 border border-red-500/20 rounded-2xl p-8 backdrop-blur-sm">
+          <h3 className="text-red-400 text-lg font-semibold mb-2">Unable to Load Movies</h3>
+          <p className="text-zinc-400 text-sm mb-6">{error}</p>
+          <button
             onClick={fetchTrendingMovies}
-            className="px-6 py-3 bg-[#00d2ff] hover:bg-[#00d2ff]/80 text-[#091020] font-semibold rounded-lg transition-all duration-200 hover:shadow-lg hover:shadow-[#00d2ff]/30"
+            className="px-6 py-2.5 bg-cyan-500 hover:bg-cyan-400 text-black font-semibold rounded-lg transition-all duration-200 shadow-lg shadow-cyan-500/20"
           >
-            Try Again
+            Retry
           </button>
         </div>
       </section>
@@ -274,35 +211,48 @@ const TrendingMovies: React.FC<TrendingMoviesProps> = ({
   }
 
   return (
-    <section className="w-full bg-transparent py-12 md:py-16 px-4 sm:px-6 lg:px-8 relative z-10">
+    <section className="w-full py-12 md:py-16 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
-        {/* Section Header */}
-        <div className="mb-8 md:mb-12">
-          <h2 className="text-2xl md:text-3xl font-bold text-text-primary mb-2">
-            Trending Movies
-          </h2>
-          <p className="text-text-secondary text-sm md:text-base">
-            Select up to 3 movies that you like
-          </p>
+        {/* Header dengan Counter */}
+        <div className="mb-8 md:mb-10 flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
+          <div>
+            <h2 className="text-2xl md:text-3xl font-bold text-white mb-1 tracking-tight">
+              Trending Movies
+            </h2>
+            <p className="text-zinc-400 text-sm md:text-base">
+              Pick up to 3 movies to personalize your recommendations.
+            </p>
+          </div>
+          {selectedMovies.length > 0 && (
+            <div className="text-sm text-zinc-300 bg-zinc-800/50 px-3 py-1.5 rounded-full border border-zinc-700/50 self-start sm:self-auto">
+              <span className="text-cyan-400 font-bold">{selectedMovies.length}</span>/3 Selected
+            </div>
+          )}
         </div>
 
         {/* Movies Grid */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 md:gap-6">
-          {loading ? (
-            Array.from({ length: limit }).map((_, index) => (
+        {loading ? (
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 md:gap-6">
+            {Array.from({ length: limit }).map((_, index) => (
               <MovieCardSkeleton key={`skeleton-${index}`} />
-            ))
-          ) : (
-            movieData.map((movie) => (
+            ))}
+          </div>
+        ) : movieData.length > 0 ? (
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 md:gap-6">
+            {movieData.map((movie) => (
               <MovieCard
                 key={movie.id}
                 movie={movie}
-                onSelect={handleSelectMovie}
+                onSelect={onSelectMovie}
                 isSelected={selectedMovies.some(m => m.id === movie.id)}
               />
-            ))
-          )}
-        </div>
+            ))}
+          </div>
+        ) : (
+          <div className="text-center py-12 text-zinc-500">
+            No trending movies found at the moment.
+          </div>
+        )}
       </div>
     </section>
   );

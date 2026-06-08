@@ -1,77 +1,48 @@
-import { NextResponse } from "next/server";
-
-type TmdbMovie = {
-  id: number;
-  title?: string;
-  name?: string;
-  overview?: string;
-  poster_path: string | null;
-  release_date?: string;
-  first_air_date?: string;
-  vote_average?: number;
-};
-
-type TmdbTrendingResponse = {
-  results?: TmdbMovie[];
-};
-
-// Use Cloudflare Workers API URL
-const CLOUDFLARE_API_URL = "https://tmdb-api-prod-v2.devaliimn.workers.dev";
-const TMDB_IMAGE_BASE_URL = "https://image.tmdb.org/t/p/w500";
-
-export const dynamic = "force-dynamic";
-export const revalidate = 3600;
+// app/api/trending-movies/route.ts
+import { NextResponse } from 'next/server';
 
 export async function GET() {
+  const apiKey = process.env.TMDB_API_KEY;
+
+  if (!apiKey) {
+    console.error('TMDB_API_KEY is not set in environment variables');
+    return NextResponse.json(
+      { message: 'API key not configured' },
+      { status: 500 }
+    );
+  }
+
   try {
-    // Call Cloudflare Workers API instead of direct TMDB
-    const response = await fetch(`${CLOUDFLARE_API_URL}/api/v1/recommendations/trending`, {
-      next: { revalidate },
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
+    const response = await fetch(
+      `https://api.themoviedb.org/3/trending/movie/week?api_key=${apiKey}&language=en-US`,
+      { next: { revalidate: 3600 } } // Cache data selama 1 jam (ISR)
+    );
 
     if (!response.ok) {
-      return NextResponse.json(
-        { message: "Failed to fetch trending movies from API." },
-        { status: response.status },
-      );
+      throw new Error(`TMDB API responded with status ${response.status}`);
     }
 
-    const data = (await response.json()) as TmdbTrendingResponse;
-    const movies = (data.results ?? [])
-      .filter((movie) => movie.poster_path)
-      .slice(0, 10)
-      .map((movie) => {
-        const date = movie.release_date ?? movie.first_air_date ?? "";
+    const data = await response.json();
 
-        return {
-          id: movie.id,
-          title: movie.title ?? movie.name ?? "Untitled",
-          overview: movie.overview ?? "",
-          posterUrl: `${TMDB_IMAGE_BASE_URL}${movie.poster_path}`,
-          releaseYear: date ? new Date(date).getFullYear() : null,
-          rating:
-            typeof movie.vote_average === "number"
-              ? Number(movie.vote_average.toFixed(1))
-              : null,
-        };
-      });
+    // 🌟 NORMALISASI DATA: Ubah format mentah TMDB ke format yang diharapkan frontend
+    const normalizedMovies = data.results
+      .filter((movie: any) => movie.poster_path) // Hanya ambil film yang punya poster
+      .map((movie: any) => ({
+        id: movie.id,
+        title: movie.title || movie.name || 'Untitled',
+        posterUrl: `https://image.tmdb.org/t/p/w500${movie.poster_path}`,
+        releaseYear: movie.release_date ? new Date(movie.release_date).getFullYear() : null,
+        rating: movie.vote_average ? Number(movie.vote_average.toFixed(1)) : null,
+        voteCount: movie.vote_count || 0,
+      }));
 
-    return NextResponse.json(
-      { movies },
-      {
-        headers: {
-          "Cache-Control": "public, s-maxage=3600, stale-while-revalidate=86400",
-        },
-      },
-    );
+    // Kembalikan dalam format { movies: [...] } sesuai ekspektasi komponen home
+    return NextResponse.json({ movies: normalizedMovies });
   } catch (error) {
-    console.error("API Error:", error);
+    console.error('Error fetching trending movies:', error);
     return NextResponse.json(
-      { message: "Unable to connect to movie API." },
-      { status: 502 },
+      { message: 'Failed to fetch trending movies' },
+      { status: 500 }
     );
   }
 }

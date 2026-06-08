@@ -78,7 +78,7 @@ export function TrendingMovies() {
     <section className="py-20 bg-transparent relative z-10">
       <div className="mx-auto max-w-7xl px-6">
         {/* Section Header */}
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-100px" }}
@@ -107,7 +107,8 @@ export function TrendingMovies() {
           <EmptyState />
         ) : (
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-6 sm:gap-8">
-            {movies.map((movie, index) => (
+            {/* ✨ TAMBAHKAN .slice(0, 10) sebelum .map() */}
+            {movies.slice(0, 10).map((movie, index) => (
               <MovieCard
                 key={movie.id}
                 id={movie.id}
