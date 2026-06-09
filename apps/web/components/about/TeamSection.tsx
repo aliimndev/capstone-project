@@ -62,7 +62,7 @@ const TeamSection: React.FC = () => {
       name: "Ali Imannudin",
       jobdesk: "Full Stack Engineer",
       photoUrl: "/team/ali.jpeg"
-    },
+    },q.
     {
       name: "Arinda Setyo Rini",
       jobdesk: "UI/UX Designer",
