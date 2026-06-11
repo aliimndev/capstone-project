@@ -15,7 +15,7 @@ const HeroSection = () => {
       >
         {/* Subtitle */}
         <p className="text-text-secondary text-lg mb-4 font-medium">
-          About CineMatch
+          About WeMovies AI
         </p>
 
         {/* Main Heading */}

@@ -1,40 +1,60 @@
 // components/recommend/SearchMovies.tsx
 'use client';
 
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import Image from 'next/image';
 import { searchMovies } from './movieApi';
 import { mapMoviesForDisplay } from './mapMovie';
 import type { DisplayMovie } from './movieTypes';
+import type { RatedMovie } from '@/features/recommendation/types';
 
 export type { DisplayMovie as Movie } from './movieTypes';
 
+const SUGGESTED_SEARCHES = [
+  'Fight Club',
+  'Inception',
+  'The Matrix',
+  'The Godfather',
+  'Pulp Fiction',
+  'Interstellar',
+];
+
 interface SearchMoviesProps {
   onMovieClick?: (movie: DisplayMovie) => void;
+  ratedMovies?: RatedMovie[];
+  maxRatedMovies?: number;
 }
 
-const SearchMovies: React.FC<SearchMoviesProps> = ({ onMovieClick }) => {
+const SearchMovies: React.FC<SearchMoviesProps> = ({
+  onMovieClick,
+  ratedMovies = [],
+  maxRatedMovies = 3,
+}) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState<DisplayMovie[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [showResults, setShowResults] = useState(false);
-  const searchRef = useRef<HTMLDivElement>(null);
+  const [hasSearched, setHasSearched] = useState(false);
+  const [searchError, setSearchError] = useState<string | null>(null);
 
   const fetchSearchResults = useCallback(async (query: string) => {
     try {
       setIsLoading(true);
+      setSearchError(null);
 
       const moviesFromApi = await searchMovies(query);
-      const formattedMovies = mapMoviesForDisplay(moviesFromApi.slice(0, 5), {
-        posterSize: 'search',
+      const formattedMovies = mapMoviesForDisplay(moviesFromApi.slice(0, 12), {
+        posterSize: 'card',
       });
 
       setSearchResults(formattedMovies);
-      setShowResults(true);
+      setHasSearched(true);
     } catch (error) {
       console.error('Search error:', error);
       setSearchResults([]);
-      setShowResults(true);
+      setHasSearched(true);
+      setSearchError(
+        error instanceof Error ? error.message : 'Gagal mencari film. Coba lagi.'
+      );
     } finally {
       setIsLoading(false);
     }
@@ -46,44 +66,41 @@ const SearchMovies: React.FC<SearchMoviesProps> = ({ onMovieClick }) => {
         fetchSearchResults(searchQuery);
       } else {
         setSearchResults([]);
-        setShowResults(false);
+        setHasSearched(false);
+        setSearchError(null);
       }
     }, 500);
 
     return () => clearTimeout(timer);
   }, [searchQuery, fetchSearchResults]);
 
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (searchRef.current && !searchRef.current.contains(event.target as Node)) {
-        setShowResults(false);
-      }
-    };
-
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
-
   const handleMovieSelect = (movie: DisplayMovie) => {
     onMovieClick?.(movie);
-    setSearchQuery('');
-    setShowResults(false);
   };
 
+  const handleSuggestionClick = (suggestion: string) => {
+    setSearchQuery(suggestion);
+  };
+
+  const isRated = (movieId: number) =>
+    ratedMovies.some((m) => m.tmdbId === movieId || m.id === movieId);
+
   return (
-    <section className="w-full bg-transparent py-12 md:py-16 px-4 sm:px-6 lg:px-8 relative z-10">
-      <div className="max-w-3xl mx-auto">
-        <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-center text-white mb-4">
-          Search Movies
-        </h1>
+    <section className="w-full bg-transparent py-10 md:py-14 px-4 sm:px-6 lg:px-8 relative z-10">
+      <div className="max-w-5xl mx-auto">
+        <div className="text-center mb-8 md:mb-10">
+          <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-3">
+            Cari & Rate Film
+          </h1>
+          <p className="text-text-secondary text-base md:text-lg max-w-2xl mx-auto">
+            Cari film di katalog model, pilih reaksimu, dan rate tepat {maxRatedMovies} film
+            untuk mendapat rekomendasi personal.
+          </p>
+        </div>
 
-        <p className="text-text-secondary text-center text-base md:text-lg mb-8">
-          Search or explore trending movies, then rate exactly 3 to get recommendations.
-        </p>
-
-        <div ref={searchRef} className="relative">
-          <div className="relative">
-            <div className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400">
+        <div className="mb-6">
+          <div className="relative max-w-2xl mx-auto">
+            <div className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 className="h-5 w-5"
@@ -104,89 +121,120 @@ const SearchMovies: React.FC<SearchMoviesProps> = ({ onMovieClick }) => {
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              onFocus={() => searchResults.length > 0 && setShowResults(true)}
-              placeholder="Search for a movie..."
-              className="w-full pl-12 pr-4 py-4 bg-[#091020]/50 backdrop-blur-sm border border-white/10 rounded-lg text-text-primary placeholder-text-muted focus:outline-none focus:border-[#00d2ff] focus:ring-2 focus:ring-[#00d2ff]/20 transition-all duration-200 shadow-[0_0_20px_rgba(0,210,255,0.05)]"
+              placeholder="Ketik judul film, mis. Fight Club..."
+              className="w-full pl-12 pr-4 py-4 bg-[#091020]/50 backdrop-blur-sm border border-white/10 rounded-xl text-text-primary placeholder-text-muted focus:outline-none focus:border-[#00d2ff] focus:ring-2 focus:ring-[#00d2ff]/20 transition-all duration-200 shadow-[0_0_20px_rgba(0,210,255,0.05)]"
             />
           </div>
 
-          {showResults && isLoading && (
-            <div className="absolute top-full left-0 right-0 mt-2 bg-[#091020]/90 backdrop-blur-md border border-white/10 rounded-lg p-4 text-center text-text-secondary z-50">
-              Searching...
-            </div>
-          )}
+          <div className="flex flex-wrap justify-center gap-2 mt-4">
+            {SUGGESTED_SEARCHES.map((suggestion) => (
+              <button
+                key={suggestion}
+                type="button"
+                onClick={() => handleSuggestionClick(suggestion)}
+                className="px-3 py-1.5 text-sm rounded-full border border-white/10 bg-white/5 text-text-secondary hover:text-white hover:border-[#00d2ff]/40 hover:bg-[#00d2ff]/10 transition-colors"
+              >
+                {suggestion}
+              </button>
+            ))}
+          </div>
+        </div>
 
-          {showResults && !isLoading && searchResults.length > 0 && (
-            <div className="absolute top-full left-0 right-0 mt-2 bg-[#091020]/90 backdrop-blur-md border border-white/10 rounded-lg overflow-hidden shadow-[0_0_30px_rgba(0,210,255,0.1)] z-50">
-              <div className="max-h-96 overflow-y-auto">
-                {searchResults.map((movie) => (
+        {!hasSearched && searchQuery.trim().length < 2 && (
+          <div className="max-w-2xl mx-auto text-center rounded-xl border border-dashed border-white/10 bg-[#091020]/30 px-6 py-10">
+            <p className="text-text-secondary text-sm md:text-base mb-2">
+              Mulai dengan mengetik judul film di atas
+            </p>
+            <p className="text-text-muted text-xs md:text-sm">
+              Atau klik salah satu saran populer untuk langsung mencari
+            </p>
+          </div>
+        )}
+
+        {isLoading && (
+          <div className="text-center text-text-secondary py-12">Mencari film...</div>
+        )}
+
+        {searchError && !isLoading && (
+          <div className="max-w-xl mx-auto text-center rounded-xl border border-red-500/20 bg-red-500/5 px-6 py-8 text-red-300">
+            {searchError}
+          </div>
+        )}
+
+        {!isLoading && hasSearched && searchResults.length > 0 && (
+          <div>
+            <p className="text-text-secondary text-sm mb-4 text-center">
+              {searchResults.length} film ditemukan di katalog model — klik untuk rate
+            </p>
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 md:gap-5">
+              {searchResults.map((movie) => {
+                const rated = isRated(movie.id);
+
+                return (
                   <button
                     key={movie.id}
+                    type="button"
                     onClick={() => handleMovieSelect(movie)}
-                    className="w-full flex items-center gap-4 p-3 hover:bg-[#00d2ff]/10 hover:text-white transition-colors border-b border-white/10 last:border-b-0"
+                    className={`group text-left rounded-xl overflow-hidden border transition-all duration-300 ${
+                      rated
+                        ? 'border-[#00d2ff] ring-2 ring-[#00d2ff]/40 shadow-lg shadow-[#00d2ff]/10'
+                        : 'border-white/10 hover:border-[#00d2ff]/40 hover:shadow-xl hover:shadow-black/30'
+                    }`}
                   >
-                    <div className="w-12 h-16 flex-shrink-0 overflow-hidden rounded relative bg-secondary-medium">
+                    <div className="relative aspect-[2/3] bg-secondary-medium">
                       {movie.posterUrl ? (
                         <Image
                           src={movie.posterUrl}
                           alt={movie.title}
                           fill
-                          className="object-cover"
-                          sizes="48px"
+                          className="object-cover transition-transform duration-500 group-hover:scale-105"
+                          sizes="(max-width: 640px) 50vw, 25vw"
                         />
                       ) : (
-                        <div className="absolute inset-0 flex items-center justify-center text-[8px] text-text-secondary text-center px-1">
+                        <div className="absolute inset-0 flex items-center justify-center text-text-secondary text-xs px-2 text-center">
                           No poster
+                        </div>
+                      )}
+
+                      {rated && (
+                        <div className="absolute top-2 right-2 z-10 bg-[#00d2ff] text-black text-[10px] font-bold px-2 py-1 rounded-full">
+                          Rated
                         </div>
                       )}
                     </div>
 
-                    <div className="flex-1 text-left">
-                      <h3 className="text-text-primary font-semibold text-sm md:text-base">
+                    <div className="p-3 bg-[#091020]/80 border-t border-white/10">
+                      <h3 className="text-white font-semibold text-sm line-clamp-2 group-hover:text-[#00d2ff] transition-colors">
                         {movie.title}
                       </h3>
-                      <div className="flex items-center gap-2 text-text-secondary text-sm">
+                      <div className="flex items-center justify-between text-[11px] text-text-secondary mt-1">
                         {movie.year && <span>{movie.year}</span>}
                         {movie.rating && movie.rating > 0 && (
-                          <span>
-                            {movie.rating.toFixed(1)}
-                            {movie.votes ? ` (${movie.votes.toLocaleString()})` : ''}
-                          </span>
+                          <span>{movie.rating.toFixed(1)}</span>
                         )}
                       </div>
                     </div>
-
-                    <div className="text-[#00d2ff]">
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        className="h-5 w-5"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                        strokeWidth={2}
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          d="M12 4.5v15m7.5-7.5h-15"
-                        />
-                      </svg>
-                    </div>
                   </button>
-                ))}
-              </div>
+                );
+              })}
             </div>
-          )}
+          </div>
+        )}
 
-          {showResults && searchQuery.trim().length >= 2 && searchResults.length === 0 && !isLoading && (
-            <div className="absolute top-full left-0 right-0 mt-2 bg-[#091020]/90 backdrop-blur-md border border-white/10 rounded-lg p-4 text-center text-text-secondary z-50">
-              No movies found
-            </div>
-          )}
-        </div>
+        {!isLoading && hasSearched && searchQuery.trim().length >= 2 && searchResults.length === 0 && !searchError && (
+          <div className="max-w-xl mx-auto text-center rounded-xl border border-white/10 bg-[#091020]/30 px-6 py-10">
+            <p className="text-text-secondary">
+              Tidak ada film &quot;{searchQuery}&quot; di katalog model.
+            </p>
+            <p className="text-text-muted text-sm mt-2">
+              Coba judul lain atau gunakan saran di atas.
+            </p>
+          </div>
+        )}
       </div>
     </section>
   );
 };
 
 export default SearchMovies;
+

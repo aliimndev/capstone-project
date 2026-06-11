@@ -8,8 +8,9 @@ interface SubmitButtonProps {
 export function SubmitButton({ isSubmitting, submitStatus }: SubmitButtonProps) {
   if (submitStatus === 'success') {
     return (
-      <div className="p-4 bg-emerald-500/10 border border-emerald-500/20 rounded-lg text-center">
-        <p className="text-emerald-400 font-medium flex items-center justify-center gap-2">
+      // Diubah dari emerald (hijau) menjadi blue (biru)
+      <div className="p-4 bg-blue-500/10 border border-blue-500/20 rounded-lg text-center">
+        <p className="text-blue-400 font-medium flex items-center justify-center gap-2">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             className="h-5 w-5"
@@ -31,8 +32,8 @@ export function SubmitButton({ isSubmitting, submitStatus }: SubmitButtonProps) 
   if (submitStatus === 'error') {
     return (
       <div className="space-y-3">
-        <div className="p-4 bg-red-500/10 border border-red-500/20 rounded-lg text-center">
-          <p className="text-red-400 font-medium">
+        <div className="p-4 bg-blue-500/10 border border-blue-500/20 rounded-lg text-center">
+          <p className="text-blue-400 font-medium">
             Failed to send message. Please try again.
           </p>
         </div>

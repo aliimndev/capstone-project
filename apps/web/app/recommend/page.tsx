@@ -7,7 +7,6 @@ import RecommendedMovies from '@/components/recommend/RecommendedMovies';
 import RatingPanel from '@/components/recommend/RatingPanel';
 import SearchMovies from '@/components/recommend/SearchMovies';
 import SelectionSummary from '@/components/recommend/SelectionSummary';
-import TrendingMovies from '@/components/recommend/TrendingMovies';
 import { SiteFooter } from '@/components/layout/SiteFooter';
 import { SiteHeader } from '@/components/layout/SiteHeader';
 import { fetchRecommendations } from '@/features/recommendation/api';
@@ -97,7 +96,17 @@ export default function RecommendPage() {
           console.log('STATE_COUNT', result.movies.length);
         }
         setRecommended(result.movies);
-        setRecommendMessage(result.message);
+        if (result.usedModelFallback) {
+          setRecommendMessage(
+            'Film pilihan belum ada di katalog model. Coba cari judul klasik seperti Fight Club, Inception, atau The Matrix.'
+          );
+        } else if (result.unmappedTmdbIds?.length) {
+          setRecommendMessage(
+            `${result.message} Beberapa film tidak dikenali model dan diabaikan.`
+          );
+        } else {
+          setRecommendMessage(result.message);
+        }
       } catch (e) {
         setRecommendError(e instanceof Error ? e.message : 'Failed to get recommendations');
         setRecommended([]);
@@ -115,10 +124,10 @@ export default function RecommendPage() {
       <SiteHeader />
 
       <main className="flex-1 pb-8">
-        <SearchMovies onMovieClick={handleMovieClick} />
-        <TrendingMovies
+        <SearchMovies
           onMovieClick={handleMovieClick}
           ratedMovies={ratedMovies}
+          maxRatedMovies={MAX_RATED_MOVIES}
         />
       </main>
 

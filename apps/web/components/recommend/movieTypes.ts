@@ -40,8 +40,19 @@ export interface RecommendationApiMovie {
   source?: string | null;
 }
 
+export interface RecommendationApiMeta {
+  inference_count?: number;
+  fallback_count?: number;
+  total_count?: number;
+  inference_time_ms?: number;
+  total_time_ms?: number;
+  used_model_fallback?: boolean;
+  unmapped_tmdb_ids?: number[] | null;
+}
+
 export interface RecommendationApiResponse {
   status: string;
   message: string;
   movies: RecommendationApiMovie[];
+  meta?: RecommendationApiMeta;
 }

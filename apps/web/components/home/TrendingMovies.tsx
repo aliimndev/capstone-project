@@ -6,6 +6,7 @@ import { MovieCard } from "./MovieCard";
 import { MovieSkeleton } from "./MovieSkeleton";
 import { ErrorState } from "./ErrorState";
 import { EmptyState } from "./EmptyState";
+import { MarqueeRow } from "./MarqueeRow";
 
 interface Movie {
   id: number;
@@ -21,18 +22,11 @@ interface TrendingMoviesResponse {
   message?: string;
 }
 
-/**
- * TrendingMovies component displays a grid of trending movies from TMDB
- * Features: lazy loading, error handling, rank badges, ratings, and hover effects
- */
 export function TrendingMovies() {
   const [movies, setMovies] = useState<Movie[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  /**
-   * Fetch trending movies from API endpoint
-   */
   const loadTrendingMovies = useCallback(async () => {
     try {
       setIsLoading(true);
@@ -55,13 +49,9 @@ export function TrendingMovies() {
     }
   }, []);
 
-  /**
-   * Load movies on component mount
-   */
   useEffect(() => {
     let isActive = true;
 
-    // Use setTimeout to avoid synchronous setState in effect
     const timer = setTimeout(() => {
       if (isActive) {
         loadTrendingMovies();
@@ -74,10 +64,12 @@ export function TrendingMovies() {
     };
   }, [loadTrendingMovies]);
 
+  const firstRowMovies = movies.slice(0, 5);
+  const secondRowMovies = movies.slice(5, 10);
+
   return (
     <section className="py-20 bg-transparent relative z-10">
       <div className="mx-auto max-w-7xl px-6">
-        {/* Section Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -94,7 +86,6 @@ export function TrendingMovies() {
           </p>
         </motion.div>
 
-        {/* Movies Grid or Loading State */}
         {isLoading ? (
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-6 sm:gap-8">
             {Array.from({ length: 10 }).map((_, index) => (
@@ -106,20 +97,42 @@ export function TrendingMovies() {
         ) : movies.length === 0 ? (
           <EmptyState />
         ) : (
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-6 sm:gap-8">
-            {/* ✨ TAMBAHKAN .slice(0, 10) sebelum .map() */}
-            {movies.slice(0, 10).map((movie, index) => (
-              <MovieCard
-                key={movie.id}
-                id={movie.id}
-                title={movie.title}
-                posterUrl={movie.posterUrl}
-                rating={movie.rating}
-                releaseYear={movie.releaseYear}
-                voteCount={movie.voteCount}
-                index={index}
-              />
-            ))}
+          <div className="space-y-6 sm:space-y-8">
+            {/* First row - moves to the right */}
+            <MarqueeRow direction="right" speed={45}>
+              {firstRowMovies.map((movie, index) => (
+                <div key={movie.id} className="w-[200px] sm:w-[240px] flex-shrink-0">
+                  <MovieCard
+                    id={movie.id}
+                    title={movie.title}
+                    posterUrl={movie.posterUrl}
+                    rating={movie.rating}
+                    releaseYear={movie.releaseYear}
+                    voteCount={movie.voteCount}
+                    index={index}
+                  />
+                </div>
+              ))}
+            </MarqueeRow>
+
+            {/* Second row - moves to the left */}
+            {secondRowMovies.length > 0 && (
+              <MarqueeRow direction="left" speed={50}>
+                {secondRowMovies.map((movie, index) => (
+                  <div key={movie.id} className="w-[200px] sm:w-[240px] flex-shrink-0">
+                    <MovieCard
+                      id={movie.id}
+                      title={movie.title}
+                      posterUrl={movie.posterUrl}
+                      rating={movie.rating}
+                      releaseYear={movie.releaseYear}
+                      voteCount={movie.voteCount}
+                      index={index + 5}
+                    />
+                  </div>
+                ))}
+              </MarqueeRow>
+            )}
           </div>
         )}
       </div>

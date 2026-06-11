@@ -3,7 +3,9 @@ import type { MoviesApiResponse, SearchMoviesApiResponse, TmdbMovie } from './mo
 const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:8000';
 
 export async function fetchTrendingMovies(): Promise<TmdbMovie[]> {
-  const response = await fetch(`${API_BASE}/api/v1/recommendations/trending`);
+  const response = await fetch(
+    `${API_BASE}/api/v1/recommendations/trending?catalog_only=true&limit=20`
+  );
 
   if (!response.ok) {
     throw new Error(`Failed to fetch trending movies (${response.status})`);
@@ -20,7 +22,7 @@ export async function fetchTrendingMovies(): Promise<TmdbMovie[]> {
 
 export async function searchMovies(query: string): Promise<TmdbMovie[]> {
   const response = await fetch(
-    `${API_BASE}/api/v1/recommendations/search?q=${encodeURIComponent(query)}`
+    `${API_BASE}/api/v1/recommendations/search?q=${encodeURIComponent(query)}&catalog_only=true`
   );
 
   if (!response.ok) {
