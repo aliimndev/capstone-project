@@ -79,9 +79,9 @@ const TeamSection: React.FC = () => {
       photoUrl: "/team/shandy.jpg"
     },
     {
-      name: "Dian Kurnia",
+      name: "Rizky Dwi Febriansyah",
       jobdesk: "QA Engineer",
-      photoUrl: "/team/dian.jpg"
+      photoUrl: "/team/dwi.png"
     },
   ];
 
