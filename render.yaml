@@ -1,0 +1,16 @@
+services:
+  - type: web
+    name: wemovies-api
+    runtime: docker
+    plan: starter
+    region: singapore
+    dockerfilePath: ./apps/api/Dockerfile
+    dockerContext: ./apps/api
+    healthCheckPath: /health
+    envVars:
+      - key: TMDB_API_KEY
+        sync: false
+      - key: PORT
+        value: "8000"
+      - key: ALLOWED_ORIGINS
+        value: "https://wemovies.vercel.app"

@@ -41,13 +41,16 @@ class TMDBService:
             print(f"Error getting movie details: {e}")
             return None
     
-    def get_trending_movies(self, time_window: str = "week") -> Optional[Dict[str, Any]]:
+    def get_trending_movies(
+        self, time_window: str = "week", page: int = 1
+    ) -> Optional[Dict[str, Any]]:
         """Get trending movies"""
         try:
             endpoint = f"{self.base_url}/trending/movie/{time_window}"
             params = {
                 "api_key": self.api_key,
-                "language": "en-US"
+                "language": "en-US",
+                "page": page,
             }
             response = requests.get(endpoint, params=params, timeout=10)
             response.raise_for_status()

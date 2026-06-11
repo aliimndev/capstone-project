@@ -3,54 +3,87 @@
 
 import { useEffect, useMemo, useState } from 'react';
 
-import RecommendedMovies from "@/components/recommend/RecommendedMovies";
-import type { RecommendedMovie } from "@/components/recommend/RecommendedMovies";
+import RecommendedMovies from '@/components/recommend/RecommendedMovies';
+import RatingPanel from '@/components/recommend/RatingPanel';
+import SearchMovies from '@/components/recommend/SearchMovies';
+import SelectionSummary from '@/components/recommend/SelectionSummary';
+import TrendingMovies from '@/components/recommend/TrendingMovies';
+import { SiteFooter } from '@/components/layout/SiteFooter';
+import { SiteHeader } from '@/components/layout/SiteHeader';
+import { fetchRecommendations } from '@/features/recommendation/api';
+import type { RatedMovie, ReactionKey } from '@/features/recommendation/types';
+import type { DisplayMovie } from '@/components/recommend/movieTypes';
 
-
-import { SiteFooter } from "@/components/layout/SiteFooter";
-import SearchMovies from "@/components/recommend/SearchMovies";
-import SelectionSummary, { type Movie } from "@/components/recommend/SelectionSummary";
-import TrendingMovies from "@/components/recommend/TrendingMovies";
-import { SiteHeader } from "@/components/layout/SiteHeader";
+const MAX_RATED_MOVIES = 3;
 
 export default function RecommendPage() {
-  const [selectedMovies, setSelectedMovies] = useState<Movie[]>([]);
-  const [recommended, setRecommended] = useState<RecommendedMovie[]>([]);
-
+  const [ratedMovies, setRatedMovies] = useState<RatedMovie[]>([]);
+  const [pendingMovie, setPendingMovie] = useState<DisplayMovie | null>(null);
+  const [recommended, setRecommended] = useState<DisplayMovie[]>([]);
+  const [recommendMessage, setRecommendMessage] = useState<string | null>(null);
   const [recommendLoading, setRecommendLoading] = useState(false);
   const [recommendError, setRecommendError] = useState<string | null>(null);
 
+  const handleMovieClick = (movie: DisplayMovie) => {
+    const existing = ratedMovies.find((m) => m.tmdbId === movie.id);
+    if (existing) {
+      setPendingMovie(movie);
+      return;
+    }
 
+    if (ratedMovies.length >= MAX_RATED_MOVIES) {
+      alert('You have already rated 3 movies. Remove one to rate another.');
+      return;
+    }
 
-  const handleSelectMovie = (movie: Movie) => {
-    setSelectedMovies(prev => {
-      const isAlreadySelected = prev.find(m => m.id === movie.id);
-      
-      if (isAlreadySelected) {
-        return prev.filter(m => m.id !== movie.id);
+    setPendingMovie(movie);
+  };
+
+  const handleRate = (reaction: ReactionKey) => {
+    if (!pendingMovie) return;
+
+    setRatedMovies((prev) => {
+      const existingIndex = prev.findIndex((m) => m.tmdbId === pendingMovie.id);
+      const rated: RatedMovie = {
+        id: pendingMovie.id,
+        tmdbId: pendingMovie.id,
+        title: pendingMovie.title,
+        posterUrl: pendingMovie.posterUrl,
+        year: pendingMovie.year,
+        rating: pendingMovie.rating,
+        reaction,
+      };
+
+      if (existingIndex >= 0) {
+        const next = [...prev];
+        next[existingIndex] = rated;
+        return next;
       }
-      
-      if (prev.length >= 3) {
-        alert('You can only select up to 3 movies');
-        return prev;
-      }
-      
-      return [...prev, movie];
+
+      if (prev.length >= MAX_RATED_MOVIES) return prev;
+      return [...prev, rated];
     });
+
+    setPendingMovie(null);
   };
 
   const handleRemoveMovie = (movieId: string | number) => {
-    setSelectedMovies(prev => prev.filter(m => m.id !== movieId));
+    setRatedMovies((prev) => prev.filter((m) => m.tmdbId !== movieId && m.id !== movieId));
+    setRecommended([]);
+    setRecommendMessage(null);
+    setRecommendError(null);
   };
 
-  const selectedIds = useMemo(() => {
-    return selectedMovies.map((m) => Number(m.id)).filter((x) => !Number.isNaN(x));
-  }, [selectedMovies]);
+  const ratedPayloadKey = useMemo(
+    () => JSON.stringify(ratedMovies.map((m) => ({ tmdbId: m.tmdbId, reaction: m.reaction }))),
+    [ratedMovies]
+  );
 
   useEffect(() => {
     const run = async () => {
-      if (selectedIds.length !== 3) {
+      if (ratedMovies.length !== MAX_RATED_MOVIES) {
         setRecommended([]);
+        setRecommendMessage(null);
         setRecommendError(null);
         setRecommendLoading(false);
         return;
@@ -59,63 +92,59 @@ export default function RecommendPage() {
       try {
         setRecommendLoading(true);
         setRecommendError(null);
-
-        const res = await fetch('http://localhost:8000/api/v1/recommendations/', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ movie_ids: selectedIds }),
-        });
-
-        if (!res.ok) {
-          const text = await res.text();
-          throw new Error(text || `Request failed: ${res.status}`);
+        const result = await fetchRecommendations(ratedMovies);
+        if (process.env.NODE_ENV === 'development') {
+          console.log('STATE_COUNT', result.movies.length);
         }
-
-        const data = await res.json();
-        // backend returns { movies: MovieBase[] }
-        setRecommended(data?.movies || []);
+        setRecommended(result.movies);
+        setRecommendMessage(result.message);
       } catch (e) {
         setRecommendError(e instanceof Error ? e.message : 'Failed to get recommendations');
         setRecommended([]);
+        setRecommendMessage(null);
       } finally {
         setRecommendLoading(false);
       }
     };
 
     run();
-  }, [selectedIds]);
+  }, [ratedPayloadKey, ratedMovies]);
 
   return (
-
     <div className="min-h-screen bg-transparent text-text-primary flex flex-col relative z-10">
       <SiteHeader />
-      
-      {/* Main Content */}
+
       <main className="flex-1 pb-8">
-        <SearchMovies onSelectMovie={handleSelectMovie} />
-        <TrendingMovies 
-          onSelectMovie={handleSelectMovie}
-          selectedMovies={selectedMovies}
+        <SearchMovies onMovieClick={handleMovieClick} />
+        <TrendingMovies
+          onMovieClick={handleMovieClick}
+          ratedMovies={ratedMovies}
         />
       </main>
 
-      {/* Selection Summary - Tidak fixed, tapi di atas Footer */}
       <div className="bg-[#091020]/80 backdrop-blur-md z-50">
         <SelectionSummary
-          selectedMovies={selectedMovies}
+          ratedMovies={ratedMovies}
           onRemoveMovie={handleRemoveMovie}
-          maxSelection={3}
+          maxSelection={MAX_RATED_MOVIES}
         />
       </div>
+
+      {pendingMovie && (
+        <RatingPanel
+          movie={pendingMovie}
+          onRate={handleRate}
+          onCancel={() => setPendingMovie(null)}
+        />
+      )}
 
       <RecommendedMovies
         loading={recommendLoading}
         error={recommendError}
         movies={recommended}
+        message={recommendMessage}
       />
 
-
-      {/* Footer */}
       <SiteFooter />
     </div>
   );
