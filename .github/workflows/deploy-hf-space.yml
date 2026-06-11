@@ -1,0 +1,60 @@
+name: Deploy API to Hugging Face Spaces
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'apps/api/**'
+      - 'hf-space/**'
+      - '.github/workflows/deploy-hf-space.yml'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    if: github.repository == 'aliimndev/capstone-project'
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Prepare HF Space files
+        run: |
+          set -euo pipefail
+          rm -rf /tmp/wemovies-api-space
+          mkdir -p /tmp/wemovies-api-space
+          cp hf-space/Dockerfile hf-space/README.md /tmp/wemovies-api-space/
+          cp apps/api/requirements.txt /tmp/wemovies-api-space/
+          cp -r apps/api/app apps/api/core /tmp/wemovies-api-space/
+
+      - name: Push to Hugging Face Space
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: |
+          set -euo pipefail
+          if [ -z "${HF_TOKEN:-}" ]; then
+            echo "HF_TOKEN secret is not configured. Skipping HF Space deploy."
+            exit 0
+          fi
+
+          pip install --quiet huggingface_hub
+
+          python <<'PY'
+          import os
+          from huggingface_hub import HfApi
+
+          api = HfApi(token=os.environ["HF_TOKEN"])
+          repo_id = "aliimndev/wemovies-api"
+          try:
+              api.create_repo(repo_id=repo_id, repo_type="space", space_sdk="docker", exist_ok=True)
+          except Exception as exc:
+              print(f"create_repo: {exc}")
+          api.upload_folder(
+              folder_path="/tmp/wemovies-api-space",
+              repo_id=repo_id,
+              repo_type="space",
+              commit_message="Deploy WeMovies API from GitHub Actions",
+          )
+          print(f"Deployed to https://huggingface.co/spaces/{repo_id}")
+          PY
