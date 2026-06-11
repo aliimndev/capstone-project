@@ -11,11 +11,9 @@ interface FeatureProps {
 }
 
 const Feature: React.FC<FeatureProps> = ({ title, description, align = 'left' }) => {
-  // Untuk align right, balik urutan: teks dulu, baru garis
   if (align === 'right') {
     return (
       <div className="flex gap-6 justify-end">
-        {/* Content - DI KIRI GARIS */}
         <div className="flex-1 max-w-2xl text-right">
           <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
             {title}
@@ -25,19 +23,15 @@ const Feature: React.FC<FeatureProps> = ({ title, description, align = 'left' })
           </p>
         </div>
         
-        {/* Accent Line (Cyan Vertical Line) - DI KANAN */}
         <div className="w-1 h-full min-h-[150px] bg-[#00d2ff] flex-shrink-0 shadow-[0_0_20px_rgba(0,210,255,0.5)]" />
       </div>
     );
   }
 
-  // Untuk align left: garis dulu, baru teks
   return (
     <div className="flex gap-6 justify-start">
-      {/* Accent Line (Cyan Vertical Line) - DI KIRI */}
       <div className="w-1 h-full min-h-[150px] bg-[#00d2ff] flex-shrink-0 shadow-[0_0_20px_rgba(0,210,255,0.5)]" />
       
-      {/* Content - DI KANAN GARIS */}
       <div className="flex-1 max-w-2xl text-left">
         <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
           {title}

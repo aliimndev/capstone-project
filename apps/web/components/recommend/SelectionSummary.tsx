@@ -27,100 +27,112 @@ const SelectionSummary: React.FC<SelectionSummaryProps> = ({
   });
 
   return (
-    <section className="w-full bg-transparent py-6 px-4 sm:px-6 lg:px-8 relative z-10">
-      <div className="max-w-6xl mx-auto">
-        <div className="bg-[#091020]/50 backdrop-blur-sm border border-white/10 rounded-xl p-5 md:p-7 shadow-[0_0_30px_rgba(0,210,255,0.05)]">
-          <div className="flex flex-col gap-6">
-            <div>
-              <span className="text-[#00d2ff] font-bold text-xl">
-                {ratedCount}/{maxSelection}
-              </span>
-              <span className="text-white font-semibold ml-2">rated</span>
-              <p className="text-gray-500 text-sm mt-1">
-                Rate exactly {maxSelection} movies to get personalized recommendations
-              </p>
-            </div>
+    <section className="py-12 bg-transparent relative z-10">
+      <div className="mx-auto max-w-7xl px-6">
+        <div className="mb-8">
+          <div className="flex items-baseline gap-3 mb-2">
+            <h2 className="text-2xl md:text-3xl font-bold text-white">
+              Your Selection
+            </h2>
+            <span className="text-[#00d2ff] font-semibold text-lg">
+              {ratedCount}/{maxSelection}
+            </span>
+          </div>
+          <p className="text-gray-400 text-sm md:text-base">
+            Rate exactly {maxSelection} movies to get personalized recommendations
+          </p>
+        </div>
 
-            <div className="flex flex-wrap gap-4 md:gap-5">
-              {slots.map((movie, index) => (
-                <div
-                  key={index}
-                  className={`relative aspect-[2/3] rounded-xl overflow-hidden transition-all duration-300
-                    ${movie
-                      ? 'ring-2 ring-[#00d2ff] shadow-lg shadow-[#00d2ff]/20'
-                      : 'ring-2 ring-white/20 ring-dashed bg-[#091020]/50 backdrop-blur-sm'
-                    }`}
-                >
-                  <div className="w-28 md:w-36 h-full">
-                    {movie ? (
-                      <>
-                        <Image
-                          src={movie.posterUrl}
-                          alt={movie.title}
-                          fill
-                          className="object-cover"
-                          sizes="(max-width: 768px) 112px, 144px"
-                        />
+        <div className="flex flex-wrap gap-6 md:gap-8">
+          {slots.map((movie, index) => (
+            <div
+              key={index}
+              className="group relative aspect-[2/3] w-32 md:w-40 cursor-pointer"
+            >
+              {movie ? (
+                <>
+                  <div className="relative w-full h-full rounded-xl overflow-hidden bg-gray-900">
+                    <Image
+                      src={movie.posterUrl}
+                      alt={movie.title}
+                      fill
+                      className="object-cover transition-transform duration-300 group-hover:scale-105"
+                      sizes="(max-width: 768px) 128px, 160px"
+                    />
 
-                        <div className="absolute bottom-0 inset-x-0 bg-black/80 px-2 py-1.5">
-                          <p className="text-[10px] text-[#00d2ff] font-semibold truncate">
-                            {reactionLabel(movie.reaction)}
-                          </p>
-                        </div>
+                    <div className="absolute bottom-0 inset-x-0 bg-gradient-to-t from-black/90 to-transparent p-3">
+                      <p className="text-xs text-[#00d2ff] font-semibold truncate">
+                        {reactionLabel(movie.reaction)}
+                      </p>
+                    </div>
 
-                        <div className="absolute inset-0 bg-black/70 opacity-0 hover:opacity-100 transition-opacity duration-200 flex items-center justify-center z-10">
-                          <button
-                            onClick={() => onRemoveMovie(movie.id)}
-                            className="p-2 bg-red-600 hover:bg-red-700 rounded-full transition-colors shadow-lg"
-                            title={`Remove ${movie.title}`}
-                          >
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              className="h-5 w-5 text-white"
-                              fill="none"
-                              viewBox="0 0 24 24"
-                              stroke="currentColor"
-                              strokeWidth={2}
-                            >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                d="M6 18L18 6M6 6l12 12"
-                              />
-                            </svg>
-                          </button>
-                        </div>
-                      </>
-                    ) : (
-                      <div className="w-full h-full flex items-center justify-center bg-[#1A1A1A]">
+                    <div className="absolute inset-0 bg-black/70 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-center">
+                      <button
+                        onClick={() => onRemoveMovie(movie.id)}
+                        className="p-2.5 bg-red-500 hover:bg-red-600 rounded-full transition-colors shadow-lg"
+                        title={`Remove ${movie.title}`}
+                      >
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
-                          className="h-8 w-8 text-gray-600"
+                          className="h-5 w-5 text-white"
                           fill="none"
                           viewBox="0 0 24 24"
                           stroke="currentColor"
-                          strokeWidth={1.5}
+                          strokeWidth={2.5}
                         >
                           <path
                             strokeLinecap="round"
                             strokeLinejoin="round"
-                            d="M12 4.5v15m7.5-7.5h-15"
+                            d="M6 18L18 6M6 6l12 12"
                           />
                         </svg>
-                      </div>
+                      </button>
+                    </div>
+                  </div>
+
+                  <div className="mt-3">
+                    <h3 className="text-white font-medium text-sm line-clamp-1">
+                      {movie.title}
+                    </h3>
+                    {movie.year && (
+                      <p className="text-gray-500 text-xs mt-0.5">{movie.year}</p>
                     )}
                   </div>
-                </div>
-              ))}
+                </>
+              ) : (
+                <>
+                  <div className="relative w-full h-full rounded-xl border-2 border-dashed border-gray-700 bg-gray-900/30 flex items-center justify-center">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-10 w-10 text-gray-700"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                      strokeWidth={1.5}
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M12 4.5v15m7.5-7.5h-15"
+                      />
+                    </svg>
+                  </div>
+                  <div className="mt-3">
+                    <p className="text-gray-600 text-sm">Empty slot</p>
+                  </div>
+                </>
+              )}
             </div>
-
-            {ratedCount === maxSelection && (
-              <p className="text-sm text-[#00d2ff]/80">
-                All {maxSelection} movies rated — fetching recommendations...
-              </p>
-            )}
-          </div>
+          ))}
         </div>
+
+        {ratedCount === maxSelection && (
+          <div className="mt-8 p-4 bg-[#00d2ff]/10 border border-[#00d2ff]/20 rounded-lg">
+            <p className="text-sm text-[#00d2ff] font-medium">
+              ✓ All {maxSelection} movies rated — fetching recommendations...
+            </p>
+          </div>
+        )}
       </div>
     </section>
   );

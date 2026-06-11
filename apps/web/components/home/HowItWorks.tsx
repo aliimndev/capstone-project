@@ -3,6 +3,7 @@
 // components/sections/HowItWorks.tsx
 
 import { motion } from "motion/react";
+import { useState } from "react";
 
 const steps = [
   { id: 1, title: "Pick Your Favorites" },
@@ -12,6 +13,11 @@ const steps = [
 ];
 
 export function HowItWorks() {
+  const [isHovered, setIsHovered] = useState(false);
+
+  // Jarak antar card saat menyebar (dalam px)
+  const SPREAD_DISTANCE = 280;
+
   return (
     <section className="py-20 bg-transparent overflow-hidden">
       <div className="mx-auto max-w-7xl px-6">
@@ -29,29 +35,64 @@ export function HowItWorks() {
           <div className="mt-4 h-1 w-20 bg-gradient-to-r from-[#00d2ff] to-transparent ml-auto md:mr-0 mr-auto hidden md:block rounded-full" />
         </motion.div>
 
-        {/* Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {steps.map((step, index) => (
-            <motion.div
-              key={step.id}
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-50px" }}
-              transition={{ duration: 0.6, delay: index * 0.15, ease: [0.22, 1, 0.36, 1] }}
-              className="group relative bg-[#091020]/50 backdrop-blur-sm rounded-3xl p-8 shadow-[0_0_0_1px_rgba(255,255,255,0.08)] hover:shadow-[0_0_40px_rgba(0,210,255,0.18)] transition-all duration-500 border border-white/5 hover:border-[#00d2ff]/50 min-h-[260px] flex flex-col overflow-hidden"
-            >
-              {/* Decorative Number */}
-              <div className="absolute -top-4 -right-4 text-[120px] font-black text-white/5 group-hover:text-[#00d2ff]/10 transition-colors duration-500 select-none">
-                {step.id}
-              </div>
-              
-              <div className="flex-1 flex items-center justify-center relative z-10">
-                <h3 className="text-xl font-medium text-white text-center">
-                  {step.title}
-                </h3>
-              </div>
-            </motion.div>
-          ))}
+        {/* Stacked Cards Container - dipindahkan ke kanan */}
+        <div 
+          className="relative ml-auto"
+          style={{ 
+            width: isHovered ? `${SPREAD_DISTANCE * (steps.length - 1) + 320}px` : '320px',
+            height: '320px',
+            transition: 'width 0.6s cubic-bezier(0.22, 1, 0.36, 1)'
+          }}
+          onMouseEnter={() => setIsHovered(true)}
+          onMouseLeave={() => setIsHovered(false)}
+        >
+          {steps.map((step, index) => {
+            // Posisi X saat numpuk (semua di 0) vs saat menyebar
+            const xOffset = isHovered ? index * SPREAD_DISTANCE : 0;
+            
+            // Rotasi saat numpuk (sedikit miring) vs saat menyebar (lurus)
+            const rotation = isHovered ? 0 : (index - 1.5) * 4;
+            
+            // Scale saat numpuk (card belakang lebih kecil) vs saat menyebar (semua sama)
+            const scale = isHovered ? 1 : 1 - (steps.length - 1 - index) * 0.03;
+            
+            // Z-index: card pertama (index 0) paling bawah, card terakhir paling atas
+            const zIndex = isHovered ? index : steps.length - 1 - index;
+
+            return (
+              <motion.div
+                key={step.id}
+                className="absolute top-0 left-0 w-[320px] h-[320px] bg-[#091020]/50 backdrop-blur-sm rounded-3xl p-8 border border-white/5 flex flex-col overflow-hidden shadow-[0_0_0_1px_rgba(255,255,255,0.08)] hover:shadow-[0_0_40px_rgba(0,210,255,0.18)] hover:border-[#00d2ff]/50 transition-shadow duration-500"
+                style={{ zIndex }}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-50px" }}
+                animate={{
+                  x: xOffset,
+                  rotate: rotation,
+                  scale: scale,
+                }}
+                transition={{
+                  x: { type: "spring", stiffness: 200, damping: 25, mass: 1 },
+                  rotate: { type: "spring", stiffness: 200, damping: 25, mass: 1 },
+                  scale: { type: "spring", stiffness: 200, damping: 25, mass: 1 },
+                  opacity: { duration: 0.6, delay: index * 0.1, ease: [0.22, 1, 0.36, 1] },
+                  y: { duration: 0.6, delay: index * 0.1, ease: [0.22, 1, 0.36, 1] },
+                }}
+              >
+                {/* Decorative Number */}
+                <div className="absolute -top-4 -right-4 text-[120px] font-black text-white/5 hover:text-[#00d2ff]/10 transition-colors duration-500 select-none pointer-events-none">
+                  {step.id}
+                </div>
+                
+                <div className="flex-1 flex items-center justify-center relative z-10">
+                  <h3 className="text-xl font-medium text-white text-center">
+                    {step.title}
+                  </h3>
+                </div>
+              </motion.div>
+            );
+          })}
         </div>
       </div>
     </section>

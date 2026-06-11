@@ -7,6 +7,8 @@ const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:8000';
 export interface RecommendationResult {
   movies: DisplayMovie[];
   message: string;
+  usedModelFallback?: boolean;
+  unmappedTmdbIds?: number[];
 }
 
 export async function fetchRecommendations(
@@ -26,6 +28,7 @@ export async function fetchRecommendations(
   const res = await fetch(`${API_BASE}/api/v1/recommendations/`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
+    cache: 'no-store',
     body: JSON.stringify(payload),
   });
 
@@ -50,5 +53,7 @@ export async function fetchRecommendations(
   return {
     movies: mapped,
     message: data.message ?? `Found ${mapped.length} recommendations`,
+    usedModelFallback: data.meta?.used_model_fallback,
+    unmappedTmdbIds: data.meta?.unmapped_tmdb_ids ?? undefined,
   };
 }
