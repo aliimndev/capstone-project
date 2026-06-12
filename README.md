@@ -73,7 +73,7 @@ Anda juga membutuhkan:
 ### 1. Clone repository
 
 ```bash
-git clone <url-repository-anda>
+git clone <url-repository>
 cd capstone-project
 ```
 
@@ -181,7 +181,7 @@ npm run docker:up
 ## Petunjuk Penggunaan
 
 1. Buka halaman **Recommend** (`/recommend`)
-2. Cari film via search bar atau pilih dari daftar trending
+2. Cari film via search bar 
 3. Klik film → pilih reaksi (`loved it`, `like it`, `just normal`, `dislike`)
 4. Ulangi hingga **3 film** ter-rate
 5. Sistem otomatis menampilkan **10 rekomendasi** film
@@ -251,7 +251,7 @@ Bobot reaksi:
 | `NEXT_PUBLIC_API_URL` | Ya | URL backend FastAPI |
 | `TMDB_API_KEY` | Ya | API key TMDB (untuk API routes Next.js) |
 
-> **Keamanan:** Jangan commit file `.env` atau `.env.local` ke Git. Gunakan file `.env.example` sebagai template. Jangan mencantumkan credential, API key, atau data sensitif di README maupun kode sumber.
+
 
 ## Deployment
 
