@@ -1,7 +1,5 @@
 "use client";
 
-// components/sections/ReadyToExplore.tsx
-
 import Link from "next/link";
 import { motion } from "motion/react";
 import { ChevronRight } from "lucide-react";
@@ -24,7 +22,7 @@ export function ReadyToExplore() {
         </h2>
         
         <p className="mt-6 text-xl text-white/60 max-w-2xl mx-auto">
-          Get personalized recommendations in just a few clicks. Powered by advanced AI to find exactly what you're craving.
+          Get personalized recommendations in just a few clicks. Powered by advanced AI to find exactly what you&apos;re craving.
         </p>
 
         <motion.div 

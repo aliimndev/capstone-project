@@ -5,15 +5,10 @@ interface ErrorStateProps {
   onRetry?: () => void;
 }
 
-/**
- * Error state component for failed data fetches
- * Displays error message with optional retry button
- */
 export function ErrorState({ message, onRetry }: ErrorStateProps) {
   return (
     <div className="flex flex-col items-center justify-center py-12 px-4">
       <div className="text-center">
-        {/* Error Icon */}
         <div className="mb-4 inline-block">
           <svg
             className="w-12 h-12 text-special-error"
@@ -30,12 +25,10 @@ export function ErrorState({ message, onRetry }: ErrorStateProps) {
           </svg>
         </div>
 
-        {/* Error Message */}
         <p className="text-text-secondary text-base mb-6 max-w-md">
           {message}
         </p>
 
-        {/* Retry Button */}
         {onRetry && (
           <button
             onClick={onRetry}

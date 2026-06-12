@@ -3,6 +3,7 @@ from typing import Optional, List, Literal
 
 ReactionType = Literal["loved it", "like it", "just normal", "dislike"]
 
+
 class MovieBase(BaseModel):
     id: int
     title: str
@@ -29,16 +30,9 @@ class RatedMovieInput(BaseModel):
     movie_id: int = Field(..., description="TMDB movie ID")
     reaction: ReactionType
 
+
 class RecommendationRequest(BaseModel):
-    # preferred: 3 rated movies
-    rated_movies: Optional[List[RatedMovieInput]] = None
-
-    # legacy: user can send 3 selected movies without ratings
-    movie_ids: Optional[List[int]] = None
-
-    # legacy fields
-    movie_id: Optional[int] = None
-    query: Optional[str] = None
+    rated_movies: List[RatedMovieInput]
 
 
 class RecommendationMeta(BaseModel):
@@ -56,6 +50,7 @@ class RecommendationResponse(BaseModel):
     message: str
     movies: List[RecommendedMovie]
     meta: Optional[RecommendationMeta] = None
+
 
 class TrendingMoviesResponse(BaseModel):
     status: str

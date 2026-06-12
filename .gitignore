@@ -8,18 +8,19 @@ build/
 __pycache__/
 *.py[cod]
 *$py.class
-venv/
-.env
+.venv/
+.pytest_cache/
 
-# OS
+# Environment & secrets
+.env
+.env.local
+.env.*.local
+
+# OS & tooling
 .DS_Store
 .vercel
 .wrangler
 
-# Model files
-apps/api/wewatch_backend/*.npy
-apps/api/wewatch_backend/*.bin
-apps/api/wewatch_backend/*.parquet
-apps/api/wewatch_backend/*.csv
-apps/api/wewatch_backend/*.pkl
+# ML model artifacts (download separately — see README)
 apps/api/model/
+!apps/api/model/.gitkeep

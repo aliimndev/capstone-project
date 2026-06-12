@@ -1,4 +1,3 @@
-// app/recommend/page.tsx
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
@@ -92,9 +91,6 @@ export default function RecommendPage() {
         setRecommendLoading(true);
         setRecommendError(null);
         const result = await fetchRecommendations(ratedMovies);
-        if (process.env.NODE_ENV === 'development') {
-          console.log('STATE_COUNT', result.movies.length);
-        }
         setRecommended(result.movies);
         if (result.usedModelFallback) {
           setRecommendMessage(

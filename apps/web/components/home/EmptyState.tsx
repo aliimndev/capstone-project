@@ -1,14 +1,9 @@
 "use client";
 
-/**
- * Empty state component for when no movies are found
- * Displays a user-friendly message when data is unavailable
- */
 export function EmptyState() {
   return (
     <div className="flex flex-col items-center justify-center py-16 px-4">
       <div className="text-center">
-        {/* Empty Icon */}
         <div className="mb-4 inline-block">
           <svg
             className="w-12 h-12 text-text-muted"
@@ -25,7 +20,6 @@ export function EmptyState() {
           </svg>
         </div>
 
-        {/* Empty Message */}
         <p className="text-text-secondary text-base">
           No trending movies available right now.
         </p>

@@ -1,7 +1,5 @@
 "use client";
 
-// components/sections/HowItWorks.tsx
-
 import { motion } from "motion/react";
 import { useState } from "react";
 
@@ -15,13 +13,12 @@ const steps = [
 export function HowItWorks() {
   const [isHovered, setIsHovered] = useState(false);
 
-  // Jarak antar card saat menyebar (dalam px)
   const SPREAD_DISTANCE = 280;
 
   return (
     <section className="py-20 bg-transparent overflow-hidden">
       <div className="mx-auto max-w-7xl px-6">
-        {/* Header */}
+
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -35,7 +32,7 @@ export function HowItWorks() {
           <div className="mt-4 h-1 w-20 bg-gradient-to-r from-[#00d2ff] to-transparent ml-auto md:mr-0 mr-auto hidden md:block rounded-full" />
         </motion.div>
 
-        {/* Stacked Cards Container - dipindahkan ke kanan */}
+
         <div 
           className="relative ml-auto"
           style={{ 
@@ -47,16 +44,12 @@ export function HowItWorks() {
           onMouseLeave={() => setIsHovered(false)}
         >
           {steps.map((step, index) => {
-            // Posisi X saat numpuk (semua di 0) vs saat menyebar
             const xOffset = isHovered ? index * SPREAD_DISTANCE : 0;
             
-            // Rotasi saat numpuk (sedikit miring) vs saat menyebar (lurus)
             const rotation = isHovered ? 0 : (index - 1.5) * 4;
             
-            // Scale saat numpuk (card belakang lebih kecil) vs saat menyebar (semua sama)
             const scale = isHovered ? 1 : 1 - (steps.length - 1 - index) * 0.03;
             
-            // Z-index: card pertama (index 0) paling bawah, card terakhir paling atas
             const zIndex = isHovered ? index : steps.length - 1 - index;
 
             return (

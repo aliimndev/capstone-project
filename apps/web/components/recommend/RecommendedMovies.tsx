@@ -3,6 +3,7 @@
 import React from 'react';
 import Image from 'next/image';
 import { motion } from 'motion/react';
+import { StarIcon } from '@/components/ui/Icons';
 import { resolveDisplayPosterUrl } from './mapMovie';
 import type { DisplayMovie } from './movieTypes';
 
@@ -15,49 +16,49 @@ interface RecommendedMoviesProps {
   message?: string | null;
 }
 
-const StarIcon = ({ className }: { className?: string }) => (
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className={className}>
-    <path fillRule="evenodd" d="M10.788 3.21c.448-1.077 1.976-1.077 2.424 0l2.082 5.007 5.404.433c1.164.093 1.636 1.545.749 2.305l-4.117 3.527 1.257 5.273c.271 1.136-.964 2.033-1.96 1.425L12 18.354 7.373 21.18c-.996.608-2.231-.29-1.96-1.425l1.257-5.273-4.117-3.527c-.887-.76-.415-2.212.749-2.305l5.404-.433 2.082-5.006z" clipRule="evenodd" />
-  </svg>
-);
-
-const MovieSkeleton = () => (
-  <div className="rounded-xl overflow-hidden animate-pulse">
-    <div className="relative aspect-[2/3] bg-secondary-medium/50 rounded-xl" />
-    <div className="pt-3 space-y-2">
-      <div className="h-4 bg-secondary-medium/50 rounded w-3/4" />
-      <div className="h-3 bg-secondary-medium/50 rounded w-1/2" />
+function Skeleton() {
+  return (
+    <div className="rounded-xl overflow-hidden animate-pulse">
+      <div className="relative aspect-[2/3] bg-secondary-medium/50 rounded-xl" />
+      <div className="pt-3 space-y-2">
+        <div className="h-4 bg-secondary-medium/50 rounded w-3/4" />
+        <div className="h-3 bg-secondary-medium/50 rounded w-1/2" />
+      </div>
     </div>
-  </div>
-);
+  );
+}
 
-const ErrorState = ({ message }: { message: string }) => (
-  <div className="flex flex-col items-center justify-center py-16 px-6 rounded-2xl bg-secondary-dark/30 border border-special-error/20">
-    <div className="w-16 h-16 rounded-full bg-special-error/10 flex items-center justify-center mb-4">
-      <svg className="w-8 h-8 text-special-error" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-      </svg>
+function ErrorBanner({ message }: { message: string }) {
+  return (
+    <div className="flex flex-col items-center justify-center py-16 px-6 rounded-2xl bg-secondary-dark/30 border border-special-error/20">
+      <div className="w-16 h-16 rounded-full bg-special-error/10 flex items-center justify-center mb-4">
+        <svg className="w-8 h-8 text-special-error" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+        </svg>
+      </div>
+      <p className="text-special-error text-center font-medium mb-2">Unable to load recommendations</p>
+      <p className="text-text-secondary text-sm text-center">{message}</p>
     </div>
-    <p className="text-special-error text-center font-medium mb-2">Unable to load recommendations</p>
-    <p className="text-text-secondary text-sm text-center">{message}</p>
-  </div>
-);
+  );
+}
 
-const EmptyState = () => (
-  <div className="flex flex-col items-center justify-center py-16 px-6 rounded-2xl bg-secondary-dark/30 border border-interactive-border/50">
-    <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mb-4">
-      <StarIcon className="w-8 h-8 text-primary" />
+function EmptyPrompt() {
+  return (
+    <div className="flex flex-col items-center justify-center py-16 px-6 rounded-2xl bg-secondary-dark/30 border border-interactive-border/50">
+      <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mb-4">
+        <StarIcon className="w-8 h-8 text-primary" />
+      </div>
+      <p className="text-text-primary text-center font-semibold text-lg mb-2">
+        Rate movies to get started
+      </p>
+      <p className="text-text-secondary text-center text-sm max-w-md">
+        Rate at least 3 movies to unlock personalized recommendations just for you.
+      </p>
     </div>
-    <p className="text-text-primary text-center font-semibold text-lg mb-2">
-      Rate movies to get started
-    </p>
-    <p className="text-text-secondary text-center text-sm max-w-md">
-      Rate at least 3 movies to unlock personalized recommendations just for you.
-    </p>
-  </div>
-);
+  );
+}
 
-const RecommendedMovieCard = ({ movie, index }: { movie: DisplayMovie; index: number }) => {
+function RecommendedMovieCard({ movie, index }: { movie: DisplayMovie; index: number }) {
   const posterUrl = resolveDisplayPosterUrl(movie, 'card');
 
   return (
@@ -107,17 +108,12 @@ const RecommendedMovieCard = ({ movie, index }: { movie: DisplayMovie; index: nu
       </div>
     </motion.div>
   );
-};
+}
 
 const RecommendedMovies: React.FC<RecommendedMoviesProps> = ({ loading, error, movies, message }) => {
-  if (process.env.NODE_ENV === 'development' && movies) {
-    console.log('RENDER_COUNT', movies.length);
-  }
-
   return (
     <section className="py-20 bg-transparent relative z-10">
       <div className="mx-auto max-w-7xl px-6">
-        {/* Section Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -134,17 +130,16 @@ const RecommendedMovies: React.FC<RecommendedMoviesProps> = ({ loading, error, m
           </p>
         </motion.div>
 
-        {/* Movies Grid or Loading State */}
         {loading ? (
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-6 sm:gap-8">
             {Array.from({ length: 10 }).map((_, index) => (
-              <MovieSkeleton key={`skeleton-${index}`} />
+              <Skeleton key={`skeleton-${index}`} />
             ))}
           </div>
         ) : error ? (
-          <ErrorState message={error} />
+          <ErrorBanner message={error} />
         ) : !movies || movies.length === 0 ? (
-          <EmptyState />
+          <EmptyPrompt />
         ) : (
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-6 sm:gap-8">
             {movies.slice(0, 10).map((movie, index) => (

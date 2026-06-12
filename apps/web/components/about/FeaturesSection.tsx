@@ -1,6 +1,5 @@
 "use client";
 
-// components/FeaturesSection.tsx
 import React from 'react';
 import { motion } from "motion/react";
 

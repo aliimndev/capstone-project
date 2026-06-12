@@ -62,14 +62,16 @@ app.add_middleware(
 # Include routers
 app.include_router(recommend.router)
 
+
 @app.get("/")
 def read_root():
     return {
         "message": "wemovies.ai",
         "status": "running",
         "version": settings.API_VERSION,
-        "docs": "/api/docs"
+        "docs": "/api/docs",
     }
+
 
 @app.get("/health")
 def health_check():

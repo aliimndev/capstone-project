@@ -8,7 +8,6 @@ interface SubmitButtonProps {
 export function SubmitButton({ isSubmitting, submitStatus }: SubmitButtonProps) {
   if (submitStatus === 'success') {
     return (
-      // Diubah dari emerald (hijau) menjadi blue (biru)
       <div className="p-4 bg-blue-500/10 border border-blue-500/20 rounded-lg text-center">
         <p className="text-blue-400 font-medium flex items-center justify-center gap-2">
           <svg
