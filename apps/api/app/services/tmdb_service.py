@@ -1,50 +1,58 @@
+import logging
+from typing import Any, Optional
+
 import requests
-from typing import Optional, List, Dict, Any
+
 from core.config import get_settings
+
+logger = logging.getLogger(__name__)
 
 settings = get_settings()
 
+
 class TMDBService:
-    def __init__(self):
+    """Thin wrapper around the TMDB REST API."""
+
+    def __init__(self) -> None:
         self.api_key = settings.TMDB_API_KEY
         self.base_url = settings.TMDB_BASE_URL
-        
-    def search_movies(self, query: str, page: int = 1) -> Optional[Dict[str, Any]]:
-        """Search movies by query"""
+
+    def search_movies(self, query: str, page: int = 1) -> Optional[dict[str, Any]]:
+        """Search movies by query."""
         try:
             endpoint = f"{self.base_url}/search/movie"
             params = {
                 "api_key": self.api_key,
                 "query": query,
                 "page": page,
-                "language": "en-US"
+                "language": "en-US",
             }
             response = requests.get(endpoint, params=params, timeout=10)
             response.raise_for_status()
             return response.json()
-        except requests.exceptions.RequestException as e:
-            print(f"Error searching movies: {e}")
+        except requests.exceptions.RequestException:
+            logger.exception("Error searching movies for query=%r", query)
             return None
-    
-    def get_movie_details(self, movie_id: int) -> Optional[Dict[str, Any]]:
-        """Get detailed information about a specific movie"""
+
+    def get_movie_details(self, movie_id: int) -> Optional[dict[str, Any]]:
+        """Get detailed information about a specific movie."""
         try:
             endpoint = f"{self.base_url}/movie/{movie_id}"
             params = {
                 "api_key": self.api_key,
-                "language": "en-US"
+                "language": "en-US",
             }
             response = requests.get(endpoint, params=params, timeout=10)
             response.raise_for_status()
             return response.json()
-        except requests.exceptions.RequestException as e:
-            print(f"Error getting movie details: {e}")
+        except requests.exceptions.RequestException:
+            logger.exception("Error getting movie details for id=%d", movie_id)
             return None
-    
+
     def get_trending_movies(
         self, time_window: str = "week", page: int = 1
-    ) -> Optional[Dict[str, Any]]:
-        """Get trending movies"""
+    ) -> Optional[dict[str, Any]]:
+        """Get trending movies for a given time window."""
         try:
             endpoint = f"{self.base_url}/trending/movie/{time_window}"
             params = {
@@ -55,24 +63,12 @@ class TMDBService:
             response = requests.get(endpoint, params=params, timeout=10)
             response.raise_for_status()
             return response.json()
-        except requests.exceptions.RequestException as e:
-            print(f"Error getting trending movies: {e}")
+        except requests.exceptions.RequestException:
+            logger.exception("Error getting trending movies")
             return None
-    
-    def get_movie_recommendations(self, movie_id: int) -> Optional[Dict[str, Any]]:
-        """Get movie recommendations based on a specific movie"""
-        try:
-            endpoint = f"{self.base_url}/movie/{movie_id}/recommendations"
-            params = {
-                "api_key": self.api_key,
-                "language": "en-US"
-            }
-            response = requests.get(endpoint, params=params, timeout=10)
-            response.raise_for_status()
-            return response.json()
-        except requests.exceptions.RequestException as e:
-            print(f"Error getting recommendations: {e}")
-            return None
+
+
+
 
 def get_tmdb_service() -> TMDBService:
     return TMDBService()

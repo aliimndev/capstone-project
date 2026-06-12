@@ -1,6 +1,5 @@
 "use client";
 
-// components/HeroSection.tsx
 import Link from 'next/link';
 import { motion } from "motion/react";
 

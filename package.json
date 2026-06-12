@@ -5,14 +5,18 @@
     "apps/*"
   ],
   "scripts": {
+    "dev": "npm --prefix apps/web run dev",
+    "dev:api": "cd apps/api && PYTHONPATH=. .venv/bin/uvicorn app.main:app --reload --host 0.0.0.0 --port 8000",
+    "dev:all": "npm run dev:api & npm run dev",
     "vercel-build": "npm --prefix apps/web run build",
     "worker:dev": "wrangler dev apps/proxy/worker.ts",
     "worker:deploy": "wrangler deploy apps/proxy/worker.ts --env production",
-    "docker:build": "docker build -t tmdb-api:latest .",
-    "docker:run": "docker run -p 8000:8000 tmdb-api:latest",
+    "docker:build": "docker build -t wemovies-api:latest apps/api",
+    "docker:run": "docker run -p 8000:8000 --env-file apps/api/.env wemovies-api:latest",
+    "docker:up": "docker compose -f infra/docker-compose.yml up --build",
     "lint:api": "flake8 apps/api/app --count --select=E9,F63,F7,F82 --show-source",
-    "test:api": "pytest apps/api/tests --verbose || echo 'No tests'",
-    "dev": "npm --prefix apps/web run dev"
+    "test:api": "cd apps/api && PYTHONPATH=. .venv/bin/pytest tests -v",
+    "verify:model": "cd apps/api && .venv/bin/python scripts/verify_hf_model.py"
   },
   "devDependencies": {
     "wrangler": "^4.87.0"

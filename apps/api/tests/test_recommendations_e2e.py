@@ -84,7 +84,9 @@ def test_recommendations_fallback_when_no_movielens_mapping(client: TestClient, 
     assert set(body["meta"]["unmapped_tmdb_ids"]) == {1122573, 1430077, 1358005}
 
 
-def test_recommendations_e2e_fight_club_shawshank_pulp_fiction(client: TestClient, caplog):
+def test_recommendations_e2e_fight_club_shawshank_pulp_fiction(
+    client: TestClient, caplog
+):
     caplog.set_level(logging.INFO)
 
     response = client.post("/api/v1/recommendations/", json=E2E_PAYLOAD)
@@ -112,9 +114,9 @@ def test_recommendations_e2e_fight_club_shawshank_pulp_fiction(client: TestClien
     assert len(returned_movie_ids) == 10, "Duplicate movieIds in response"
 
     input_movie_ids = {2959, 318, 296}
-    assert returned_movie_ids.isdisjoint(input_movie_ids), (
-        "Rated input movies must not appear in recommendations"
-    )
+    assert returned_movie_ids.isdisjoint(
+        input_movie_ids
+    ), "Rated input movies must not appear in recommendations"
 
     if body.get("meta"):
         assert body["meta"]["total_count"] == 10

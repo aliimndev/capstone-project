@@ -22,14 +22,20 @@ const RatingPanel: React.FC<RatingPanelProps> = ({ movie, onRate, onCancel }) =>
       <div className="max-w-3xl mx-auto pointer-events-auto">
         <div className="bg-[#091020]/95 backdrop-blur-md border border-white/10 rounded-2xl p-5 shadow-[0_0_40px_rgba(0,210,255,0.15)]">
           <div className="flex items-center gap-4 mb-5">
-            <div className="relative w-14 h-20 rounded-lg overflow-hidden flex-shrink-0">
-              <Image
-                src={movie.posterUrl}
-                alt={movie.title}
-                fill
-                className="object-cover"
-                sizes="56px"
-              />
+            <div className="relative w-14 h-20 rounded-lg overflow-hidden flex-shrink-0 bg-gray-900 border border-white/5">
+              {movie.posterUrl ? (
+                <Image
+                  src={movie.posterUrl}
+                  alt={movie.title}
+                  fill
+                  className="object-cover"
+                  sizes="56px"
+                />
+              ) : (
+                <div className="absolute inset-0 flex items-center justify-center text-[10px] text-gray-500 text-center leading-tight">
+                  No poster
+                </div>
+              )}
             </div>
             <div className="flex-1 min-w-0">
               <p className="text-white/60 text-sm">How did you feel about</p>

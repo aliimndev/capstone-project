@@ -41,18 +41,6 @@ export function mapMoviesForDisplay(
     mapMovieForDisplay(movie, { rank: index + 1, posterSize: options?.posterSize })
   );
 
-  if (process.env.NODE_ENV === 'development') {
-    console.log('MAPPED_COUNT', mapped.length);
-    const removed = movies.filter((movie) => !movie.poster_path);
-    removed.forEach((movie) => {
-      console.log('[mapMoviesForDisplay] kept without poster', {
-        id: movie.id,
-        title: movie.title,
-        reason_removed: 'none — poster_path null uses placeholder UI',
-      });
-    });
-  }
-
   return mapped;
 }
 

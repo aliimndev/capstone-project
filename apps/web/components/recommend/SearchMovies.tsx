@@ -1,10 +1,10 @@
-// components/recommend/SearchMovies.tsx
 'use client';
 
 import React, { useState, useEffect, useCallback } from 'react';
 import Image from 'next/image';
 import { searchMovies } from './movieApi';
 import { mapMoviesForDisplay } from './mapMovie';
+import { StarIcon, CheckIcon } from '@/components/ui/Icons';
 import type { DisplayMovie } from './movieTypes';
 import type { RatedMovie } from '@/features/recommendation/types';
 
@@ -49,7 +49,6 @@ const SearchMovies: React.FC<SearchMoviesProps> = ({
       setSearchResults(formattedMovies);
       setHasSearched(true);
     } catch (error) {
-      console.error('Search error:', error);
       setSearchResults([]);
       setHasSearched(true);
       setSearchError(
@@ -90,7 +89,7 @@ const SearchMovies: React.FC<SearchMoviesProps> = ({
       <div className="max-w-5xl mx-auto">
         <div className="text-center mb-8 md:mb-10">
           <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-3">
-            Cari & Rate Film
+            Cari &amp; Rate Film
           </h1>
           <p className="text-text-secondary text-base md:text-lg max-w-2xl mx-auto">
             Cari film di katalog model, pilih reaksimu, dan rate tepat {maxRatedMovies} film
@@ -169,50 +168,52 @@ const SearchMovies: React.FC<SearchMoviesProps> = ({
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 md:gap-5">
               {searchResults.map((movie) => {
                 const rated = isRated(movie.id);
+                const hasRating = typeof movie.rating === 'number' && movie.rating > 0;
 
                 return (
                   <button
                     key={movie.id}
                     type="button"
                     onClick={() => handleMovieSelect(movie)}
-                    className={`group text-left rounded-xl overflow-hidden border transition-all duration-300 ${
-                      rated
-                        ? 'border-[#00d2ff] ring-2 ring-[#00d2ff]/40 shadow-lg shadow-[#00d2ff]/10'
-                        : 'border-white/10 hover:border-[#00d2ff]/40 hover:shadow-xl hover:shadow-black/30'
-                    }`}
+                    className="group text-left"
                   >
-                    <div className="relative aspect-[2/3] bg-secondary-medium">
+                    <div className="relative aspect-[2/3] overflow-hidden rounded-xl bg-gray-900 mb-3">
                       {movie.posterUrl ? (
                         <Image
                           src={movie.posterUrl}
                           alt={movie.title}
                           fill
+                          sizes="(max-width: 640px) 50vw, (max-width: 768px) 33vw, (max-width: 1024px) 25vw, 20vw"
                           className="object-cover transition-transform duration-500 group-hover:scale-105"
-                          sizes="(max-width: 640px) 50vw, 25vw"
                         />
                       ) : (
-                        <div className="absolute inset-0 flex items-center justify-center text-text-secondary text-xs px-2 text-center">
+                        <div className="absolute inset-0 flex items-center justify-center text-gray-500 text-sm px-4 text-center bg-gradient-to-br from-gray-800 to-gray-900">
                           No poster
                         </div>
                       )}
 
                       {rated && (
-                        <div className="absolute top-2 right-2 z-10 bg-[#00d2ff] text-black text-[10px] font-bold px-2 py-1 rounded-full">
-                          Rated
+                        <div className="absolute top-2.5 left-2.5 z-20 bg-black/70 backdrop-blur-md text-white text-[11px] font-bold px-2 py-1 rounded-md flex items-center gap-1">
+                          <CheckIcon className="w-3 h-3 text-[#00d2ff]" />
+                          <span>Rated</span>
+                        </div>
+                      )}
+
+                      {hasRating && (
+                        <div className="absolute top-2.5 right-2.5 z-20 bg-black/70 backdrop-blur-md text-white text-[11px] font-semibold px-2 py-1 rounded-md flex items-center gap-1">
+                          <StarIcon className="w-3 h-3 text-yellow-400" />
+                          <span>{movie.rating?.toFixed(1)}</span>
                         </div>
                       )}
                     </div>
 
-                    <div className="p-3 bg-[#091020]/80 border-t border-white/10">
-                      <h3 className="text-white font-semibold text-sm line-clamp-2 group-hover:text-[#00d2ff] transition-colors">
+                    <div>
+                      <h3 className="text-white font-medium text-sm line-clamp-1 group-hover:text-[#00d2ff] transition-colors duration-200">
                         {movie.title}
                       </h3>
-                      <div className="flex items-center justify-between text-[11px] text-text-secondary mt-1">
-                        {movie.year && <span>{movie.year}</span>}
-                        {movie.rating && movie.rating > 0 && (
-                          <span>{movie.rating.toFixed(1)}</span>
-                        )}
-                      </div>
+                      {movie.year && (
+                        <p className="text-gray-500 text-xs mt-1">{movie.year}</p>
+                      )}
                     </div>
                   </button>
                 );
@@ -237,4 +238,3 @@ const SearchMovies: React.FC<SearchMoviesProps> = ({
 };
 
 export default SearchMovies;
-

@@ -73,7 +73,7 @@ Anda juga membutuhkan:
 ### 1. Clone repository
 
 ```bash
-git clone <url-repository-anda>
+git clone <url-repository>
 cd capstone-project
 ```
 

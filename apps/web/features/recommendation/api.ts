@@ -21,10 +21,6 @@ export async function fetchRecommendations(
     })),
   };
 
-  if (process.env.NODE_ENV === 'development') {
-    console.debug('[recommendations] request payload:', payload);
-  }
-
   const res = await fetch(`${API_BASE}/api/v1/recommendations/`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -38,17 +34,7 @@ export async function fetchRecommendations(
   }
 
   const data: RecommendationApiResponse = await res.json();
-  const apiMovies = data.movies ?? [];
-
-  if (process.env.NODE_ENV === 'development') {
-    console.log('API_COUNT', apiMovies.length);
-  }
-
-  const mapped = mapRecommendationsForDisplay(apiMovies);
-
-  if (process.env.NODE_ENV === 'development') {
-    console.log('MAPPED_COUNT', mapped.length);
-  }
+  const mapped = mapRecommendationsForDisplay(data.movies ?? []);
 
   return {
     movies: mapped,
