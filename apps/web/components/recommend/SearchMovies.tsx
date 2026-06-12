@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
 import Image from 'next/image';
+import { motion } from 'motion/react';
 import { searchMovies } from './movieApi';
 import { mapMoviesForDisplay } from './mapMovie';
 import { StarIcon, CheckIcon } from '@/components/ui/Icons';
@@ -87,7 +88,12 @@ const SearchMovies: React.FC<SearchMoviesProps> = ({
 
   return (
     <section className="w-full bg-transparent py-10 md:py-14 px-4 sm:px-6 lg:px-8 relative z-10">
-      <div className="max-w-5xl mx-auto">
+      <motion.div
+        initial={{ opacity: 0, y: 30 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+        className="max-w-5xl mx-auto"
+      >
         <div className="text-center mb-8 md:mb-10">
           <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-3">
             Discover &amp; Rate Movies
@@ -126,7 +132,12 @@ const SearchMovies: React.FC<SearchMoviesProps> = ({
             />
           </div>
 
-          <div className="flex flex-wrap justify-center gap-2 mt-4">
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
+            className="flex flex-wrap justify-center gap-2 mt-4"
+          >
             {SUGGESTED_SEARCHES.map((suggestion) => (
               <button
                 key={suggestion}
@@ -137,18 +148,23 @@ const SearchMovies: React.FC<SearchMoviesProps> = ({
                 {suggestion}
               </button>
             ))}
-          </div>
+          </motion.div>
         </div>
 
         {!hasSearched && searchQuery.trim().length < 2 && (
-          <div className="max-w-2xl mx-auto text-center rounded-xl border border-dashed border-white/10 bg-[#091020]/30 px-6 py-10">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.5, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
+            className="max-w-2xl mx-auto text-center rounded-xl border border-dashed border-white/10 bg-[#091020]/30 px-6 py-10"
+          >
             <p className="text-text-secondary text-sm md:text-base mb-2">
               Just start typing a movie name above
             </p>
             <p className="text-text-muted text-xs md:text-sm">
               Or instantly explore one of our top suggestions
             </p>
-          </div>
+          </motion.div>
         )}
 
         {isLoading && (
@@ -164,23 +180,43 @@ const SearchMovies: React.FC<SearchMoviesProps> = ({
         )}
 
         {!isLoading && hasSearched && searchResults.length > 0 && (
-          <div>
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.5 }}
+          >
             <p className="text-text-secondary text-sm mb-4 text-center">
               {searchResults.length} movie{searchResults.length !== 1 ? 's' : ''} found — click any to rate
             </p>
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 md:gap-5">
+            <motion.div
+              initial="hidden"
+              animate="visible"
+              variants={{
+                hidden: {},
+                visible: {
+                  transition: {
+                    staggerChildren: 0.05,
+                  },
+                },
+              }}
+              className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 md:gap-5"
+            >
               {searchResults.map((movie) => {
                 const rated = isRated(movie.id);
                 const hasRating = typeof movie.rating === 'number' && movie.rating > 0;
 
                 return (
-                  <button
+                  <motion.button
                     key={movie.id}
+                    variants={{
+                      hidden: { opacity: 0, y: 20 },
+                      visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: [0.16, 1, 0.3, 1] } },
+                    }}
                     type="button"
                     onClick={() => handleMovieSelect(movie)}
                     className="group text-left"
                   >
-                    <div className="relative aspect-[2/3] overflow-hidden rounded-xl bg-gray-900 mb-3">
+                    <div className="relative aspect-[2/3] overflow-hidden rounded-xl bg-gray-900 mb-3 shadow-lg group-hover:shadow-2xl group-hover:shadow-[#00d2ff]/10 transition-all duration-300">
                       {movie.posterUrl ? (
                         <Image
                           src={movie.posterUrl}
@@ -218,24 +254,29 @@ const SearchMovies: React.FC<SearchMoviesProps> = ({
                         <p className="text-gray-500 text-xs mt-1">{movie.year}</p>
                       )}
                     </div>
-                  </button>
+                  </motion.button>
                 );
               })}
-            </div>
-          </div>
+            </motion.div>
+          </motion.div>
         )}
 
         {!isLoading && hasSearched && searchQuery.trim().length >= 2 && searchResults.length === 0 && !searchError && (
-          <div className="max-w-xl mx-auto text-center rounded-xl border border-white/10 bg-[#091020]/30 px-6 py-10">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.4 }}
+            className="max-w-xl mx-auto text-center rounded-xl border border-white/10 bg-[#091020]/30 px-6 py-10"
+          >
             <p className="text-text-secondary">
               No matches for &quot;{searchQuery}&quot; in our collection.
             </p>
             <p className="text-text-muted text-sm mt-2">
               Try a different title or pick a suggestion above.
             </p>
-          </div>
+          </motion.div>
         )}
-      </div>
+      </motion.div>
     </section>
   );
 };
