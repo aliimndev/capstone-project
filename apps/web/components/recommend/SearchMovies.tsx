@@ -11,12 +11,12 @@ import type { RatedMovie } from '@/features/recommendation/types';
 export type { DisplayMovie as Movie } from './movieTypes';
 
 const SUGGESTED_SEARCHES = [
-  'Fight Club',
-  'Inception',
-  'The Matrix',
-  'The Godfather',
-  'Pulp Fiction',
-  'Interstellar',
+  'Action',
+  'Sci-Fi',
+  'Horror',
+  'Drama',
+  'Comedy',
+  'Romance',
 ];
 
 interface SearchMoviesProps {
@@ -52,7 +52,7 @@ const SearchMovies: React.FC<SearchMoviesProps> = ({
       setSearchResults([]);
       setHasSearched(true);
       setSearchError(
-        error instanceof Error ? error.message : 'Gagal mencari film. Coba lagi.'
+        error instanceof Error ? error.message : 'Search failed. Give it another shot.'
       );
     } finally {
       setIsLoading(false);
@@ -79,6 +79,7 @@ const SearchMovies: React.FC<SearchMoviesProps> = ({
 
   const handleSuggestionClick = (suggestion: string) => {
     setSearchQuery(suggestion);
+    fetchSearchResults(suggestion);
   };
 
   const isRated = (movieId: number) =>
@@ -89,11 +90,11 @@ const SearchMovies: React.FC<SearchMoviesProps> = ({
       <div className="max-w-5xl mx-auto">
         <div className="text-center mb-8 md:mb-10">
           <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-3">
-            Cari &amp; Rate Film
+            Discover &amp; Rate Movies
           </h1>
           <p className="text-text-secondary text-base md:text-lg max-w-2xl mx-auto">
-            Cari film di katalog model, pilih reaksimu, dan rate tepat {maxRatedMovies} film
-            untuk mendapat rekomendasi personal.
+            Search any movie from our library - then rate exactly {maxRatedMovies}{' '}
+            films to unlock personalized recommendations.
           </p>
         </div>
 
@@ -120,7 +121,7 @@ const SearchMovies: React.FC<SearchMoviesProps> = ({
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Ketik judul film, mis. Fight Club..."
+              placeholder="Search any movie title or explore genres below..."
               className="w-full pl-12 pr-4 py-4 bg-[#091020]/50 backdrop-blur-sm border border-white/10 rounded-xl text-text-primary placeholder-text-muted focus:outline-none focus:border-[#00d2ff] focus:ring-2 focus:ring-[#00d2ff]/20 transition-all duration-200 shadow-[0_0_20px_rgba(0,210,255,0.05)]"
             />
           </div>
@@ -142,16 +143,18 @@ const SearchMovies: React.FC<SearchMoviesProps> = ({
         {!hasSearched && searchQuery.trim().length < 2 && (
           <div className="max-w-2xl mx-auto text-center rounded-xl border border-dashed border-white/10 bg-[#091020]/30 px-6 py-10">
             <p className="text-text-secondary text-sm md:text-base mb-2">
-              Mulai dengan mengetik judul film di atas
+              Just start typing a movie name above
             </p>
             <p className="text-text-muted text-xs md:text-sm">
-              Atau klik salah satu saran populer untuk langsung mencari
+              Or instantly explore one of our top suggestions
             </p>
           </div>
         )}
 
         {isLoading && (
-          <div className="text-center text-text-secondary py-12">Mencari film...</div>
+          <div className="text-center text-text-secondary py-12">
+            Hunting down results...
+          </div>
         )}
 
         {searchError && !isLoading && (
@@ -163,7 +166,7 @@ const SearchMovies: React.FC<SearchMoviesProps> = ({
         {!isLoading && hasSearched && searchResults.length > 0 && (
           <div>
             <p className="text-text-secondary text-sm mb-4 text-center">
-              {searchResults.length} film ditemukan di katalog model — klik untuk rate
+              {searchResults.length} movie{searchResults.length !== 1 ? 's' : ''} found — click any to rate
             </p>
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 md:gap-5">
               {searchResults.map((movie) => {
@@ -225,10 +228,10 @@ const SearchMovies: React.FC<SearchMoviesProps> = ({
         {!isLoading && hasSearched && searchQuery.trim().length >= 2 && searchResults.length === 0 && !searchError && (
           <div className="max-w-xl mx-auto text-center rounded-xl border border-white/10 bg-[#091020]/30 px-6 py-10">
             <p className="text-text-secondary">
-              Tidak ada film &quot;{searchQuery}&quot; di katalog model.
+              No matches for &quot;{searchQuery}&quot; in our collection.
             </p>
             <p className="text-text-muted text-sm mt-2">
-              Coba judul lain atau gunakan saran di atas.
+              Try a different title or pick a suggestion above.
             </p>
           </div>
         )}
