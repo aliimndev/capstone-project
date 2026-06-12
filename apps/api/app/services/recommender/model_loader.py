@@ -22,7 +22,7 @@ class ModelLoader:
 
         if artifact_path is None:
             artifact_path = (
-                Path(__file__).resolve().parents[4]
+                Path(__file__).resolve().parents[3]
                 / "model"
                 / "recommender_artifacts.pkl"
             )

@@ -30,14 +30,20 @@ export function MovieCard({
   return (
     <div className="group cursor-pointer">
       <div className="relative aspect-[2/3] overflow-hidden rounded-xl bg-gray-900 mb-3">
-        <Image
-          src={posterUrl}
-          alt={title}
-          fill
-          sizes="(min-width: 768px) 20vw, (min-width: 640px) 33vw, 50vw"
-          className="object-cover"
-          priority={index < 3}
-        />
+        {posterUrl ? (
+          <Image
+            src={posterUrl}
+            alt={title}
+            fill
+            sizes="(min-width: 768px) 20vw, (min-width: 640px) 33vw, 50vw"
+            className="object-cover"
+            priority={index < 3}
+          />
+        ) : (
+          <div className="absolute inset-0 flex items-center justify-center text-gray-500 text-sm px-4 text-center bg-gradient-to-br from-gray-800 to-gray-900">
+            No poster
+          </div>
+        )}
 
         <div className="absolute top-2.5 left-2.5 z-20 bg-black/70 backdrop-blur-md text-white text-[11px] font-bold px-2 py-1 rounded-md">
           #{rankBadge}

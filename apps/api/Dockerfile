@@ -28,7 +28,7 @@ COPY core ./core
 RUN mkdir -p model
 
 # Bake model into image when absent (CI / cloud deploy); local builds can COPY model/ instead.
-COPY model ./model
+COPY model* ./model/
 RUN test -s model/recommender_artifacts.pkl || \
     curl -fsSL -o model/recommender_artifacts.pkl "${HF_MODEL_URL}"
 
