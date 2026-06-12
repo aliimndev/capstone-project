@@ -131,11 +131,11 @@ async def get_recommendations(
             recs = recommender_service.enrich_recommendations_with_tmdb(
                 recs, tmdb_service
             )
-            message = f"Found {len(recs)} recommendations dari model ML"
+            message = f"Found {len(recs)} recommendations from the ML model"
             if meta["fallback_count"] > 0:
                 message += (
-                    f" ({meta['inference_count']} dari inference, "
-                    f"{meta['fallback_count']} dari top_trending fallback)"
+                    f" ({meta['inference_count']} from inference, "
+                    f"{meta['fallback_count']} from fallback)"
                 )
 
         return RecommendationResponse(
