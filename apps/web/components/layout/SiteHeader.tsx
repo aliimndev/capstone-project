@@ -18,7 +18,7 @@ export function SiteHeader() {
               fill
               className="object-contain"
               sizes="40px"
-              priority
+              loading="eager"
             />
           </div>
           <span className="text-lg font-semibold text-text-primary">WeMovies AI</span>
