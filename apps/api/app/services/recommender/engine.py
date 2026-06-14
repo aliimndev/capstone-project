@@ -1,14 +1,15 @@
 import logging
 import time
-from typing import Any, Dict, List, Optional, Set, Tuple
+from typing import Any, Dict, List, Optional, Set, Tuple, cast
 
 import numpy as np
 import pandas as pd
 from scipy.sparse import csr_matrix, issparse
 
 from app.schemas.recommend import RecommendedMovie
-from .model_loader import ModelLoader
+
 from .id_mapper import IDMapper
+from .model_loader import ModelLoader
 
 logger = logging.getLogger(__name__)
 
@@ -256,10 +257,14 @@ class InferenceEngine:
         cf_scores = movie_latent_norm.dot(cf_norm)
 
         if issparse(content_feat):
-            cb_norm = cb_profile / (np.linalg.norm(cb_profile.toarray()) + 1e-10)
-            cb_scores = content_feat.dot(cb_norm.T).toarray().flatten()
+            _cb_sparse = cast(csr_matrix, cb_profile)
+            cb_norm = _cb_sparse / (np.linalg.norm(_cb_sparse.toarray()) + 1e-10)
+            cb_scores = (
+                cast(csr_matrix, content_feat.dot(cb_norm.T)).toarray().flatten()
+            )
         else:
-            cb_norm = cb_profile / (np.linalg.norm(cb_profile) + 1e-10)
+            _cb_dense = cast(np.ndarray, cb_profile)
+            cb_norm = _cb_dense / (np.linalg.norm(_cb_dense) + 1e-10)
             cb_scores = np.dot(content_feat, cb_norm)
 
         scores = alpha_cf * cf_scores + alpha_cb * cb_scores

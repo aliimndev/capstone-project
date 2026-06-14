@@ -1,27 +1,29 @@
 import json
 import logging
+from typing import Any
 
 from fastapi import APIRouter, Depends, HTTPException, Request
 from pydantic import ValidationError
+
 from app.schemas.recommend import (
+    MovieBase,
+    RecommendationMeta,
     RecommendationRequest,
     RecommendationResponse,
-    RecommendationMeta,
-    TrendingMoviesResponse,
     SearchMoviesResponse,
-    MovieBase,
+    TrendingMoviesResponse,
 )
-from app.services.tmdb_service import get_tmdb_service, TMDBService
 from app.services.recommender_service import RecommenderService, get_recommender_service
+from app.services.tmdb_service import TMDBService, get_tmdb_service
 
 logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/api/v1/recommendations", tags=["recommendations"])
 
 
-def _movie_base_from_tmdb(movie: dict) -> MovieBase:
+def _movie_base_from_tmdb(movie: dict[str, Any]) -> MovieBase:
     return MovieBase(
-        id=movie.get("id"),
+        id=movie.get("id", 0),
         title=movie.get("title", "Unknown"),
         overview=movie.get("overview"),
         poster_path=movie.get("poster_path"),
@@ -311,15 +313,15 @@ async def discover_movies_by_genre(
 ):
     """Discover movies by genre using TMDB Discover API. With catalog_only=true, only return movies known to the ML model."""
     if genre_id <= 0:
-        raise HTTPException(
-            status_code=400, detail="Invalid genre ID"
-        )
+        raise HTTPException(status_code=400, detail="Invalid genre ID")
 
     try:
         result = tmdb_service.discover_movies_by_genre(genre_id)
 
         if not result or "results" not in result:
-            raise HTTPException(status_code=404, detail="No movies found for this genre")
+            raise HTTPException(
+                status_code=404, detail="No movies found for this genre"
+            )
 
         movies_data = [
             _movie_base_from_tmdb(movie) for movie in result.get("results", [])
@@ -349,7 +351,11 @@ async def discover_movies_by_genre(
                 ),
             )
 
-        logger.info("TMDB discover for genre_id=%d returned %d movies", genre_id, len(movies_data))
+        logger.info(
+            "TMDB discover for genre_id=%d returned %d movies",
+            genre_id,
+            len(movies_data),
+        )
 
         return SearchMoviesResponse(
             status="success",
@@ -360,4 +366,6 @@ async def discover_movies_by_genre(
     except HTTPException:
         raise
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Error discovering movies by genre: {str(e)}")
+        raise HTTPException(
+            status_code=500, detail=f"Error discovering movies by genre: {str(e)}"
+        )
