@@ -300,3 +300,64 @@ async def search_movies(
         raise
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error searching movies: {str(e)}")
+
+
+@router.get("/discover", response_model=SearchMoviesResponse)
+async def discover_movies_by_genre(
+    genre_id: int,
+    catalog_only: bool = False,
+    tmdb_service: TMDBService = Depends(get_tmdb_service),
+    recommender_service: RecommenderService = Depends(get_recommender_service),
+):
+    """Discover movies by genre using TMDB Discover API. With catalog_only=true, only return movies known to the ML model."""
+    if genre_id <= 0:
+        raise HTTPException(
+            status_code=400, detail="Invalid genre ID"
+        )
+
+    try:
+        result = tmdb_service.discover_movies_by_genre(genre_id)
+
+        if not result or "results" not in result:
+            raise HTTPException(status_code=404, detail="No movies found for this genre")
+
+        movies_data = [
+            _movie_base_from_tmdb(movie) for movie in result.get("results", [])
+        ]
+
+        if catalog_only and recommender_service.is_loaded:
+            before = len(movies_data)
+            movies_data = [
+                movie
+                for movie in movies_data
+                if recommender_service.is_tmdb_in_catalog(movie.id)
+            ]
+            logger.info(
+                "Catalog discover filter for genre_id=%d | before=%d | after=%d",
+                genre_id,
+                before,
+                len(movies_data),
+            )
+
+        if not movies_data:
+            raise HTTPException(
+                status_code=404,
+                detail=(
+                    "No catalog movies found for this genre"
+                    if catalog_only
+                    else "No movies found for this genre"
+                ),
+            )
+
+        logger.info("TMDB discover for genre_id=%d returned %d movies", genre_id, len(movies_data))
+
+        return SearchMoviesResponse(
+            status="success",
+            query=f"genre:{genre_id}",
+            movies=movies_data,
+        )
+
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error discovering movies by genre: {str(e)}")

@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import Image from 'next/image';
 import { motion } from 'motion/react';
-import { searchMovies } from './movieApi';
+import { searchMovies, discoverMoviesByGenre } from './movieApi';
 import { mapMoviesForDisplay } from './mapMovie';
 import { StarIcon, CheckIcon } from '@/components/ui/Icons';
 import type { DisplayMovie } from './movieTypes';
@@ -11,13 +11,18 @@ import type { RatedMovie } from '@/features/recommendation/types';
 
 export type { DisplayMovie as Movie } from './movieTypes';
 
-const SUGGESTED_SEARCHES = [
-  'Action',
-  'Sci-Fi',
-  'Horror',
-  'Drama',
-  'Comedy',
-  'Romance',
+interface Genre {
+  id: number;
+  name: string;
+}
+
+const SUGGESTED_GENRES: Genre[] = [
+  { id: 28, name: 'Action' },
+  { id: 878, name: 'Sci-Fi' },
+  { id: 27, name: 'Horror' },
+  { id: 18, name: 'Drama' },
+  { id: 35, name: 'Comedy' },
+  { id: 10749, name: 'Romance' }
 ];
 
 interface SearchMoviesProps {
@@ -78,9 +83,31 @@ const SearchMovies: React.FC<SearchMoviesProps> = ({
     onMovieClick?.(movie);
   };
 
-  const handleSuggestionClick = (suggestion: string) => {
-    setSearchQuery(suggestion);
-    fetchSearchResults(suggestion);
+  const fetchGenreResults = useCallback(async (genreId: number) => {
+    try {
+      setIsLoading(true);
+      setSearchError(null);
+
+      const moviesFromApi = await discoverMoviesByGenre(genreId);
+      const formattedMovies = mapMoviesForDisplay(moviesFromApi.slice(0, 12), {
+        posterSize: 'card',
+      });
+
+      setSearchResults(formattedMovies);
+      setHasSearched(true);
+    } catch (error) {
+      setSearchResults([]);
+      setHasSearched(true);
+      setSearchError(
+        error instanceof Error ? error.message : 'Genre discovery failed. Give it another shot.'
+      );
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
+
+  const handleGenreClick = (genre: Genre) => {
+    fetchGenreResults(genre.id);
   };
 
   const isRated = (movieId: number) =>
@@ -138,14 +165,14 @@ const SearchMovies: React.FC<SearchMoviesProps> = ({
             transition={{ duration: 0.5, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
             className="flex flex-wrap justify-center gap-2 mt-4"
           >
-            {SUGGESTED_SEARCHES.map((suggestion) => (
+            {SUGGESTED_GENRES.map((genre) => (
               <button
-                key={suggestion}
+                key={genre.id}
                 type="button"
-                onClick={() => handleSuggestionClick(suggestion)}
+                onClick={() => handleGenreClick(genre)}
                 className="px-3 py-1.5 text-sm rounded-full border border-white/10 bg-white/5 text-text-secondary hover:text-white hover:border-[#00d2ff]/40 hover:bg-[#00d2ff]/10 transition-colors"
               >
-                {suggestion}
+                {genre.name}
               </button>
             ))}
           </motion.div>

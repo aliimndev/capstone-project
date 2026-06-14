@@ -67,6 +67,26 @@ class TMDBService:
             logger.exception("Error getting trending movies")
             return None
 
+    def discover_movies_by_genre(
+        self, genre_id: int, page: int = 1
+    ) -> Optional[dict[str, Any]]:
+        """Discover movies by genre using TMDB Discover API."""
+        try:
+            endpoint = f"{self.base_url}/discover/movie"
+            params = {
+                "api_key": self.api_key,
+                "with_genres": str(genre_id),
+                "language": "en-US",
+                "page": page,
+                "sort_by": "popularity.desc",
+            }
+            response = requests.get(endpoint, params=params, timeout=10)
+            response.raise_for_status()
+            return response.json()
+        except requests.exceptions.RequestException:
+            logger.exception("Error discovering movies for genre_id=%d", genre_id)
+            return None
+
 
 
 

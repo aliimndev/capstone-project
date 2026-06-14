@@ -38,3 +38,22 @@ export async function searchMovies(query: string): Promise<TmdbMovie[]> {
 
   return data.movies;
 }
+
+export async function discoverMoviesByGenre(genreId: number): Promise<TmdbMovie[]> {
+  const response = await fetch(
+    `${API_BASE}/api/v1/recommendations/discover?genre_id=${genreId}&catalog_only=true`
+  );
+
+  if (!response.ok) {
+    const text = await response.text();
+    throw new Error(text || `Genre discovery failed (${response.status})`);
+  }
+
+  const data: SearchMoviesApiResponse = await response.json();
+
+  if (!Array.isArray(data.movies)) {
+    throw new Error('Invalid discover response: missing movies array');
+  }
+
+  return data.movies;
+}
