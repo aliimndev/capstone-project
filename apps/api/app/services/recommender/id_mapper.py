@@ -22,9 +22,11 @@ class IDMapper:
 
         tmdb_to_movie: Dict[int, int] = {}
         duplicate_tmdb = 0
-        for _, row in valid.iterrows():
-            tmdb_id = int(row["tmdbId_int"])
-            movie_id = int(row["movieId_int"])
+        for tmdb_id_raw, movie_id_raw in zip(
+            valid["tmdbId_int"].tolist(), valid["movieId_int"].tolist()
+        ):
+            tmdb_id = int(tmdb_id_raw)
+            movie_id = int(movie_id_raw)
             if movie_id not in catalog_ids:
                 continue
             if tmdb_id in tmdb_to_movie and tmdb_to_movie[tmdb_id] != movie_id:

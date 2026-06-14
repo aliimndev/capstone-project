@@ -1,5 +1,5 @@
 # Build stage
-FROM python:3.11-slim as builder
+FROM python:3.11-slim AS builder
 
 WORKDIR /app
 
@@ -15,22 +15,10 @@ FROM python:3.11-slim
 
 WORKDIR /app
 
-ARG HF_MODEL_URL=https://huggingface.co/aliimndev/recommender_artifacts.pkl/resolve/main/recommender_artifacts.pkl
-
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    curl \
-    && rm -rf /var/lib/apt/lists/*
-
 COPY --from=builder /root/.local /root/.local
 
 COPY app ./app
 COPY core ./core
-RUN mkdir -p model
-
-# Bake model into image when absent (CI / cloud deploy); local builds can COPY model/ instead.
-COPY model* ./model/
-RUN test -s model/recommender_artifacts.pkl || \
-    curl -fsSL -o model/recommender_artifacts.pkl "${HF_MODEL_URL}"
 
 ENV PATH=/root/.local/bin:$PATH \
     PYTHONUNBUFFERED=1 \
@@ -38,8 +26,8 @@ ENV PATH=/root/.local/bin:$PATH \
     PYTHONPATH=/app \
     PORT=8000
 
-HEALTHCHECK --interval=30s --timeout=10s --start-period=90s --retries=3 \
-    CMD curl -f "http://localhost:${PORT}/health" || exit 1
+HEALTHCHECK --interval=30s --timeout=10s --start-period=300s --retries=5 \
+    CMD python -c "import os, urllib.request; urllib.request.urlopen(f'http://127.0.0.1:{os.environ.get(\"PORT\", \"8000\")}/health', timeout=5).read()"
 
 EXPOSE 8000
 

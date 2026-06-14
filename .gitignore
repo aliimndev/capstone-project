@@ -21,6 +21,7 @@ __pycache__/
 .vercel
 .wrangler
 
-# ML model artifacts (download separately — see README)
+# ML model artifact — 215 MB, hosted on Hugging Face, downloaded at container runtime.
+# Never commit the .pkl to git; the .gitkeep preserves the empty directory for local dev.
 apps/api/model/
 !apps/api/model/.gitkeep
