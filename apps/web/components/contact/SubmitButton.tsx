@@ -6,80 +6,85 @@ interface SubmitButtonProps {
 }
 
 export function SubmitButton({ isSubmitting, submitStatus }: SubmitButtonProps) {
-  if (submitStatus === 'success') {
-    return (
-      <div className="p-4 bg-blue-500/10 border border-blue-500/20 rounded-lg text-center">
-        <p className="text-blue-400 font-medium flex items-center justify-center gap-2">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="h-5 w-5"
-            viewBox="0 0 20 20"
-            fill="currentColor"
-          >
-            <path
-              fillRule="evenodd"
-              d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-              clipRule="evenodd"
-            />
-          </svg>
-          Message sent successfully! We&apos;ll get back to you soon.
-        </p>
-      </div>
-    );
-  }
-
-  if (submitStatus === 'error') {
-    return (
-      <div className="space-y-3">
-        <div className="p-4 bg-blue-500/10 border border-blue-500/20 rounded-lg text-center">
-          <p className="text-blue-400 font-medium">
-            Failed to send message. Please try again.
-          </p>
-        </div>
-        <button
-          type="submit"
-          disabled={isSubmitting}
-          className="w-full px-6 py-4 bg-[#00d2ff] hover:bg-[#00d2ff]/80 disabled:bg-[#00d2ff]/50 text-[#091020] font-semibold rounded-lg transition-all duration-200 hover:shadow-lg hover:shadow-[#00d2ff]/30 disabled:cursor-not-allowed"
-        >
-          Try Again
-        </button>
-      </div>
-    );
-  }
+  const isError = submitStatus === 'error';
 
   return (
-    <button
-      type="submit"
-      disabled={isSubmitting}
-      className="w-full px-6 py-4 bg-[#00d2ff] hover:bg-[#00d2ff]/80 disabled:bg-[#00d2ff]/50 text-[#091020] font-semibold rounded-lg transition-all duration-200 hover:shadow-lg hover:shadow-[#00d2ff]/30 disabled:cursor-not-allowed flex items-center justify-center gap-2"
-    >
-      {isSubmitting ? (
-        <>
-          <svg
-            className="animate-spin h-5 w-5 text-[#091020]"
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-          >
-            <circle
-              className="opacity-25"
-              cx="12"
-              cy="12"
-              r="10"
-              stroke="currentColor"
-              strokeWidth="4"
-            />
-            <path
-              className="opacity-75"
-              fill="currentColor"
-              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-            />
-          </svg>
-          Sending...
-        </>
-      ) : (
-        'Send Message'
+    <div className="space-y-3 pt-1">
+      {/* Error banner — shown above button when previous attempt failed */}
+      {isError && (
+        <div className="flex items-center gap-2.5 px-4 py-3 rounded-xl bg-red-500/[0.07] border border-red-500/20">
+          <span className="inline-block w-1.5 h-1.5 rounded-full bg-red-400 flex-shrink-0" />
+          <p className="text-xs text-red-400">
+            Couldn&apos;t deliver your message — please try again.
+          </p>
+        </div>
       )}
-    </button>
+
+      {/* Primary action button */}
+      <button
+        type="submit"
+        disabled={isSubmitting}
+        className={[
+          'w-full px-6 py-4 rounded-xl font-semibold text-sm',
+          'flex items-center justify-center gap-2.5',
+          'transition-all duration-200',
+          'bg-[#00d2ff] text-[#091020]',
+          'hover:bg-[#00d2ff]/90',
+          'hover:shadow-[0_0_32px_rgba(0,210,255,0.45)]',
+          'hover:scale-[1.015]',
+          'active:scale-[0.985]',
+          'disabled:opacity-50 disabled:cursor-not-allowed',
+          'disabled:scale-100 disabled:shadow-none',
+        ].join(' ')}
+      >
+        {isSubmitting ? (
+          /* Loading state */
+          <>
+            <svg
+              className="animate-spin h-4 w-4 text-[#091020] flex-shrink-0"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              aria-hidden="true"
+            >
+              <circle
+                className="opacity-25"
+                cx="12"
+                cy="12"
+                r="10"
+                stroke="currentColor"
+                strokeWidth="4"
+              />
+              <path
+                className="opacity-75"
+                fill="currentColor"
+                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+              />
+            </svg>
+            <span>Sending…</span>
+          </>
+        ) : (
+          /* Idle / retry state */
+          <>
+            {/* Paper-plane send icon */}
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-4 w-4 flex-shrink-0 -rotate-45"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              strokeWidth={2.25}
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              aria-hidden="true"
+            >
+              <path d="M22 2L11 13" />
+              <path d="M22 2L15 22L11 13L2 9L22 2Z" />
+            </svg>
+            <span>{isError ? 'Try Again' : 'Send Message'}</span>
+          </>
+        )}
+      </button>
+    </div>
   );
 }
