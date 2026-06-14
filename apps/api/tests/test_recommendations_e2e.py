@@ -132,3 +132,78 @@ def test_recommendations_e2e_fight_club_shawshank_pulp_fiction(
             f"  {i:02d}. movieId={m['movieId']} tmdbId={m.get('tmdbId')} "
             f"source={m.get('source')} | {m['title']}"
         )
+
+
+def test_discover_movies_by_genre_valid_genre_id(client: TestClient):
+    """Test genre discovery with valid TMDB genre ID (Action = 28)."""
+    response = client.get("/api/v1/recommendations/discover?genre_id=28&catalog_only=false")
+
+    assert response.status_code == 200, response.text
+    body = response.json()
+
+    assert body["status"] == "success"
+    assert "movies" in body
+    assert isinstance(body["movies"], list)
+    assert len(body["movies"]) > 0, "Expected at least one movie for valid genre"
+
+    for movie in body["movies"]:
+        assert "id" in movie
+        assert "title" in movie
+        assert movie["title"]
+        assert "poster_path" in movie
+        assert "release_date" in movie
+        assert "vote_average" in movie
+
+
+def test_discover_movies_by_genre_invalid_genre_id(client: TestClient):
+    """Test genre discovery with invalid genre ID (negative number)."""
+    response = client.get("/api/v1/recommendations/discover?genre_id=-1&catalog_only=false")
+
+    assert response.status_code == 400, response.text
+    body = response.json()
+
+    assert "detail" in body
+    assert "Invalid genre ID" in body["detail"]
+
+
+def test_discover_movies_by_genre_zero_genre_id(client: TestClient):
+    """Test genre discovery with zero genre ID."""
+    response = client.get("/api/v1/recommendations/discover?genre_id=0&catalog_only=false")
+
+    assert response.status_code == 400, response.text
+    body = response.json()
+
+    assert "detail" in body
+    assert "Invalid genre ID" in body["detail"]
+
+
+def test_discover_movies_by_genre_nonexistent_genre_id(client: TestClient):
+    """Test genre discovery with nonexistent genre ID (should return 404)."""
+    response = client.get("/api/v1/recommendations/discover?genre_id=999999&catalog_only=false")
+
+    assert response.status_code == 404, response.text
+    body = response.json()
+
+    assert "detail" in body
+    assert "No movies found for this genre" in body["detail"]
+
+
+def test_discover_movies_by_genre_response_structure_consistency(client: TestClient):
+    """Test that genre discovery response structure matches search response structure."""
+    response = client.get("/api/v1/recommendations/discover?genre_id=28&catalog_only=false")
+
+    assert response.status_code == 200, response.text
+    body = response.json()
+
+    # Verify response structure matches SearchMoviesResponse schema
+    assert body["status"] == "success"
+    assert "movies" in body
+    assert "query" in body
+    assert isinstance(body["movies"], list)
+
+    # Verify movie structure matches MovieBase schema
+    if len(body["movies"]) > 0:
+        movie = body["movies"][0]
+        required_fields = ["id", "title", "overview", "poster_path", "release_date", "vote_average", "vote_count"]
+        for field in required_fields:
+            assert field in movie, f"Missing required field: {field}"
