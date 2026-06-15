@@ -316,30 +316,40 @@ async def discover_movies_by_genre(
         raise HTTPException(status_code=400, detail="Invalid genre ID")
 
     try:
-        result = tmdb_service.discover_movies_by_genre(genre_id)
+        movies_data: list[MovieBase] = []
+        pages_to_scan = 5 if catalog_only else 1
+        target_count = 20
+        scanned_pages = 0
 
-        if not result or "results" not in result:
-            raise HTTPException(
-                status_code=404, detail="No movies found for this genre"
-            )
+        for page in range(1, pages_to_scan + 1):
+            scanned_pages = page
+            result = tmdb_service.discover_movies_by_genre(genre_id, page=page)
 
-        movies_data = [
-            _movie_base_from_tmdb(movie) for movie in result.get("results", [])
-        ]
+            if not result or "results" not in result:
+                if page == 1:
+                    raise HTTPException(
+                        status_code=404, detail="No movies found for this genre"
+                    )
+                break
 
-        if catalog_only and recommender_service.is_loaded:
-            before = len(movies_data)
-            movies_data = [
-                movie
-                for movie in movies_data
-                if recommender_service.is_tmdb_in_catalog(movie.id)
+            current_page_movies = [
+                _movie_base_from_tmdb(movie) for movie in result.get("results", [])
             ]
-            logger.info(
-                "Catalog discover filter for genre_id=%d | before=%d | after=%d",
-                genre_id,
-                before,
-                len(movies_data),
-            )
+
+            if catalog_only and recommender_service.is_loaded:
+                current_page_movies = [
+                    movie
+                    for movie in current_page_movies
+                    if recommender_service.is_tmdb_in_catalog(movie.id)
+                ]
+
+            movies_data.extend(current_page_movies)
+
+            # Stop if we have enough movies or if we've reached the last available page from TMDB
+            if len(movies_data) >= target_count:
+                break
+            if page >= result.get("total_pages", 0):
+                break
 
         if not movies_data:
             raise HTTPException(
@@ -352,15 +362,16 @@ async def discover_movies_by_genre(
             )
 
         logger.info(
-            "TMDB discover for genre_id=%d returned %d movies",
+            "TMDB discover for genre_id=%d returned %d movies (scanned %d pages)",
             genre_id,
             len(movies_data),
+            scanned_pages,
         )
 
         return SearchMoviesResponse(
             status="success",
             query=f"genre:{genre_id}",
-            movies=movies_data,
+            movies=movies_data[:target_count],
         )
 
     except HTTPException:

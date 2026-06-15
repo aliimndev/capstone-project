@@ -259,7 +259,7 @@ The frontend lives in `apps/web` and uses the **Next.js App Router**.
 
 ```mermaid
 flowchart LR
-    Home[Landing / navigation] --> RecommendPage[/recommend]
+    Home[Landing / navigation] --> RecommendPage["Recommend page (/recommend)"]
     RecommendPage --> Search[Search movies]
     Search --> Select[Select movie]
     Select --> Rate[Choose reaction]
