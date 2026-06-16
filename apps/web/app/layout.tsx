@@ -10,7 +10,7 @@ const geistSans = Geist({
 });
 
 export const metadata: Metadata = {
-  title: "wemovies",
+  title: "WeMovies AI",
   description: "movies recommendations.",
   icons: {
     icon: "/logo/wemovies.svg",
