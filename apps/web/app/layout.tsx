@@ -11,10 +11,10 @@ const geistSans = Geist({
 
 export const metadata: Metadata = {
   title: "wemovies",
-  description: "Aplikasi rekomendasi film berdasarkan preferensi pengguna.",
+  description: "movies recommendations.",
   icons: {
-    icon: "/logo/logo-search.svg",
-    shortcut: "/logo/logo-search.svg",
+    icon: "/logo/wemovies.svg",
+    shortcut: "/logo/wemovies.svg",
   },
 };
 
