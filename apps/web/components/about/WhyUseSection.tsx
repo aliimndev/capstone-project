@@ -10,11 +10,14 @@ interface FeatureItemProps {
 
 const FeatureItem: React.FC<FeatureItemProps> = ({ icon, text }) => {
   return (
-    <div className="flex items-center gap-3 bg-[#091020]/50 backdrop-blur-sm hover:bg-[#00d2ff]/10 hover:border-[#00d2ff]/50 hover:shadow-[0_0_20px_rgba(0,210,255,0.2)] transition-all duration-300 rounded-full px-4 py-3 w-full max-w-2xl mx-auto border border-white/10">
+    <div className="flex items-center gap-2 sm:gap-3 bg-[#091020]/50 backdrop-blur-sm hover:bg-[#00d2ff]/10 hover:border-[#00d2ff]/50 hover:shadow-[0_0_20px_rgba(0,210,255,0.2)] transition-all duration-300 rounded-full px-3 sm:px-4 py-2.5 sm:py-3 w-full max-w-2xl mx-auto border border-white/10">
       <div className="shrink-0 text-[#00d2ff]">
-        {icon}
+        {/* Icon dengan ukuran responsif */}
+        <span className="block h-4 w-4 sm:h-5 sm:w-5">
+          {icon}
+        </span>
       </div>
-      <span className="text-white text-sm md:text-base font-medium">
+      <span className="text-white text-xs sm:text-sm md:text-base font-medium leading-snug">
         {text}
       </span>
     </div>
@@ -27,7 +30,7 @@ const WhyUseSection: React.FC = () => {
       icon: (
         <svg 
           xmlns="http://www.w3.org/2000/svg" 
-          className="h-5 w-5" 
+          className="h-full w-full" 
           viewBox="0 0 20 20" 
           fill="currentColor"
           aria-hidden="true"
@@ -45,7 +48,7 @@ const WhyUseSection: React.FC = () => {
       icon: (
         <svg 
           xmlns="http://www.w3.org/2000/svg" 
-          className="h-5 w-5" 
+          className="h-full w-full" 
           viewBox="0 0 20 20" 
           fill="currentColor"
           aria-hidden="true"
@@ -63,7 +66,7 @@ const WhyUseSection: React.FC = () => {
       icon: (
         <svg 
           xmlns="http://www.w3.org/2000/svg" 
-          className="h-5 w-5" 
+          className="h-full w-full" 
           viewBox="0 0 20 20" 
           fill="currentColor"
           aria-hidden="true"
@@ -81,7 +84,7 @@ const WhyUseSection: React.FC = () => {
 
   return (
     <section 
-      className="w-full bg-transparent py-16 md:py-20 px-4 sm:px-6 lg:px-8 relative z-10"
+      className="w-full bg-transparent py-12 sm:py-16 md:py-20 px-4 sm:px-6 lg:px-8 relative z-10"
       aria-labelledby="why-use-heading"
     >
       <div className="max-w-4xl mx-auto">
@@ -92,13 +95,13 @@ const WhyUseSection: React.FC = () => {
           viewport={{ once: true, margin: "-100px" }}
           transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
           id="why-use-heading"
-          className="text-3xl md:text-4xl font-bold text-center text-white mb-10 md:mb-12"
+          className="text-2xl sm:text-3xl md:text-4xl font-bold text-center text-white mb-8 sm:mb-10 md:mb-12"
         >
           Why Use This?
         </motion.h2>
 
         {/* Features List */}
-        <div className="space-y-4">
+        <div className="space-y-3 sm:space-y-4">
           {features.map((feature, index) => (
             <motion.div
               key={index}

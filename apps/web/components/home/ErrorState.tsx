@@ -11,7 +11,7 @@ export function ErrorState({ message, onRetry }: ErrorStateProps) {
       <div className="text-center">
         <div className="mb-4 inline-block">
           <svg
-            className="w-12 h-12 text-special-error"
+            className="w-12 h-12 text-blue-600"  
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"
@@ -32,7 +32,7 @@ export function ErrorState({ message, onRetry }: ErrorStateProps) {
         {onRetry && (
           <button
             onClick={onRetry}
-            className="px-6 py-3 bg-primary-orange hover:bg-interactive-hover text-primary-black font-semibold rounded-lg transition-all duration-200 hover:shadow-lg hover:shadow-primary-orange/30"
+            className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition-all duration-200 hover:shadow-lg hover:shadow-blue-600/30"
           >
             Try Again
           </button>
