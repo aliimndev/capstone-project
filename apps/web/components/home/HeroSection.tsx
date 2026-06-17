@@ -10,7 +10,7 @@ export function HeroSection() {
     { name: "Member 2", url: "https://github.com/rizkidwifrb" },
     { name: "Member 3", url: "https://github.com/Joshuachriss" },
     { name: "Member 4", url: "https://github.com/arindasr" },
-    { name: "Member 4", url: "https://github.com/aliimndev" },
+    { name: "Member 5", url: "https://github.com/aliimndev" },
   ];
 
   const gradientStyle = {
@@ -26,7 +26,7 @@ export function HeroSection() {
   return (
     <section className="relative pt-20 md:pt-28 pb-20 flex flex-col items-center justify-center px-6 min-h-[calc(100vh-4rem)] overflow-hidden">
       <div className="relative z-20 flex flex-col items-center text-center w-full max-w-3xl mx-auto">
-        
+
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
@@ -66,7 +66,7 @@ export function HeroSection() {
           >
             Stop guessing
           </motion.span>
-          
+
           <motion.span
             className="block mt-1 animate-shiny"
             style={gradientStyle}
@@ -84,7 +84,7 @@ export function HeroSection() {
           transition={{ duration: 0.8, delay: 0.5, ease: [0.22, 1, 0.36, 1] }}
           className="mt-6 text-white/70 max-w-lg text-base md:text-lg leading-relaxed"
         >
-          Tell us what you love 
+          Tell us what you love
           <br className="hidden md:block" />
           Instant AI recommendations
         </motion.p>

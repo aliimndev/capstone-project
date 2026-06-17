@@ -14,9 +14,9 @@ const Feature: React.FC<FeatureProps> = ({ title, description, align = 'left' })
 
   return (
     <div className={`flex gap-4 sm:gap-6 ${isRight ? 'md:justify-end' : 'md:justify-start'} justify-start`}>
-      {/* Garis vertikal: di mobile selalu di kiri, di md mengikuti align */}
+
       <div className={`w-1 h-full min-h-[120px] sm:min-h-[150px] bg-[#00d2ff] flex-shrink-0 shadow-[0_0_20px_rgba(0,210,255,0.5)] ${isRight ? 'md:order-2' : 'md:order-1'}`} />
-      
+
       <div className={`flex-1 max-w-2xl ${isRight ? 'md:text-right' : 'md:text-left'} text-left ${isRight ? 'md:order-1' : 'md:order-2'}`}>
         <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white mb-3 sm:mb-4">
           {title}
@@ -46,7 +46,7 @@ const FeaturesSection: React.FC = () => {
   ];
 
   return (
-    <section 
+    <section
       className="w-full bg-transparent py-12 sm:py-16 md:py-24 lg:py-32 px-4 sm:px-6 lg:px-8 relative z-10"
       aria-labelledby="features-heading"
     >
