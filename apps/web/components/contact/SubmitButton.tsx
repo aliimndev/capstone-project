@@ -13,8 +13,8 @@ export function SubmitButton({ isSubmitting, submitStatus }: SubmitButtonProps) 
       {/* Error banner — shown above button when previous attempt failed */}
       {isError && (
         <div className="flex items-center gap-2.5 px-4 py-3 rounded-xl bg-red-500/[0.07] border border-red-500/20">
-          <span className="inline-block w-1.5 h-1.5 rounded-full bg-red-400 flex-shrink-0" />
-          <p className="text-xs text-red-400">
+          <span className="inline-block w-1.5 h-1.5 rounded-full bg-blue-500-400 flex-shrink-0" />
+          <p className="text-xs text-blue-500-400">
             Couldn&apos;t deliver your message — please try again.
           </p>
         </div>
