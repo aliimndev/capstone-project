@@ -40,9 +40,11 @@ export async function searchMovies(query: string): Promise<TmdbMovie[]> {
 }
 
 export async function discoverMoviesByGenre(genreId: number): Promise<TmdbMovie[]> {
-  const response = await fetch(
-    `${API_BASE}/api/v1/recommendations/discover?genre_id=${genreId}&catalog_only=true`
-  );
+  const params = new URLSearchParams({
+    genre_id: String(genreId),
+    catalog_only: 'true',
+  });
+  const response = await fetch(`${API_BASE}/api/v1/recommendations/discover?${params}`);
 
   if (!response.ok) {
     const text = await response.text();

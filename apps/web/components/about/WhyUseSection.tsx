@@ -83,23 +83,28 @@ const WhyUseSection: React.FC = () => {
 
   return (
     <section
-      className="w-full bg-transparent py-12 sm:py-16 md:py-20 px-4 sm:px-6 lg:px-8 relative z-10"
-      aria-labelledby="why-use-heading"
+      className="w-full bg-transparent py-12 sm:py-16 md:py-20 px-4 sm:px-6 lg:px-8 relative"
+      aria-labelledby="value-heading"
     >
       <div className="max-w-4xl mx-auto">
-        {/* Heading */}
-        <motion.h2
+        <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-100px" }}
           transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-          id="why-use-heading"
-          className="text-2xl sm:text-3xl md:text-4xl font-bold text-center text-white mb-8 sm:mb-10 md:mb-12"
+          className="text-center mb-8 sm:mb-10 md:mb-12"
         >
-          Why Use This?
-        </motion.h2>
+          <h2
+            id="value-heading"
+            className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold text-white leading-tight"
+          >
+            <span className="block sm:inline">What Makes Us Different?</span>
+          </h2>
+          <p className="mt-2 text-gray-400 text-xs sm:text-sm md:text-base max-w-xl mx-auto">
+            No account. No noise. Just a hybrid AI that knows your taste.
+          </p>
+        </motion.div>
 
-        {/* Features List */}
         <div className="space-y-3 sm:space-y-4">
           {features.map((feature, index) => (
             <motion.div

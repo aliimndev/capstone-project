@@ -10,7 +10,6 @@ export function SubmitButton({ isSubmitting, submitStatus }: SubmitButtonProps) 
 
   return (
     <div className="space-y-3 pt-1">
-      {/* Error banner — shown above button when previous attempt failed */}
       {isError && (
         <div className="flex items-center gap-2.5 px-4 py-3 rounded-xl bg-red-500/[0.07] border border-red-500/20">
           <span className="inline-block w-1.5 h-1.5 rounded-full bg-blue-500-400 flex-shrink-0" />
@@ -20,7 +19,6 @@ export function SubmitButton({ isSubmitting, submitStatus }: SubmitButtonProps) 
         </div>
       )}
 
-      {/* Primary action button */}
       <button
         type="submit"
         disabled={isSubmitting}
@@ -38,7 +36,6 @@ export function SubmitButton({ isSubmitting, submitStatus }: SubmitButtonProps) 
         ].join(' ')}
       >
         {isSubmitting ? (
-          /* Loading state */
           <>
             <svg
               className="animate-spin h-4 w-4 text-[#091020] flex-shrink-0"
@@ -64,9 +61,7 @@ export function SubmitButton({ isSubmitting, submitStatus }: SubmitButtonProps) 
             <span>Sending…</span>
           </>
         ) : (
-          /* Idle / retry state */
           <>
-            {/* Paper-plane send icon */}
             <svg
               xmlns="http://www.w3.org/2000/svg"
               className="h-4 w-4 flex-shrink-0 -rotate-45"

@@ -57,10 +57,14 @@ const RatingPanel: React.FC<RatingPanelProps> = ({ movie, onRate, onCancel }) =>
               <button
                 key={option.key}
                 onClick={() => onRate(option.key)}
-                className="flex flex-col items-center gap-1.5 py-3 px-2 rounded-xl bg-white/5 hover:bg-[#00d2ff]/15 border border-white/10 hover:border-[#00d2ff]/40 transition-all duration-200 hover:scale-[1.02]"
+                className={`
+                  flex flex-col items-center gap-1.5 py-3 px-2 rounded-xl
+                  border border-white/10 text-gray-300
+                  transition-all duration-200 hover:scale-[1.02]
+                  ${option.hoverClasses}
+                `}
               >
-                <span className="text-2xl">{option.emoji}</span>
-                <span className="text-white text-sm font-medium">{option.label}</span>
+                <span className="text-sm font-medium">{option.label}</span>
               </button>
             ))}
           </div>

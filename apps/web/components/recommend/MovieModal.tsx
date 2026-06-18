@@ -17,7 +17,6 @@ export function MovieModal({ movie, matchPct, onClose }: Props) {
   const [showTrailer, setShowTrailer] = useState(false);
   const posterUrl = resolveDisplayPosterUrl(movie, 'card');
 
-  // ESC key handler
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
       if (e.key === 'Escape') onClose();
@@ -26,7 +25,6 @@ export function MovieModal({ movie, matchPct, onClose }: Props) {
     return () => window.removeEventListener('keydown', handler);
   }, [onClose]);
 
-  // Body scroll lock
   useEffect(() => {
     const original = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
@@ -39,7 +37,7 @@ export function MovieModal({ movie, matchPct, onClose }: Props) {
 
   return (
     <motion.div
-      className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6"
+      className="fixed inset-0 z-[200] flex items-center justify-center p-3 sm:p-6"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
@@ -51,7 +49,6 @@ export function MovieModal({ movie, matchPct, onClose }: Props) {
         onClick={onClose}
       />
 
-      {/* Modal content */}
       <motion.div
         className="relative z-10 w-full max-w-3xl max-h-[90vh] overflow-y-auto rounded-2xl bg-[#0a1020]/95 border border-white/10 shadow-2xl shadow-black/60"
         initial={{ opacity: 0, scale: 0.92, y: 20 }}
@@ -60,20 +57,18 @@ export function MovieModal({ movie, matchPct, onClose }: Props) {
         transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Close button */}
         <button
           type="button"
           onClick={onClose}
-          className="absolute top-4 right-4 z-30 w-9 h-9 rounded-full bg-white/10 backdrop-blur-md flex items-center justify-center text-white/70 hover:text-white hover:bg-white/20 transition-colors"
+          className="absolute top-3 right-3 z-30 w-10 h-10 rounded-full bg-white/10 backdrop-blur-md flex items-center justify-center text-white/70 hover:text-white hover:bg-white/20 transition-colors"
         >
-          <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+          <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
           </svg>
         </button>
 
         <div className="flex flex-col sm:flex-row">
-          {/* Poster */}
-          <div className="relative w-full sm:w-64 flex-shrink-0 aspect-[2/3] sm:aspect-auto sm:min-h-[380px] bg-secondary-medium rounded-t-2xl sm:rounded-l-2xl sm:rounded-tr-none overflow-hidden">
+          <div className="relative w-full h-56 sm:h-auto sm:min-h-[380px] sm:w-64 flex-shrink-0 bg-secondary-medium rounded-t-2xl sm:rounded-l-2xl sm:rounded-tr-none overflow-hidden">
             {posterUrl ? (
               <Image
                 src={posterUrl}
@@ -90,8 +85,7 @@ export function MovieModal({ movie, matchPct, onClose }: Props) {
             )}
           </div>
 
-          {/* Details */}
-          <div className="flex-1 p-6 sm:p-8 flex flex-col gap-4">
+          <div className="flex-1 p-5 sm:p-8 flex flex-col gap-4">
             <div>
               <h2 className="text-2xl sm:text-3xl font-bold text-white leading-tight mb-2">
                 {movie.title}
@@ -122,21 +116,20 @@ export function MovieModal({ movie, matchPct, onClose }: Props) {
               </div>
             </div>
 
-            {/* Overview */}
             {movie.overview && (
-              <p className="text-text-secondary text-sm leading-relaxed">
+              <p className="text-text-secondary text-sm leading-relaxed max-h-40 overflow-y-auto pr-1">
                 {movie.overview}
               </p>
             )}
 
-            {/* Trailer section */}
             <div className="mt-auto pt-4">
               {!showTrailer ? (
                 <button
                   type="button"
                   onClick={() => setShowTrailer(true)}
-                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold
-                    bg-red-600 hover:bg-red-500 text-white transition-colors duration-200 shadow-lg shadow-red-600/20"
+                  className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold
+                    bg-red-600 hover:bg-red-500 text-white transition-colors duration-200 shadow-lg shadow-red-600/20
+                    w-full sm:w-fit"
                 >
                   <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
                     <path d="M8 5v14l11-7z" />
@@ -149,8 +142,9 @@ export function MovieModal({ movie, matchPct, onClose }: Props) {
                     href={`https://www.youtube.com/results?search_query=${trailerQuery}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold
-                      bg-red-600 hover:bg-red-500 text-white transition-colors duration-200 shadow-lg shadow-red-600/20 w-fit"
+                    className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold
+                      bg-red-600 hover:bg-red-500 text-white transition-colors duration-200 shadow-lg shadow-red-600/20
+                      w-full sm:w-fit"
                   >
                     <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
                       <path d="M8 5v14l11-7z" />

@@ -248,10 +248,10 @@ export default function ContactPage() {
   const ease = [0.22, 1, 0.36, 1] as const;
 
   return (
-    <div className="min-h-screen bg-transparent text-white flex flex-col relative z-10">
+    <div className="min-h-screen bg-transparent text-white relative z-10">
       <SiteHeader />
 
-      <main className="flex-1 py-20 px-4 sm:px-6 lg:px-8">
+      <main className="py-20 px-4 sm:px-6 lg:px-8">
         <div className="max-w-2xl mx-auto">
 
           {/* ── Decorative ambient glows ─────────────────────────────────── */}

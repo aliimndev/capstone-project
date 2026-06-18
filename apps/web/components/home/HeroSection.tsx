@@ -85,7 +85,7 @@ export function HeroSection() {
           className="mt-6 text-white/70 max-w-lg text-base md:text-lg leading-relaxed"
         >
           Tell us what you love
-          <br className="hidden md:block" />
+          <br />
           Instant AI recommendations
         </motion.p>
 

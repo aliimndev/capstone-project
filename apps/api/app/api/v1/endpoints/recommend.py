@@ -317,7 +317,7 @@ async def discover_movies_by_genre(
 
     try:
         movies_data: list[MovieBase] = []
-        pages_to_scan = 5 if catalog_only else 1
+        pages_to_scan = 20 if catalog_only else 1
         target_count = 20
         scanned_pages = 0
 

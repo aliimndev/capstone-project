@@ -59,27 +59,27 @@ const TEAM_MEMBERS: TeamMemberProps[] = [
   {
     name: "Ali Imannudin",
     jobdesk: "Full Stack Engineer",
-    photoUrl: "/team/ali.jpeg",
+    photoUrl: "/team/ale.webp",
   },
   {
     name: "Arinda Setyo Rini",
     jobdesk: "UI/UX Designer & Dataset Curator",
-    photoUrl: "/team/arinda.jpg",
+    photoUrl: "/team/arinda.webp",
   },
   {
     name: "Joshua Christian Benedict",
     jobdesk: "Machine Learning Engineer",
-    photoUrl: "/team/joshua.jpg",
+    photoUrl: "/team/joshua.webp",
   },
   {
     name: "Shandy Putraniar Budianto",
     jobdesk: "Machine Learning Evaluator ",
-    photoUrl: "/team/shandy.jpg",
+    photoUrl: "/team/shandy.webp",
   },
   {
     name: "Rizky Dwi Febriansyah",
     jobdesk: "Visual & Graphic Designer",
-    photoUrl: "/team/dwi.png",
+    photoUrl: "/team/dwi.webp",
   },
 ];
 
