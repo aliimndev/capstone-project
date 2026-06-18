@@ -25,6 +25,10 @@ const SUGGESTED_GENRES: Genre[] = [
   { id: 10749, name: 'Romance' }
 ];
 
+function dedupeMoviesById<T extends { id: number }>(movies: T[]): T[] {
+  return Array.from(new Map(movies.map((movie) => [movie.id, movie])).values());
+}
+
 interface SearchMoviesProps {
   onMovieClick?: (movie: DisplayMovie) => void;
   ratedMovies?: RatedMovie[];
@@ -48,7 +52,8 @@ const SearchMovies: React.FC<SearchMoviesProps> = ({
       setSearchError(null);
 
       const moviesFromApi = await searchMovies(query);
-      const formattedMovies = mapMoviesForDisplay(moviesFromApi.slice(0, 12), {
+      const uniqueMovies = dedupeMoviesById(moviesFromApi);
+      const formattedMovies = mapMoviesForDisplay(uniqueMovies.slice(0, 12), {
         posterSize: 'card',
       });
 
@@ -89,7 +94,8 @@ const SearchMovies: React.FC<SearchMoviesProps> = ({
       setSearchError(null);
 
       const moviesFromApi = await discoverMoviesByGenre(genreId);
-      const formattedMovies = mapMoviesForDisplay(moviesFromApi.slice(0, 12), {
+      const uniqueMovies = dedupeMoviesById(moviesFromApi);
+      const formattedMovies = mapMoviesForDisplay(uniqueMovies.slice(0, 12), {
         posterSize: 'card',
       });
 

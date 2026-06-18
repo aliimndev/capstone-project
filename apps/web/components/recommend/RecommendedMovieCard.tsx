@@ -32,7 +32,12 @@ export function RecommendedMovieCard({ movie, index, onSelect }: Props) {
       className="group cursor-pointer"
       onClick={() => onSelect(movie)}
     >
-      <div className="relative aspect-[2/3] rounded-xl overflow-hidden bg-secondary-medium mb-3 transition-all duration-300 hover:scale-[1.03] hover:shadow-2xl hover:shadow-[#00d2ff]/10">
+      <div
+        className="relative aspect-[2/3] rounded-xl overflow-hidden bg-secondary-medium mb-3
+          transition-transform duration-300 hover:scale-[1.03]
+          hover:shadow-2xl hover:shadow-[#00d2ff]/10
+          transform-gpu backface-hidden"
+      >
         {posterUrl ? (
           <Image
             src={posterUrl}

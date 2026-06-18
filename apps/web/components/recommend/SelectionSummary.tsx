@@ -1,4 +1,3 @@
-
 import React from 'react';
 import Image from 'next/image';
 import type { RatedMovie } from '@/features/recommendation/types';
@@ -25,7 +24,7 @@ const SelectionSummary: React.FC<SelectionSummaryProps> = ({
   });
 
   return (
-    <section className="py-12 bg-transparent relative z-10">
+    <section className="py-12 bg-transparent relative"> {/* Hilangkan z-10 */}
       <div className="mx-auto max-w-7xl px-6">
         <div className="mb-8">
           <div className="flex items-baseline gap-3 mb-2">
@@ -49,7 +48,7 @@ const SelectionSummary: React.FC<SelectionSummaryProps> = ({
             >
               {movie ? (
                 <>
-                  <div className="relative w-full h-full rounded-xl overflow-hidden bg-gray-900">
+                  <div className="relative w-full h-full rounded-xl overflow-hidden bg-gray-900/80"> {/* Kurangi opacity background */}
                     <Image
                       src={movie.posterUrl}
                       alt={movie.title}
@@ -58,13 +57,13 @@ const SelectionSummary: React.FC<SelectionSummaryProps> = ({
                       sizes="(max-width: 768px) 128px, 160px"
                     />
 
-                    <div className="absolute bottom-0 inset-x-0 bg-gradient-to-t from-black/90 to-transparent p-3">
+                    <div className="absolute bottom-0 inset-x-0 bg-gradient-to-t from-black/80 to-transparent p-3"> {/* Kurangi opacity gradasi */}
                       <p className="text-xs text-[#00d2ff] font-semibold truncate">
                         {reactionLabel(movie.reaction)}
                       </p>
                     </div>
 
-                    <div className="absolute inset-0 bg-black/70 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-center">
+                    <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-center"> {/* Kurangi opacity overlay hover */}
                       <button
                         onClick={() => onRemoveMovie(movie.id)}
                         className="p-2.5 bg-red-500 hover:bg-red-600 rounded-full transition-colors shadow-lg"
@@ -99,10 +98,10 @@ const SelectionSummary: React.FC<SelectionSummaryProps> = ({
                 </>
               ) : (
                 <>
-                  <div className="relative w-full h-full rounded-xl border-2 border-dashed border-gray-700 bg-gray-900/30 flex items-center justify-center">
+                  <div className="relative w-full h-full rounded-xl border-2 border-dashed border-gray-700 bg-gray-900/20 flex items-center justify-center"> {/* Kurangi opacity empty slot */}
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
-                      className="h-10 w-10 text-gray-700"
+                      className="h-10 w-10 text-gray-700/60"
                       fill="none"
                       viewBox="0 0 24 24"
                       stroke="currentColor"
@@ -125,7 +124,7 @@ const SelectionSummary: React.FC<SelectionSummaryProps> = ({
         </div>
 
         {ratedCount === maxSelection && (
-          <div className="mt-8 p-4 bg-[#00d2ff]/10 border border-[#00d2ff]/20 rounded-lg">
+          <div className="mt-8 p-4 bg-[#00d2ff]/5 border border-[#00d2ff]/10 rounded-lg"> {/* Kurangi opacity notifikasi */}
             <p className="text-sm text-[#00d2ff] font-medium">
               ✓ All {maxSelection} movies rated — fetching recommendations...
             </p>
