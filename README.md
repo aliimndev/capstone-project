@@ -41,7 +41,7 @@ WeMovies AI lets users search movies, rate **exactly 3 titles**, and receive **1
 | Frontend | Next.js 16, React 19, TypeScript, Tailwind CSS, Motion, Lucide |
 | Backend | FastAPI, Pydantic, scikit-learn, NumPy, pandas, SciPy |
 | External APIs | TMDB, Resend, Hugging Face |
-| Deployment | Vercel (frontend), Dockerized FastAPI backend, optional Hugging Face Space, optional Cloudflare Worker |
+| Deployment | Vercel (frontend), Hugging Face Spaces Docker backend, optional Cloudflare Worker |
 | CI/CD | GitHub Actions, GHCR |
 
 ---
@@ -61,7 +61,7 @@ capstone-project/
 │   ├── api/                 # FastAPI backend + recommendation engine
 │   └── proxy/               # Optional Cloudflare Worker TMDB proxy
 ├── docs/                    # Architecture / user-flow diagrams
-├── hf-space/                # Optional Hugging Face Space packaging
+├── hf-space/                # Hugging Face Space backend packaging
 ├── infra/                   # Docker Compose & local infrastructure helpers
 ├── .github/workflows/       # CI/CD pipelines
 ├── package.json             # Monorepo scripts
@@ -85,7 +85,7 @@ flowchart TD
     API --> RECSVC[RecommenderService]
     API --> TMDB[TMDB API]
     RECSVC --> MODEL[Model artifact cache]
-    MODEL --> HF[Hugging Face]
+    MODEL --> HF[Hugging Face / Google Drive backup]
 
     CONTACT --> RESEND[Resend]
     RESEND --> INBOX[Support inbox]
@@ -153,7 +153,10 @@ Instead:
 
 This makes Docker and CI builds more reliable and avoids committing a 200+ MB binary to Git.
 
-**Artifact source**: [aliimndev/recommender_artifacts.pkl on Hugging Face](https://huggingface.co/aliimndev/recommender_artifacts.pkl)
+**Primary artifact source**: [aliimndev/recommender_artifacts.pkl on Hugging Face](https://huggingface.co/aliimndev/recommender_artifacts.pkl)  
+**Google Drive model backup**: <https://drive.google.com/drive/folders/15e6JBAYuqJdMoE1-BXbyim3B2QzEzY5-?usp=sharing>
+
+> For capstone assessment, the Google Drive folder contains the downloadable ML model artifact. Ensure the evaluator account `pijak@student.devacademy.id` has view/download access.
 
 ---
 
@@ -191,7 +194,7 @@ You will also need:
 
 ### Frontend — `apps/web/.env.local`
 
-A sample file is provided at [`apps/web/.env.local.example`](apps/web/.env.local.example).
+The frontend environment file is intentionally not committed to GitHub. Create `apps/web/.env.local` manually using the variables below.
 
 | Variable | Required | Purpose |
 |---|---|---|
@@ -236,8 +239,8 @@ cd capstone-project
 
 ```bash
 npm install
-cp apps/web/.env.local.example apps/web/.env.local
-# then edit apps/web/.env.local
+
+# Create apps/web/.env.local manually, then fill it using the variables in the Environment Variables section.
 ```
 
 ### 3) Set up the FastAPI backend
@@ -270,6 +273,12 @@ Open:
 - FastAPI docs: <http://localhost:8000/api/docs>
 - FastAPI health: <http://localhost:8000/health>
 
+Production links:
+
+- Live Demo: <https://wemoviesai.vercel.app/>
+- Backend API: <https://aliimndev-wemovies-api.hf.space>
+- API Documentation: <https://aliimndev-wemovies-api.hf.space/api/docs>
+
 ### 5) Optional: verify the model artifact manually
 
 ```bash
@@ -298,7 +307,7 @@ This script downloads the Hugging Face artifact, validates the SHA-256 hash, and
 - `apps/api/app/services/recommender/` contains the recommendation engine, model loader, ID mapper, and TMDB enrichment helpers
 - `apps/api/core/config.py` defines env-based backend configuration
 
-### Contact form workflow
+### Contact form workflow 
 
 - The frontend `Contact` page posts to `POST /api/contact`
 - The Next.js route validates the payload
@@ -319,7 +328,7 @@ This script downloads the Hugging Face artifact, validates the SHA-256 hash, and
 | `GET` | `/api/v1/recommendations/trending` | Browse trending titles |
 | `GET` | `/api/v1/recommendations/search?q=...` | Search TMDB-backed movies |
 | `GET` | `/api/v1/recommendations/discover?genre_id=...` | Discover movies by genre |
-| `GET` | `/api/docs` | Swagger UI |
+| `GET` | `/api/docs` | Swagger UI. Production: <https://aliimndev-wemovies-api.hf.space/api/docs> |
 
 ### Next.js server routes
 
@@ -359,7 +368,7 @@ Notes:
 | TMDB mappings | ~80k IDs |
 | Latent matrix | `(80318, 100)` |
 | Content features | `(80318, 5019)` |
-| Artifact host | Hugging Face |
+| Artifact host | Hugging Face, with Google Drive backup for capstone review |
 
 ### Reaction weights
 
@@ -386,27 +395,27 @@ Set these environment variables in Vercel:
 - `CONTACT_TO_EMAIL`
 - `CONTACT_FROM_EMAIL`
 
-### Backend (Docker / container host)
+### Backend (Hugging Face Spaces)
 
-The primary backend packaging path is `apps/api/Dockerfile`.
+The production backend is deployed as a Docker-based Hugging Face Space:
+
+- Backend API: <https://aliimndev-wemovies-api.hf.space>
+- API Documentation: <https://aliimndev-wemovies-api.hf.space/api/docs>
+- Packaging path: `hf-space/`
+- Deployment workflow: `.github/workflows/deploy-hf-space.yml`
 
 Important behavior:
 
-- The Docker image **does not bundle** the model artifact
-- The API container downloads the model from Hugging Face on first startup
-- The artifact is cached inside `/app/model`
+- The Docker image does not require the model artifact to be committed to Git
+- The API container downloads the model artifact during build/startup depending on the deployment path
+- The artifact is cached inside the backend model directory
 - This removes the need for Git LFS or committing `recommender_artifacts.pkl`
 
 The repo also includes:
 
-- `render.yaml` — example Docker deployment config for the API
+- `apps/api/Dockerfile` — reusable Docker packaging for the FastAPI backend
+- `render.yaml` — legacy/example Docker deployment config
 - `.github/workflows/api-ci-cd.yml` — API CI/CD pipeline that tests, builds, and pushes the backend image to GHCR
-
-### Optional Hugging Face Space backend
-
-The repo contains an optional `hf-space/` backend packaging path plus `.github/workflows/deploy-hf-space.yml`.
-
-This is useful if you want to run the FastAPI backend in a Hugging Face Docker Space instead of a separate container host.
 
 ### Optional Cloudflare Worker proxy
 
@@ -452,7 +461,7 @@ From `apps/web/`:
 
 ```bash
 npm run lint
-npx tsc --noEmit
+npx tsc -p tsconfig.json --noEmit
 npm run build
 ```
 
@@ -477,14 +486,6 @@ curl http://localhost:8000/health
 | Docker Compose API boot issue on a fresh machine | See the read-only model mount caveat above |
 
 ---
-
-## Notes on Current Config
-
-A few repo files are helpful but not perfectly aligned with the current runtime behavior:
-
-- The **backend runtime** now relies on `HF_MODEL_URL`, `HF_MODEL_SHA256`, and `HF_DOWNLOAD_TIMEOUT`, but the old README previously documented only local model files.
-- The backend code reads **`EXTRA_CORS_ORIGINS`**, not `ALLOWED_ORIGINS`.
-- The root README previously referenced a missing `apps/web/.env.local.example`; this repo now includes one.
 
 ---
 
