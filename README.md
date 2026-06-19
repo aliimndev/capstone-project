@@ -1,6 +1,6 @@
 <div align="center">
 
-<a href="https://wemovies.ai" target="_blank">
+<a href="https://wemoviesai.vercel.app" target="_blank">
   <picture>
     <img alt="WeMovies AI Logo" src="docs/wemovies.webp" width="220px" height="auto">
   </picture>
