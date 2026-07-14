@@ -1,6 +1,6 @@
 <div align="center">
 
-<a href="https://wemovies.ai" target="_blank">
+<a href="https://wemoviesai.vercel.app" target="_blank">
   <picture>
     <img alt="WeMovies AI Logo" src="docs/wemovies.webp" width="220px" height="auto">
   </picture>
@@ -155,8 +155,6 @@ This makes Docker and CI builds more reliable and avoids committing a 200+ MB bi
 
 **Primary artifact source**: [aliimndev/recommender_artifacts.pkl on Hugging Face](https://huggingface.co/aliimndev/recommender_artifacts.pkl)  
 **Google Drive model backup**: <https://drive.google.com/drive/folders/15e6JBAYuqJdMoE1-BXbyim3B2QzEzY5-?usp=sharing>
-
-> For capstone assessment, the Google Drive folder contains the downloadable ML model artifact. Ensure the evaluator account `pijak@student.devacademy.id` has view/download access.
 
 ---
 
