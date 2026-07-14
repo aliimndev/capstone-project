@@ -1,6 +1,7 @@
 from contextlib import asynccontextmanager
 import logging
 import sys
+import threading
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
@@ -23,17 +24,30 @@ logger = logging.getLogger(__name__)
 settings = get_settings()
 
 
-@asynccontextmanager
-async def lifespan(app: FastAPI):
-    logger.info("FastAPI startup: initializing recommender service")
+def _load_model_background() -> None:
+    """Load the recommender model in a background thread.
+
+    This prevents the (potentially slow) model download / deserialization
+    from blocking FastAPI startup, which is critical on Hugging Face Spaces
+    where the platform expects the HTTP server to respond quickly.
+    """
     service = get_recommender_service()
     try:
         service.load()
-        logger.info("FastAPI startup: recommender service ready")
+        logger.info("Background model loader: recommender service ready")
     except FileNotFoundError as exc:
-        logger.warning("FastAPI startup: recommender model not loaded — %s", exc)
+        logger.warning("Background model loader: model not found — %s", exc)
     except Exception as exc:
-        logger.exception("FastAPI startup: failed to load recommender model — %s", exc)
+        logger.exception("Background model loader: failed — %s", exc)
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    logger.info("FastAPI startup: launching background model loader")
+    loader_thread = threading.Thread(
+        target=_load_model_background, daemon=True, name="model-loader"
+    )
+    loader_thread.start()
     yield
     logger.info("FastAPI shutdown")
 
@@ -80,4 +94,5 @@ def health_check():
         "status": "healthy",
         "message": "API is running",
         "model_loaded": service.is_loaded,
+        "model_status": "ready" if service.is_loaded else "loading",
     }

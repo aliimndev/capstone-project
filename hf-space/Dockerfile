@@ -1,4 +1,5 @@
 # check=skip=FromAsCasing
+# ── Build stage ──────────────────────────────────────────────────────
 FROM python:3.11-slim as builder
 
 WORKDIR /app
@@ -9,25 +10,29 @@ RUN apt-get update && apt-get install -y --no-install-recommends gcc \
 COPY requirements.txt .
 RUN pip install --user --no-cache-dir -r requirements.txt
 
+# ── Runtime stage ────────────────────────────────────────────────────
 FROM python:3.11-slim
 
 WORKDIR /app
 
-ARG HF_MODEL_URL=https://huggingface.co/aliimndev/recommender_artifacts.pkl/resolve/main/recommender_artifacts.pkl
+# Create a non-root user (required by Hugging Face Spaces)
+RUN useradd -m -u 1000 appuser
 
-RUN apt-get update && apt-get install -y --no-install-recommends curl \
-    && rm -rf /var/lib/apt/lists/*
-
-COPY --from=builder /root/.local /root/.local
+COPY --from=builder /root/.local /home/appuser/.local
 COPY app ./app
 COPY core ./core
-RUN mkdir -p model && curl -fsSL -o model/recommender_artifacts.pkl "${HF_MODEL_URL}"
 
-ENV PATH=/root/.local/bin:$PATH \
+# Create model directory with correct permissions
+# Model is downloaded at runtime to keep image size small
+RUN mkdir -p model && chown -R appuser:appuser /app
+
+ENV PATH=/home/appuser/.local/bin:$PATH \
     PYTHONUNBUFFERED=1 \
     PYTHONDONTWRITEBYTECODE=1 \
     PYTHONPATH=/app \
     PORT=7860
+
+USER appuser
 
 EXPOSE 7860
 
