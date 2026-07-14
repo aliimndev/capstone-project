@@ -10,32 +10,18 @@ interface FeatureProps {
 }
 
 const Feature: React.FC<FeatureProps> = ({ title, description, align = 'left' }) => {
-  if (align === 'right') {
-    return (
-      <div className="flex gap-6 justify-end">
-        <div className="flex-1 max-w-2xl text-right">
-          <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
-            {title}
-          </h2>
-          <p className="text-gray-400 text-base md:text-lg leading-relaxed">
-            {description}
-          </p>
-        </div>
-        
-        <div className="w-1 h-full min-h-[150px] bg-[#00d2ff] flex-shrink-0 shadow-[0_0_20px_rgba(0,210,255,0.5)]" />
-      </div>
-    );
-  }
+  const isRight = align === 'right';
 
   return (
-    <div className="flex gap-6 justify-start">
-      <div className="w-1 h-full min-h-[150px] bg-[#00d2ff] flex-shrink-0 shadow-[0_0_20px_rgba(0,210,255,0.5)]" />
-      
-      <div className="flex-1 max-w-2xl text-left">
-        <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
+    <div className={`flex gap-4 sm:gap-6 ${isRight ? 'md:justify-end' : 'md:justify-start'} justify-start`}>
+
+      <div className={`w-1 h-full min-h-[120px] sm:min-h-[150px] bg-[#00d2ff] flex-shrink-0 shadow-[0_0_20px_rgba(0,210,255,0.5)] ${isRight ? 'md:order-2' : 'md:order-1'}`} />
+
+      <div className={`flex-1 max-w-2xl ${isRight ? 'md:text-right' : 'md:text-left'} text-left ${isRight ? 'md:order-1' : 'md:order-2'}`}>
+        <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white mb-3 sm:mb-4">
           {title}
         </h2>
-        <p className="text-gray-400 text-base md:text-lg leading-relaxed">
+        <p className="text-gray-400 text-sm sm:text-base md:text-lg leading-relaxed">
           {description}
         </p>
       </div>
@@ -60,12 +46,12 @@ const FeaturesSection: React.FC = () => {
   ];
 
   return (
-    <section 
-      className="w-full bg-transparent py-16 md:py-24 lg:py-32 px-4 sm:px-6 lg:px-8 relative z-10"
+    <section
+      className="w-full bg-transparent py-12 sm:py-16 md:py-24 lg:py-32 px-4 sm:px-6 lg:px-8 relative z-10"
       aria-labelledby="features-heading"
     >
       <div className="max-w-7xl mx-auto">
-        <div className="space-y-20 md:space-y-32">
+        <div className="space-y-16 sm:space-y-20 md:space-y-32">
           {features.map((feature, index) => (
             <motion.div
               key={index}

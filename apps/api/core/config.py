@@ -14,7 +14,7 @@ _DEFAULT_ORIGINS = [
 
 class Settings(BaseSettings):
     # API Configuration
-    API_TITLE: str = "RekoFilm API"
+    API_TITLE: str = "WeMovies API"
     API_VERSION: str = "1.0.0"
 
     # Backend URL (untuk frontend mengetahui URL API)
@@ -23,6 +23,20 @@ class Settings(BaseSettings):
     # TMDB Configuration
     TMDB_API_KEY: str = os.getenv("TMDB_API_KEY", "")
     TMDB_BASE_URL: str = "https://api.themoviedb.org/3"
+
+    # Hugging Face model hosting — artifact is downloaded at runtime if not cached locally.
+    # Override via environment variables for alternative hosting or air-gapped deployments.
+    HF_MODEL_URL: str = (
+        "https://huggingface.co/aliimndev/recommender_artifacts.pkl"
+        "/resolve/main/recommender_artifacts.pkl"
+    )
+    # SHA256 of the published artifact for integrity verification.
+    # Set to "" to skip verification (not recommended in production).
+    HF_MODEL_SHA256: str = (
+        "f2e7760f90a9d982e617b58d67764b78e2148090d0a57b9c59e3658e47f3723c"
+    )
+    # Max seconds to wait for the full download to complete.
+    HF_DOWNLOAD_TIMEOUT: int = 600
 
     # Comma-separated extra CORS origins (e.g. preview deploy URLs)
     EXTRA_CORS_ORIGINS: str = ""

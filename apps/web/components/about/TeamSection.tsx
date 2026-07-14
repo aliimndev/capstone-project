@@ -23,10 +23,10 @@ const TeamCard: React.FC<TeamMemberProps> = ({ name, jobdesk, photoUrl }) => {
             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 300px"
           />
         ) : (
-          <div className="flex flex-col items-center gap-2 text-gray-500">
+          <div className="flex flex-col items-center gap-1 text-gray-500">
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              className="h-12 w-12 opacity-60"
+              className="h-10 w-10 sm:h-12 sm:w-12 opacity-60"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -38,16 +38,18 @@ const TeamCard: React.FC<TeamMemberProps> = ({ name, jobdesk, photoUrl }) => {
                 d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
               />
             </svg>
-            <span className="text-sm font-medium">Photo</span>
+            <span className="text-xs sm:text-sm font-medium">Photo</span>
           </div>
         )}
       </div>
 
-      <div className="bg-[#091020]/80 p-4 text-center backdrop-blur-sm border-t border-white/5">
-        <h3 className="text-white font-bold text-base md:text-lg mb-1 truncate">
+      <div className="bg-[#091020]/80 p-3 sm:p-4 text-center backdrop-blur-sm border-t border-white/5">
+        <h3 className="text-white font-bold text-sm sm:text-base md:text-lg mb-1 truncate">
           {name}
         </h3>
-        <p className="text-gray-400 text-sm md:text-base">{jobdesk}</p>
+        <p className="text-gray-400 text-xs sm:text-sm md:text-base">
+          {jobdesk}
+        </p>
       </div>
     </div>
   );
@@ -57,45 +59,45 @@ const TEAM_MEMBERS: TeamMemberProps[] = [
   {
     name: "Ali Imannudin",
     jobdesk: "Full Stack Engineer",
-    photoUrl: "/team/ali.jpeg",
+    photoUrl: "/team/ale.webp",
   },
   {
     name: "Arinda Setyo Rini",
-    jobdesk: "UI/UX Designer",
-    photoUrl: "/team/arinda.jpg",
+    jobdesk: "UI/UX Designer & Dataset Curator",
+    photoUrl: "/team/arinda.webp",
   },
   {
     name: "Joshua Christian Benedict",
-    jobdesk: "Backend Engineer",
-    photoUrl: "/team/joshua.jpg",
+    jobdesk: "Machine Learning Engineer",
+    photoUrl: "/team/joshua.webp",
   },
   {
     name: "Shandy Putraniar Budianto",
-    jobdesk: "ML Engineer",
-    photoUrl: "/team/shandy.jpg",
+    jobdesk: "Machine Learning Evaluator ",
+    photoUrl: "/team/shandy.webp",
   },
   {
     name: "Rizky Dwi Febriansyah",
-    jobdesk: "QA Engineer",
-    photoUrl: "/team/dwi.png",
+    jobdesk: "Visual & Graphic Designer",
+    photoUrl: "/team/dwi.webp",
   },
 ];
 
 const TeamSection: React.FC = () => {
   return (
-    <section className="w-full bg-transparent py-16 md:py-24 px-4 sm:px-6 lg:px-8 relative z-10">
+    <section className="w-full bg-transparent py-12 sm:py-16 md:py-24 px-4 sm:px-6 lg:px-8 relative z-10">
       <div className="max-w-6xl mx-auto">
         <motion.h2
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-100px" }}
           transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-          className="text-3xl md:text-4xl font-bold text-center text-white mb-12"
+          className="text-2xl sm:text-3xl md:text-4xl font-bold text-center text-white mb-8 sm:mb-10 md:mb-12"
         >
           Our Team
         </motion.h2>
 
-        <div className="flex flex-wrap justify-center gap-6 md:gap-8">
+        <div className="flex flex-wrap justify-center gap-4 sm:gap-6 md:gap-8">
           {TEAM_MEMBERS.map((member, index) => (
             <motion.div
               key={member.name}
@@ -107,7 +109,7 @@ const TeamSection: React.FC = () => {
                 delay: index * 0.1,
                 ease: [0.22, 1, 0.36, 1],
               }}
-              className="w-full sm:w-[calc(50%-12px)] lg:w-[calc(33.333%-22px)] max-w-[300px]"
+              className="w-full sm:w-[calc(50%-12px)] lg:w-[calc(33.333%-22px)] max-w-[300px] sm:max-w-[300px]"
             >
               <TeamCard
                 name={member.name}

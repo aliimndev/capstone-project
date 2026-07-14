@@ -5,7 +5,7 @@ import { ReactNode } from "react";
 interface MarqueeRowProps {
   children: ReactNode;
   direction?: "left" | "right";
-  speed?: number; // duration in seconds
+  speed?: number;
 }
 
 export function MarqueeRow({

@@ -13,12 +13,12 @@ export function SiteHeader() {
         <Link href="/" className="flex items-center gap-3" aria-label="WeMovies AI home">
           <div className="relative h-9 w-9">
             <Image
-              src="/logo/logo-header.png"
+              src="/logo/wemovies.svg"
               alt="WeMovies AI Logo"
               fill
               className="object-contain"
               sizes="40px"
-              priority
+              loading="eager"
             />
           </div>
           <span className="text-lg font-semibold text-text-primary">WeMovies AI</span>

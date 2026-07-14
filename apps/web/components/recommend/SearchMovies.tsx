@@ -2,7 +2,8 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
 import Image from 'next/image';
-import { searchMovies } from './movieApi';
+import { motion } from 'motion/react';
+import { searchMovies, discoverMoviesByGenre } from './movieApi';
 import { mapMoviesForDisplay } from './mapMovie';
 import { StarIcon, CheckIcon } from '@/components/ui/Icons';
 import type { DisplayMovie } from './movieTypes';
@@ -10,14 +11,23 @@ import type { RatedMovie } from '@/features/recommendation/types';
 
 export type { DisplayMovie as Movie } from './movieTypes';
 
-const SUGGESTED_SEARCHES = [
-  'Fight Club',
-  'Inception',
-  'The Matrix',
-  'The Godfather',
-  'Pulp Fiction',
-  'Interstellar',
+interface Genre {
+  id: number;
+  name: string;
+}
+
+const SUGGESTED_GENRES: Genre[] = [
+  { id: 28, name: 'Action' },
+  { id: 878, name: 'Sci-Fi' },
+  { id: 27, name: 'Horror' },
+  { id: 18, name: 'Drama' },
+  { id: 35, name: 'Comedy' },
+  { id: 10749, name: 'Romance' }
 ];
+
+function dedupeMoviesById<T extends { id: number }>(movies: T[]): T[] {
+  return Array.from(new Map(movies.map((movie) => [movie.id, movie])).values());
+}
 
 interface SearchMoviesProps {
   onMovieClick?: (movie: DisplayMovie) => void;
@@ -42,7 +52,8 @@ const SearchMovies: React.FC<SearchMoviesProps> = ({
       setSearchError(null);
 
       const moviesFromApi = await searchMovies(query);
-      const formattedMovies = mapMoviesForDisplay(moviesFromApi.slice(0, 12), {
+      const uniqueMovies = dedupeMoviesById(moviesFromApi);
+      const formattedMovies = mapMoviesForDisplay(uniqueMovies.slice(0, 12), {
         posterSize: 'card',
       });
 
@@ -52,7 +63,7 @@ const SearchMovies: React.FC<SearchMoviesProps> = ({
       setSearchResults([]);
       setHasSearched(true);
       setSearchError(
-        error instanceof Error ? error.message : 'Gagal mencari film. Coba lagi.'
+        error instanceof Error ? error.message : 'Search failed. Give it another shot.'
       );
     } finally {
       setIsLoading(false);
@@ -77,8 +88,32 @@ const SearchMovies: React.FC<SearchMoviesProps> = ({
     onMovieClick?.(movie);
   };
 
-  const handleSuggestionClick = (suggestion: string) => {
-    setSearchQuery(suggestion);
+  const fetchGenreResults = useCallback(async (genreId: number) => {
+    try {
+      setIsLoading(true);
+      setSearchError(null);
+
+      const moviesFromApi = await discoverMoviesByGenre(genreId);
+      const uniqueMovies = dedupeMoviesById(moviesFromApi);
+      const formattedMovies = mapMoviesForDisplay(uniqueMovies.slice(0, 12), {
+        posterSize: 'card',
+      });
+
+      setSearchResults(formattedMovies);
+      setHasSearched(true);
+    } catch (error) {
+      setSearchResults([]);
+      setHasSearched(true);
+      setSearchError(
+        error instanceof Error ? error.message : 'Genre discovery failed. Give it another shot.'
+      );
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
+
+  const handleGenreClick = (genre: Genre) => {
+    fetchGenreResults(genre.id);
   };
 
   const isRated = (movieId: number) =>
@@ -86,14 +121,19 @@ const SearchMovies: React.FC<SearchMoviesProps> = ({
 
   return (
     <section className="w-full bg-transparent py-10 md:py-14 px-4 sm:px-6 lg:px-8 relative z-10">
-      <div className="max-w-5xl mx-auto">
+      <motion.div
+        initial={{ opacity: 0, y: 30 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+        className="max-w-5xl mx-auto"
+      >
         <div className="text-center mb-8 md:mb-10">
           <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-3">
-            Cari &amp; Rate Film
+            Discover &amp; Rate Movies
           </h1>
           <p className="text-text-secondary text-base md:text-lg max-w-2xl mx-auto">
-            Cari film di katalog model, pilih reaksimu, dan rate tepat {maxRatedMovies} film
-            untuk mendapat rekomendasi personal.
+            Search any movie from our library - then rate exactly {maxRatedMovies}{' '}
+            films to unlock personalized recommendations.
           </p>
         </div>
 
@@ -120,38 +160,50 @@ const SearchMovies: React.FC<SearchMoviesProps> = ({
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Ketik judul film, mis. Fight Club..."
+              placeholder="Search any movie title or explore genres below..."
               className="w-full pl-12 pr-4 py-4 bg-[#091020]/50 backdrop-blur-sm border border-white/10 rounded-xl text-text-primary placeholder-text-muted focus:outline-none focus:border-[#00d2ff] focus:ring-2 focus:ring-[#00d2ff]/20 transition-all duration-200 shadow-[0_0_20px_rgba(0,210,255,0.05)]"
             />
           </div>
 
-          <div className="flex flex-wrap justify-center gap-2 mt-4">
-            {SUGGESTED_SEARCHES.map((suggestion) => (
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
+            className="flex flex-wrap justify-center gap-2 mt-4"
+          >
+            {SUGGESTED_GENRES.map((genre) => (
               <button
-                key={suggestion}
+                key={genre.id}
                 type="button"
-                onClick={() => handleSuggestionClick(suggestion)}
+                onClick={() => handleGenreClick(genre)}
                 className="px-3 py-1.5 text-sm rounded-full border border-white/10 bg-white/5 text-text-secondary hover:text-white hover:border-[#00d2ff]/40 hover:bg-[#00d2ff]/10 transition-colors"
               >
-                {suggestion}
+                {genre.name}
               </button>
             ))}
-          </div>
+          </motion.div>
         </div>
 
         {!hasSearched && searchQuery.trim().length < 2 && (
-          <div className="max-w-2xl mx-auto text-center rounded-xl border border-dashed border-white/10 bg-[#091020]/30 px-6 py-10">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.5, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
+            className="max-w-2xl mx-auto text-center rounded-xl border border-dashed border-white/10 bg-[#091020]/30 px-6 py-10"
+          >
             <p className="text-text-secondary text-sm md:text-base mb-2">
-              Mulai dengan mengetik judul film di atas
+              Just start typing a movie name above
             </p>
             <p className="text-text-muted text-xs md:text-sm">
-              Atau klik salah satu saran populer untuk langsung mencari
+              Or instantly explore one of our top suggestions
             </p>
-          </div>
+          </motion.div>
         )}
 
         {isLoading && (
-          <div className="text-center text-text-secondary py-12">Mencari film...</div>
+          <div className="text-center text-text-secondary py-12">
+            Hunting down results...
+          </div>
         )}
 
         {searchError && !isLoading && (
@@ -161,23 +213,43 @@ const SearchMovies: React.FC<SearchMoviesProps> = ({
         )}
 
         {!isLoading && hasSearched && searchResults.length > 0 && (
-          <div>
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.5 }}
+          >
             <p className="text-text-secondary text-sm mb-4 text-center">
-              {searchResults.length} film ditemukan di katalog model — klik untuk rate
+              {searchResults.length} movie{searchResults.length !== 1 ? 's' : ''} found — click any to rate
             </p>
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 md:gap-5">
+            <motion.div
+              initial="hidden"
+              animate="visible"
+              variants={{
+                hidden: {},
+                visible: {
+                  transition: {
+                    staggerChildren: 0.05,
+                  },
+                },
+              }}
+              className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 md:gap-5"
+            >
               {searchResults.map((movie) => {
                 const rated = isRated(movie.id);
                 const hasRating = typeof movie.rating === 'number' && movie.rating > 0;
 
                 return (
-                  <button
+                  <motion.button
                     key={movie.id}
+                    variants={{
+                      hidden: { opacity: 0, y: 20 },
+                      visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: [0.16, 1, 0.3, 1] } },
+                    }}
                     type="button"
                     onClick={() => handleMovieSelect(movie)}
                     className="group text-left"
                   >
-                    <div className="relative aspect-[2/3] overflow-hidden rounded-xl bg-gray-900 mb-3">
+                    <div className="relative aspect-[2/3] overflow-hidden rounded-xl bg-gray-900 mb-3 shadow-lg group-hover:shadow-2xl group-hover:shadow-[#00d2ff]/10 transition-all duration-300">
                       {movie.posterUrl ? (
                         <Image
                           src={movie.posterUrl}
@@ -215,24 +287,29 @@ const SearchMovies: React.FC<SearchMoviesProps> = ({
                         <p className="text-gray-500 text-xs mt-1">{movie.year}</p>
                       )}
                     </div>
-                  </button>
+                  </motion.button>
                 );
               })}
-            </div>
-          </div>
+            </motion.div>
+          </motion.div>
         )}
 
         {!isLoading && hasSearched && searchQuery.trim().length >= 2 && searchResults.length === 0 && !searchError && (
-          <div className="max-w-xl mx-auto text-center rounded-xl border border-white/10 bg-[#091020]/30 px-6 py-10">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.4 }}
+            className="max-w-xl mx-auto text-center rounded-xl border border-white/10 bg-[#091020]/30 px-6 py-10"
+          >
             <p className="text-text-secondary">
-              Tidak ada film &quot;{searchQuery}&quot; di katalog model.
+              No matches for &quot;{searchQuery}&quot; in our collection.
             </p>
             <p className="text-text-muted text-sm mt-2">
-              Coba judul lain atau gunakan saran di atas.
+              Try a different title or pick a suggestion above.
             </p>
-          </div>
+          </motion.div>
         )}
-      </div>
+      </motion.div>
     </section>
   );
 };
